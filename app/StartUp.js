@@ -12,6 +12,9 @@ import {colors} from './theme';
 import {FeedBack} from './components/Feedback';
 import AsyncStorage from '@react-native-community/async-storage';
 import {accountAction} from './store/actions';
+import {Platform, PermissionsAndroid} from 'react-native';
+import Geolocation from 'react-native-geolocation-service';
+
 
 const StartUp = () => {
   const dispatch = useDispatch();
@@ -19,7 +22,39 @@ const StartUp = () => {
 
   React.useEffect(() => {
     handleAccount();
+    requestLocationPermission();
   }, []);
+
+  const requestLocationPermission = async () => {
+    if (Platform.OS === 'ios') {
+      Geolocation.requestAuthorization('always');
+      Geolocation.setRNConfiguration({
+        skipPermissionRequests: false,
+        authorizationLevel: 'whenInUse',
+      });
+    }
+
+    if (Platform.OS === 'android') {
+      await PermissionsAndroid.request(
+        PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+      );
+    }
+    await handleLocation();
+  };
+
+  const handleLocation = async () => {
+    Geolocation.getCurrentPosition(
+      (position) => {
+        console.log('position', position);
+        dispatch(accountAction.setLocation(position));
+      },
+      (error) => {
+        // See error code charts below.
+        console.log(error.code, error.message);
+      },
+      {enableHighAccuracy: true, timeout: 15000, maximumAge: 10000},
+    );
+  };
 
   const handleAccount = async () => {
     try {
@@ -39,6 +74,7 @@ const StartUp = () => {
       console.log('error', error);
     }
   };
+  
 
   const RNPTheme = {
     dark: theme.dark,
@@ -62,7 +98,7 @@ const StartUp = () => {
     dark: theme.dark,
     colors: {
       ...DefaultTheme.colors,
-      primary: theme.dark ? '#000' : 'rgb(255, 45, 85)',
+      primary: theme.dark ? 'rgb(255, 45, 85)' : '#000',
       background: theme.dark ? '#000' : 'rgb(255, 255, 255)',
       card: theme.dark ? '#131313' : colors.ligthGrey,
       text: theme.dark ? '#fff' : 'rgb(28, 28, 30)',

@@ -1,38 +1,65 @@
 import React from 'react';
-import {createStackNavigator} from '@react-navigation/stack';
 import {View, TouchableOpacity, Image, StyleSheet} from 'react-native';
-import Home from '../../screens/Dashboard';
+import Home from './home';
 import {Avatar, Badge} from 'react-native-paper';
 import { colors } from "../../theme";
-import Icon from "react-native-vector-icons/MaterialCommunityIcons"
-import { Indicator } from '../../components/Feedback';
-import { Switch } from '../../components/Switch';
-const Stack = createStackNavigator();
+import Icon from "react-native-vector-icons/Feather"
+import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
+const Tab = createBottomTabNavigator();
+
 
 const Dashboard = () => {
   return (
-    <Stack.Navigator initialRouteName="Home" headerMode="screen">
-      <Stack.Screen
-        name="Home"
-        options={({navigation: {navigate}}) => ({
-          headerLeft: () => (
-            <View>
-              <Avatar.Text size={35} label="XD" color={colors.red.main} />
-            </View>
-          ),
-          headerTitle: () => (
-            <View>
-              <Badge style={classes.badge} >3</Badge>
-              <Icon size={35} name="basket" />
-            </View>
-          ),
-          headerRight: () => (
-            <Switch />
-          )
-        })}
+    <Tab.Navigator
+      initialRouteName="Home"
+      screenOptions={({route}) => ({
+        tabBarIcon: ({focused, color, size}) => {
+          let iconName;
+          // console.log('{ focused, color, size }', focused, color, size);
+
+          if (route.name === 'Home') {
+            iconName = 'home';
+          } else if (route.name === 'Earnings') {
+            iconName = 'credit-card';
+          } else if (route.name === 'Trips') {
+            iconName = 'navigation';
+          } else if (route.name === 'Profile') {
+            iconName = 'user';
+          }
+
+          // You can return any component that you like here!
+          return (
+            <Icon
+              name={iconName}
+              size={size}
+              // size={!focused ? 15 : 35}
+              color={focused ? colors.red.main : color}
+            />
+          );
+        },
+      })}
+      tabBarOptions={
+        {
+          // activeTintColor: '#4DC735',
+          // inactiveTintColor: 'gray',
+          // style: {
+          //   backgroundColor: "#000"
+          // }
+        }
+      }>
+      <Tab.Screen name="Home" component={Home} options={{title: 'Home'}} />
+      <Tab.Screen
+        name="Earnings"
         component={Home}
+        options={{title: 'Earnings'}}
       />
-    </Stack.Navigator>
+      <Tab.Screen name="Trips" component={Home} options={{title: 'Trips'}} />
+      <Tab.Screen
+        name="Profile"
+        component={Home}
+        options={{title: 'Profile'}}
+      />
+    </Tab.Navigator>
   );
 };
 
@@ -45,9 +72,15 @@ const classes = StyleSheet.create({
     // color: '#000',
   },
   badge: {
-    position: "absolute",
-    left: 20,
-    bottom: 20,
-    zIndex: 5
+    position: 'absolute',
+    left: 25,
+    bottom: 18,
+    zIndex: 5,
+  },
+  left: {
+    paddingLeft: 20,
+  },
+  right: {
+    paddingRight: 20,
   },
 });
