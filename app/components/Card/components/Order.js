@@ -6,11 +6,13 @@ import FeaterIcon from 'react-native-vector-icons/Feather';
 import {useSelector, useDispatch} from 'react-redux';
 import {colors} from '../../../theme';
 import { Button } from '../../Button';
-import { deliveryAction } from "../../../store/actions"
+import { deliveryAction } from "../../../store/actions";
+import { useNavigation } from "@react-navigation/native";
 
 const Order = () => {
   const dispatch = useDispatch();
   const {dark} = useSelector(({theme}) => theme);
+  const { navigate } = useNavigation();
   return (
     <View style={classes.root}>
       <Surface style={classes.container}>
@@ -60,7 +62,11 @@ const Order = () => {
             </View>
           </View>
         </View>
-        <Button label="Accept" rootStyle={classes.ButtonRoot} />
+        <Button
+          label="Accept"
+          rootStyle={classes.ButtonRoot}
+          onPress={() => navigate("ConfirmPickupCode")}
+        />
 
         <View style={classes.actionRoot}>
           <TouchableOpacity style={classes.actionButtonRoot}>
@@ -82,9 +88,7 @@ const Order = () => {
           <TouchableOpacity
             style={classes.actionButtonRoot}
             onPress={() =>
-              dispatch(
-                deliveryAction.setDeliveryData({ cancel: true}),
-              )
+              dispatch(deliveryAction.setDeliveryData({cancel: true}))
             }>
             <FeaterIcon name="x" size={30} color={colors.red.main} />
             <Caption
@@ -165,7 +169,7 @@ const classes = StyleSheet.create({
     borderRightWidth: 1,
   },
   ButtonRoot: {
-    backgroundColor: colors.green,
+    backgroundColor: colors.green.main,
     marginVertical: 20,
   },
   productId: {

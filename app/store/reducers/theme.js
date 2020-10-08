@@ -1,7 +1,7 @@
 import {CHANGE_APP_MODE} from '../types';
 
 const initialstate = {
-  dark: false,
+  dark: true,
 };
 
 export default (state = initialstate, action) => {

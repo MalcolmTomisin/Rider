@@ -8,7 +8,10 @@ import TitleButton from './custom/TitleButton';
 import BackButton from './custom/BackButton';
 import Settings from '../screens/Dashboard/profile/settings';
 import BankAccount from '../screens/Dashboard/profile/bankAccount';
-import OrderPool from '../screens/Dashboard/order';
+import OrderPoolStack from './Dashboard/order';
+import ConfirmPickupCode from '../screens/Dashboard/order/confirmPickupCode';
+import ConfirmDeliveryCode from '../screens/Dashboard/order/confirmDeliveryCode';
+import Rate from '../screens/Dashboard/order/rate';
 const Stack = createStackNavigator();
 
 
@@ -59,7 +62,38 @@ const Navigation = () => {
           title: '',
           headerStyle: classes.header,
         })}
-        component={OrderPool}
+        component={OrderPoolStack}
+      />
+      <Stack.Screen
+        name="ConfirmPickupCode"
+        options={({navigation: {goBack}}) => ({
+          headerLeft: () => <Left goBack={goBack} name="Confirm Pickup Code" />,
+          title: '',
+          headerStyle: classes.header,
+        })}
+        component={ConfirmPickupCode}
+      />
+      <Stack.Screen
+        name="ConfirmDeliveryCode"
+        options={({navigation: {goBack}}) => ({
+          headerLeft: () => (
+            <Left goBack={goBack} name="Confirm Delivery Code" />
+          ),
+          title: '',
+          headerStyle: classes.header,
+        })}
+        component={ConfirmDeliveryCode}
+      />
+      <Stack.Screen
+        name="Rate"
+        options={({navigation: {goBack}}) => ({
+          headerLeft: () => (
+            <Left goBack={goBack} name="How was your client?" />
+          ),
+          title: '',
+          headerStyle: classes.header,
+        })}
+        component={Rate}
       />
     </Stack.Navigator>
   );

@@ -1,12 +1,20 @@
 import React from 'react'
-import { View } from 'react-native'
+import {View, StyleSheet} from 'react-native';
+import { Task } from '../../../components/Card'
 
 const OrderPool = () => {
   return (
-    <View>
-      
+    <View style={classes.root}>
+      <Task />
     </View>
-  )
+  );
 }
 
 export default OrderPool
+
+const classes = StyleSheet.create({
+  root: {
+    flex: 1,
+    marginHorizontal: 20
+  },
+});

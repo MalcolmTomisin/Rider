@@ -7,7 +7,7 @@ import Geocoder from 'react-native-geocoding';
 import {ActivityIndicator, Surface} from 'react-native-paper';
 import {colors, DARK_MAP_THEME} from '../../theme';
 import { useSelector } from "react-redux";
-import { Offline, Order } from '../../components/Card';
+import { Offline, Order, EnroutePickup, ConfirmPickup } from '../../components/Card';
 const {width, height} = Dimensions.get('window');
 
 const GOOGLE_MAPS_APIKEY = 'AIzaSyCiOd5vESI31DmPFd6e7QVRVMTX43sm_Ic';
@@ -116,6 +116,8 @@ const Home = () => {
       </MapView>
       {/* <Offline /> */}
       <Order />
+      {/* <EnroutePickup /> */}
+      {/* <ConfirmPickup /> */}
     </View>
   );
 };

@@ -1,7 +1,10 @@
 const colors = {
   white: '#fff',
   black: '#000',
-  green: '#1E9B0E',
+  green: {
+    light: '#D9EED6',
+    main: '#1E9B0E',
+  },
   red: {
     light: '#FFDCDC',
     main: '#FF0000',
@@ -14,6 +17,9 @@ const colors = {
   hr: {
     light: '#00000019',
     dark: '#333',
+  },
+  blue: {
+    main: '#1D2C7E',
   },
 };
 
