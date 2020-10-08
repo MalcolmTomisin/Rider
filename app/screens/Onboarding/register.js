@@ -81,7 +81,7 @@ const classes = StyleSheet.create({
     alignItems: 'flex-start',
   },
   hr: {
-    borderBottomColor: colors.hr,
+    borderBottomColor: colors.hr.light,
     borderBottomWidth: 1,
     height: 10,
   },
@@ -89,7 +89,7 @@ const classes = StyleSheet.create({
     height: 120,
     justifyContent: 'flex-start',
     alignItems: 'center',
-    borderTopColor: colors.hr,
+    borderTopColor: colors.hr.light,
     borderTopWidth: 1,
     width: '100%',
     paddingVertical: 20,

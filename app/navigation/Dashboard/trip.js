@@ -1,36 +1,23 @@
 import React from 'react';
 import {createStackNavigator} from '@react-navigation/stack';
 import {View, TouchableOpacity, Image, StyleSheet} from 'react-native';
-import Home from '../../screens/Dashboard';
-import {Avatar, Badge} from 'react-native-paper';
 import { colors } from "../../theme";
-import Icon from "react-native-vector-icons/MaterialCommunityIcons"
-import { Indicator } from '../../components/Feedback';
-import { Switch } from '../../components/Switch';
+import TitleButton from "../custom/TitleButton";
+import Trips from '../../screens/Dashboard/trips';
 const Stack = createStackNavigator();
 
-const Dashboard = () => {
+const TripStack = () => {
   return (
-    <Stack.Navigator initialRouteName="Home" headerMode="screen">
+    <Stack.Navigator initialRouteName="Trip" headerMode="float">
       <Stack.Screen
-        name="Home"
+        name="Trip"
         options={({navigation: {navigate}}) => ({
           headerLeft: () => (
             <View style={classes.left}>
-              <Avatar.Text size={35} label="XD" color={colors.red.main} />
+              <TitleButton label="Trips" />
             </View>
           ),
-          headerTitle: () => (
-            <TouchableOpacity onPress={() => navigate("OrderPool")} >
-              <Badge style={classes.badge}>3</Badge>
-              <Icon size={35} name="basket" />
-            </TouchableOpacity>
-          ),
-          headerRight: () => (
-            <View style={classes.right}>
-              <Switch />
-            </View>
-          ),
+          title: '',
           headerStyle: {
             shadowColor: '#000',
             shadowOffset: {
@@ -39,16 +26,17 @@ const Dashboard = () => {
             },
             shadowOpacity: 0.25,
             shadowRadius: 3.84,
+
             elevation: 5,
           },
         })}
-        component={Home}
+        component={Trips}
       />
     </Stack.Navigator>
   );
 };
 
-export default Dashboard;
+export default TripStack;
 
 const classes = StyleSheet.create({
   label: {
@@ -61,7 +49,6 @@ const classes = StyleSheet.create({
     left: 25,
     bottom: 18,
     zIndex: 5,
-    backgroundColor: colors.red.main
   },
   left: {
     paddingLeft: 20,

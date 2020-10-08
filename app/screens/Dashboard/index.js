@@ -7,6 +7,7 @@ import Geocoder from 'react-native-geocoding';
 import {ActivityIndicator, Surface} from 'react-native-paper';
 import {colors, DARK_MAP_THEME} from '../../theme';
 import { useSelector } from "react-redux";
+import { Offline, Order } from '../../components/Card';
 const {width, height} = Dimensions.get('window');
 
 const GOOGLE_MAPS_APIKEY = 'AIzaSyCiOd5vESI31DmPFd6e7QVRVMTX43sm_Ic';
@@ -14,7 +15,7 @@ const GOOGLE_MAPS_APIKEY = 'AIzaSyCiOd5vESI31DmPFd6e7QVRVMTX43sm_Ic';
 Geocoder.init(GOOGLE_MAPS_APIKEY);
 
 const Home = () => {
-  const { dark } = useSelector(({ theme }) => theme)
+  const { dark } = useSelector(({ theme }) => theme);
   const mapView = React.useRef(null);
   const [loading, setLoading] = useState(true);
   const [coordinates, setCoordinates] = useState({
@@ -67,8 +68,10 @@ const Home = () => {
   };
 
   const onMapPress = (e) => {
-    console.log('e.nativeEvent.coordinate', e.nativeEvent.coordinate);
-    setDestination(e.nativeEvent.coordinate);
+    console.log('e.nativeEvent', e.nativeEvent);
+    if (typeof e.nativeEvent.coordinate.latitude !== "undefined" ) {
+      setDestination(e.nativeEvent.coordinate);
+    }
   };
 
   console.log('coordinates', coordinates);
@@ -111,9 +114,8 @@ const Home = () => {
           />
         )}
       </MapView>
-      {/* <Surface style={classes.church}>
-        <Church {...church} selected={church._id} disabled={true} />
-      </Surface> */}
+      {/* <Offline /> */}
+      <Order />
     </View>
   );
 };

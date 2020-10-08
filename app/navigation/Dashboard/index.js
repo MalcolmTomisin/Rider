@@ -1,11 +1,14 @@
 import React from 'react';
-import {View, TouchableOpacity, Image, StyleSheet} from 'react-native';
+import { StyleSheet} from 'react-native';
 import Home from './home';
-import {Avatar, Badge} from 'react-native-paper';
 import { colors } from "../../theme";
-import Icon from "react-native-vector-icons/Feather"
+import Icon from "react-native-vector-icons/Feather";
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
+import EarningStack from "./earning"
+import TripStack from './trip';
+import ProfileStack from './profile';
 const Tab = createBottomTabNavigator();
+
 
 
 const Dashboard = () => {
@@ -15,8 +18,6 @@ const Dashboard = () => {
       screenOptions={({route}) => ({
         tabBarIcon: ({focused, color, size}) => {
           let iconName;
-          // console.log('{ focused, color, size }', focused, color, size);
-
           if (route.name === 'Home') {
             iconName = 'home';
           } else if (route.name === 'Earnings') {
@@ -31,32 +32,32 @@ const Dashboard = () => {
           return (
             <Icon
               name={iconName}
-              size={size}
-              // size={!focused ? 15 : 35}
+              // size={size}
+              size={!focused ? 15 : 30}
               color={focused ? colors.red.main : color}
             />
           );
         },
       })}
-      tabBarOptions={
-        {
-          // activeTintColor: '#4DC735',
-          // inactiveTintColor: 'gray',
-          // style: {
-          //   backgroundColor: "#000"
-          // }
-        }
-      }>
+      tabBarOptions={{
+        activeTintColor: colors.red.main,
+        // inactiveTintColor: 'gray',
+        style: classes.root,
+      }}>
       <Tab.Screen name="Home" component={Home} options={{title: 'Home'}} />
       <Tab.Screen
         name="Earnings"
-        component={Home}
+        component={EarningStack}
         options={{title: 'Earnings'}}
       />
-      <Tab.Screen name="Trips" component={Home} options={{title: 'Trips'}} />
+      <Tab.Screen
+        name="Trips"
+        component={TripStack}
+        options={{title: 'Trips'}}
+      />
       <Tab.Screen
         name="Profile"
-        component={Home}
+        component={ProfileStack}
         options={{title: 'Profile'}}
       />
     </Tab.Navigator>
@@ -66,21 +67,14 @@ const Dashboard = () => {
 export default Dashboard;
 
 const classes = StyleSheet.create({
-  label: {
-    fontSize: 18,
-    lineHeight: 25,
-    // color: '#000',
-  },
-  badge: {
-    position: 'absolute',
-    left: 25,
-    bottom: 18,
-    zIndex: 5,
-  },
-  left: {
-    paddingLeft: 20,
-  },
-  right: {
-    paddingRight: 20,
+  root: {
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
   },
 });

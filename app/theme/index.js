@@ -1,7 +1,7 @@
 const colors = {
   white: '#fff',
   black: '#000',
-  green: '#2AC940',
+  green: '#1E9B0E',
   red: {
     light: '#FFDCDC',
     main: '#FF0000',
@@ -9,8 +9,12 @@ const colors = {
   grey: {
     light: '#F2F2F2',
     main: '#A2A2A2',
+    dark: '#131313',
   },
-  hr: '#00000019',
+  hr: {
+    light: '#00000019',
+    dark: '#333',
+  },
 };
 
 

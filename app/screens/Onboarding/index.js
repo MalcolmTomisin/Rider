@@ -80,7 +80,7 @@ const classes = StyleSheet.create({
     marginHorizontal: 20,
   },
   hr: {
-    borderBottomColor: colors.hr,
+    borderBottomColor: colors.hr.light,
     borderBottomWidth: 1,
     marginVertical: 10,
     height: 10,

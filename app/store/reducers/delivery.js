@@ -1,16 +1,8 @@
 import {DELIVERY_DATA} from '../types';
 
 const initialstate = {
-  popularData: null,
-  menuCategoryData: null,
-  restaurantData: null,
-  fastestNearData: null,
-  dealData: null,
-  cart: [],
-  amount: 0,
-  locationId: null,
-  cardId: null,
-  open: false
+  cancel: false,
+  reason: false,
 };
 
 export default (state = initialstate, action) => {

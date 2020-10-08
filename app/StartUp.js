@@ -14,6 +14,7 @@ import AsyncStorage from '@react-native-community/async-storage';
 import {accountAction} from './store/actions';
 import {Platform, PermissionsAndroid} from 'react-native';
 import Geolocation from 'react-native-geolocation-service';
+import { CancelOrder, Reason } from './components/Modal';
 
 
 const StartUp = () => {
@@ -98,11 +99,11 @@ const StartUp = () => {
     dark: theme.dark,
     colors: {
       ...DefaultTheme.colors,
-      primary: theme.dark ? 'rgb(255, 45, 85)' : '#000',
-      background: theme.dark ? '#000' : 'rgb(255, 255, 255)',
-      card: theme.dark ? '#131313' : colors.ligthGrey,
-      text: theme.dark ? '#fff' : 'rgb(28, 28, 30)',
-      border: theme.dark ? colors.darkBorderColor : colors.hr,
+      primary: theme.dark ? 'rgb(255, 45, 85)' : colors.black,
+      background: theme.dark ? colors.black : colors.white,
+      card: theme.dark ? colors.grey.dark : colors.white,
+      text: theme.dark ? colors.white : 'rgb(28, 28, 30)',
+      border: theme.dark ? colors.hr.dark : colors.hr.light,
     },
   };
 
@@ -112,6 +113,8 @@ const StartUp = () => {
         <Navigation />
       </NavigationContainer>
       <FeedBack />
+      <CancelOrder />
+      <Reason />
     </PaperProvider>
   );
 };
