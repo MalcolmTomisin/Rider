@@ -1,12 +1,12 @@
 import {createStore, applyMiddleware} from 'redux';
 import thunk from 'redux-thunk';
 import appReducer from './reducers';
-import {setSignUpDetails} from './actions/signUp';
+import {setSignUpName} from './actions/signUp';
 
 const store = createStore(appReducer, applyMiddleware(thunk));
 
-export const boundSignUp = (details) => {
-  store.dispatch(setSignUpDetails(details));
+export const boundSignUpName = (details) => {
+  store.dispatch(setSignUpName(details));
 };
 
 export default store;

@@ -6,7 +6,7 @@ import img from '../../image';
 import {colors} from '../../theme';
 import {TextField} from '../../components/TextField';
 import BackButton from '../../navigation/custom/BackButton';
-import {boundSignUp} from '../../store';
+import {boundSignUpName} from '../../store';
 
 const Register = (props) => {
   const {
@@ -17,7 +17,10 @@ const Register = (props) => {
     navigate('Login');
   };
 
-  const handleFirstName = (input) => {};
+  //handles text input for name field 
+  const handleFirstName = (input) => {
+    boundSignUpName(input);
+  };
   return (
     <View style={classes.root}>
       <View style={classes.headerRoot}>
@@ -25,7 +28,7 @@ const Register = (props) => {
       </View>
       <View style={classes.bodyRoot}>
         <Title style={classes.bodyTitle}>Create Account</Title>
-        <TextField label="First Name" />
+        <TextField label="First Name" onPress={handleFirstName} />
         <TextField label="Last Name" />
         <TextField label="Email Address" />
         <TextField label="Password" />
