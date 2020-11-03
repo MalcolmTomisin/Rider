@@ -1,11 +1,11 @@
 
-export const baseURL = 'https://digicomme.com';
+export const baseURL = 'https://dev.api.user.churchesapp.com/';
 
 export const pspk = 'pk_test_fef4b69ccc575dec3a8babc10d9371505943faa8';
 
 export const api = {
-  login: `${baseURL}/api/auth/login`,
-  register: `${baseURL}/api/auth/register`,
+  login: `${baseURL}auth/login`,
+  register: `${baseURL}user`,
   verify: `${baseURL}/api/auth/verify`,
   forgotPassword: `${baseURL}/api/auth/forgot-password`,
   resetPassword: `${baseURL}/api/auth/reset-password`,
@@ -21,4 +21,5 @@ export const api = {
   checkout: `${baseURL}/api/order/checkout`,
   location: `${baseURL}/api/locations`,
   card: `${baseURL}/api/cards`,
+  userAuthKey: '@user'
 };

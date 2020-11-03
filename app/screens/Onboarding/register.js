@@ -1,16 +1,23 @@
-import React from 'react'
+import React from 'react';
 import {View, StyleSheet, TouchableOpacity} from 'react-native';
 import {Title, Subheading, Caption} from 'react-native-paper';
-import { Button } from '../../components/Button';
+import {Button} from '../../components/Button';
 import img from '../../image';
-import { colors } from '../../theme';
-import { TextField } from '../../components/TextField';
+import {colors} from '../../theme';
+import {TextField} from '../../components/TextField';
 import BackButton from '../../navigation/custom/BackButton';
+import {boundSignUp} from '../../store';
 
-const Register = ({navigation: {goBack, navigate}}) => {
+const Register = (props) => {
+  const {
+    navigation: {goBack, navigate},
+  } = props;
+  let {signUp} = props;
   const handleLogin = () => {
-navigate('Login')
-  }
+    navigate('Login');
+  };
+
+  const handleFirstName = (input) => {};
   return (
     <View style={classes.root}>
       <View style={classes.headerRoot}>

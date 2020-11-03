@@ -33,7 +33,7 @@ const Profile = ({ navigation: { navigate } }) => {
       <List name="Ratings" onPress={() => navigate('Rating')} />
       <List name="Settings" onPress={() => navigate('Settings')} />
       <List name="Help" onPress={() => navigate('Trips')} />
-      <List name="Logout" onPress={() => navigate('Trips')} />
+      <List name="Logout" onPress={() => navigate('Onboarding')} />
     </View>
   );
 };

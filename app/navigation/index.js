@@ -1,8 +1,9 @@
-import React from 'react';
+import React,{useState, useEffect} from 'react';
 import {createStackNavigator} from '@react-navigation/stack';
 import {View, TouchableOpacity, Image, StyleSheet} from 'react-native';
 import Dashboard from './Dashboard';
 import Onboarding from './Onboarding';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import Rating from '../screens/Dashboard/profile/rating';
 import TitleButton from './custom/TitleButton';
 import BackButton from './custom/BackButton';
@@ -12,23 +13,25 @@ import OrderPoolStack from './Dashboard/order';
 import ConfirmPickupCode from '../screens/Dashboard/order/confirmPickupCode';
 import ConfirmDeliveryCode from '../screens/Dashboard/order/confirmDeliveryCode';
 import Rate from '../screens/Dashboard/order/rate';
+import { api } from '../api';
 const Stack = createStackNavigator();
 
 
 const Navigation = () => {
+  const [signedIn, setSignedIn] = useState(false);
+  useEffect(() => {
+    GetAuth().then(result => { setSignedIn(result) });
+  }, []);
   return (
-    <Stack.Navigator initialRouteName="Dashboard" headerMode="float">
-      <Stack.Screen
-        name="Onboarding"
-        options={{headerShown: false}}
-        component={Onboarding}
-      />
-      <Stack.Screen
+    <Stack.Navigator initialRouteName={signedIn ? "Dashboard" : "Onboarding"} headerMode="float">
+      signedIn ?
+     ( <>
+        <Stack.Screen
         name="Dashboard"
         options={{headerShown: false}}
         component={Dashboard}
-      />
-      <Stack.Screen
+        />
+        <Stack.Screen
         name="Rating"
         options={({navigation: {goBack}}) => ({
           headerLeft: () => <Left goBack={goBack} name="Ratings" />,
@@ -95,6 +98,14 @@ const Navigation = () => {
         })}
         component={Rate}
       />
+      </>)   
+      :
+     ( <Stack.Screen
+        name="Onboarding"
+        options={{headerShown: false}}
+        component={Onboarding}
+      />)
+      
     </Stack.Navigator>
   );
 };
@@ -112,6 +123,17 @@ const Left = ({ name, goBack, navigate }) => {
       />
     </View>
   )
+}
+
+const GetAuth = async () => {
+  //check if token exists 
+  try {
+      const value = await AsyncStorage.getItem(api.userAuthKey);
+    return value != null ? JSON.parse(value) : false;
+  } catch (e) {
+    //failure 
+  }
+  return false;
 }
 
 const classes = StyleSheet.create({
