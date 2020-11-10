@@ -10,12 +10,11 @@ import {
 import {useSelector, useDispatch} from 'react-redux';
 import {colors} from './theme';
 import {FeedBack} from './components/Feedback';
-import AsyncStorage from '@react-native-community/async-storage';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import {accountAction} from './store/actions';
 import {Platform, PermissionsAndroid} from 'react-native';
 import Geolocation from 'react-native-geolocation-service';
-import { CancelOrder, Reason } from './components/Modal';
-
+import {CancelOrder, Reason} from './components/Modal';
 
 const StartUp = () => {
   const dispatch = useDispatch();
@@ -75,7 +74,6 @@ const StartUp = () => {
       console.log('error', error);
     }
   };
-  
 
   const RNPTheme = {
     dark: theme.dark,

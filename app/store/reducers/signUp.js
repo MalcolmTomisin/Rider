@@ -1,4 +1,4 @@
-import {SIGN_UP_NAME} from '../types';
+import {SIGN_UP_NAME, SIGN_IN} from '../types';
 import {Platform} from 'react-native';
 
 const initialState = {
@@ -10,11 +10,14 @@ const initialState = {
   state: '',
   platform: Platform.OS === 'ios' ? 'ios' : 'android',
   phoneNumber: '',
+  signedIn: false,
 };
 
-export default (state = [], action) => {
+export default (state = initialState, action) => {
   switch (action) {
     case SIGN_UP_NAME:
+      return {...state, ...action.payload};
+    case SIGN_IN:
       return {...state, ...action.payload};
     default:
       return state;

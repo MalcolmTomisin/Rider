@@ -1,5 +1,5 @@
 import React from 'react';
-import {View, StyleSheet, TouchableOpacity} from 'react-native';
+import {View, StyleSheet, TouchableOpacity, ScrollView} from 'react-native';
 import {Title, Subheading, Caption} from 'react-native-paper';
 import {Button} from '../../components/Button';
 import img from '../../image';
@@ -22,7 +22,7 @@ const Register = (props) => {
     boundSignUpName(input);
   };
   return (
-    <View style={classes.root}>
+    <ScrollView contentContainerStyle={classes.root}>
       <View style={classes.headerRoot}>
         <BackButton goBack={() => goBack()} />
       </View>
@@ -56,7 +56,7 @@ const Register = (props) => {
           </Subheading>
         </View>
       </View>
-    </View>
+    </ScrollView>
   );
 };
 

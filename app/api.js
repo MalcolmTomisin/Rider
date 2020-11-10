@@ -1,10 +1,10 @@
 
-export const baseURL = 'https://dev.api.user.churchesapp.com/';
+export const baseURL = 'https://dev.api.logistics.churchesapp.com/';
 
 export const pspk = 'pk_test_fef4b69ccc575dec3a8babc10d9371505943faa8';
 
 export const api = {
-  login: `${baseURL}auth/login`,
+  login: `${baseURL}auth/rider`,
   register: `${baseURL}user`,
   verify: `${baseURL}/api/auth/verify`,
   forgotPassword: `${baseURL}/api/auth/forgot-password`,

@@ -9,6 +9,7 @@ export const SIGN_UP_NAME = 'SIGN_UP_NAME';
 export const SIGN_UP_EMAIL = 'SIGN_UP_EMAIL';
 export const SIGN_UP_PASSWORD = 'SIGN_UP_PASSWORD';
 export const SIGN_UP_COURIER = 'SIGN_UP_COURIER';
+export const SIGN_IN = 'SIGN IN';
 
 // feedback
 export const LAUNCH_FEEDBACK = 'LAUNCH_FEEDBACK';
