@@ -6,6 +6,6 @@ export const setSignUpName = (payload) => ({
 });
 
 export const setSignInToken = (payload) => ({
-  action: SIGN_IN,
+  type: SIGN_IN,
   payload,
 });

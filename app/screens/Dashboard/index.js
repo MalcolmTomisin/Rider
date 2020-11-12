@@ -6,8 +6,15 @@ import Geolocation from 'react-native-geolocation-service';
 import Geocoder from 'react-native-geocoding';
 import {ActivityIndicator, Surface} from 'react-native-paper';
 import {colors, DARK_MAP_THEME} from '../../theme';
-import { useSelector } from "react-redux";
-import { Offline, Order, EnroutePickup, ConfirmPickup } from '../../components/Card';
+import {useSelector} from 'react-redux';
+import {
+  Offline,
+  Order,
+  EnroutePickup,
+  ConfirmPickup,
+} from '../../components/Card';
+import socketIO from 'socket.io-client';
+
 const {width, height} = Dimensions.get('window');
 
 const GOOGLE_MAPS_APIKEY = 'AIzaSyCiOd5vESI31DmPFd6e7QVRVMTX43sm_Ic';
@@ -15,7 +22,8 @@ const GOOGLE_MAPS_APIKEY = 'AIzaSyCiOd5vESI31DmPFd6e7QVRVMTX43sm_Ic';
 Geocoder.init(GOOGLE_MAPS_APIKEY);
 
 const Home = () => {
-  const { dark } = useSelector(({ theme }) => theme);
+  const {isOnline} = useSelector(({account}) => account);
+  const {dark} = useSelector(({theme}) => theme);
   const mapView = React.useRef(null);
   const [loading, setLoading] = useState(true);
   const [coordinates, setCoordinates] = useState({
@@ -31,6 +39,14 @@ const Home = () => {
     handleGetUserLocation();
     // handleGetAddressCordinates();
   }, []);
+  React.useEffect(() => {
+    console.log('here');
+    const socket = socketIO('https://dev.api.logistics.churchesapp.com');
+    socket.connect();
+    socket.on('connect', () => {
+      console.log('connected');
+    });
+  });
 
   const handleGetUserLocation = async () => {
     Geolocation.getCurrentPosition(
@@ -50,11 +66,10 @@ const Home = () => {
       {
         enableHighAccuracy: true,
         timeout: 15000,
-        maximumAge: 10000
+        maximumAge: 10000,
       },
     );
   };
-
 
   const onReady = (result) => {
     mapView.current.fitToCoordinates(result.coordinates, {
@@ -69,7 +84,7 @@ const Home = () => {
 
   const onMapPress = (e) => {
     console.log('e.nativeEvent', e.nativeEvent);
-    if (typeof e.nativeEvent.coordinate.latitude !== "undefined" ) {
+    if (typeof e.nativeEvent.coordinate.latitude !== 'undefined') {
       setDestination(e.nativeEvent.coordinate);
     }
   };
@@ -114,8 +129,9 @@ const Home = () => {
           />
         )}
       </MapView>
-      {/* <Offline /> */}
-      <Order />
+      {isOnline ? <Order /> : <Offline />}
+      <Offline />
+      {/* <Order /> */}
       {/* <EnroutePickup /> */}
       {/* <ConfirmPickup /> */}
     </View>

@@ -3,10 +3,10 @@ import {createStackNavigator} from '@react-navigation/stack';
 import {View, TouchableOpacity, Image, StyleSheet} from 'react-native';
 import Home from '../../screens/Dashboard';
 import {Avatar, Badge} from 'react-native-paper';
-import { colors } from "../../theme";
-import Icon from "react-native-vector-icons/MaterialCommunityIcons"
-import { Indicator } from '../../components/Feedback';
-import { Switch } from '../../components/Switch';
+import {colors} from '../../theme';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import {Indicator} from '../../components/Feedback';
+import {Switch} from '../../components/Switch';
 const Stack = createStackNavigator();
 
 const Dashboard = () => {
@@ -21,7 +21,7 @@ const Dashboard = () => {
             </View>
           ),
           headerTitle: () => (
-            <TouchableOpacity onPress={() => navigate("OrderPool")} >
+            <TouchableOpacity onPress={() => navigate('OrderPool')}>
               <Badge style={classes.badge}>3</Badge>
               <Icon size={35} name="basket" />
             </TouchableOpacity>
@@ -61,7 +61,7 @@ const classes = StyleSheet.create({
     left: 25,
     bottom: 18,
     zIndex: 5,
-    backgroundColor: colors.red.main
+    backgroundColor: colors.red.main,
   },
   left: {
     paddingLeft: 20,

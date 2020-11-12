@@ -1,4 +1,5 @@
-import {AUTH_TOKEN, USER_DATA, LOCATION_DATA} from '../types';
+import { AUTH_TOKEN, USER_DATA, LOCATION_DATA, IS_ONLINE } from '../types';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const initialstate = {
   token: null,
@@ -24,6 +25,7 @@ const initialstate = {
       longitude: -122.084,
     },
   },
+  isOnline: true,
 };
 
 export default (state = initialstate, action) => {
@@ -38,6 +40,8 @@ export default (state = initialstate, action) => {
       return Object.assign({}, state, {
         location: action.payload,
       });
+    case IS_ONLINE:
+      return {...state, ...action.payload};
     default:
       return state;
   }

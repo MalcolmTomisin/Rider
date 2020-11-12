@@ -15,10 +15,34 @@ import {accountAction} from './store/actions';
 import {Platform, PermissionsAndroid} from 'react-native';
 import Geolocation from 'react-native-geolocation-service';
 import {CancelOrder, Reason} from './components/Modal';
+import WebSocket from './components/Socket/context';
+import socketIO from 'socket.io-client';
 
 const StartUp = () => {
+  const [socket, setSocket] = React.useState(null);
   const dispatch = useDispatch();
   const theme = useSelector(({theme}) => theme);
+
+  const connectSocket = () => {
+    try {
+      console.log('socket');
+      const s = socketIO('https://dev.api.logistics.churchesapp.com', {
+        transports: ['websocket'],
+        path: '/socket.io'
+      });
+
+      s.on('connect', () => {
+        console.log('socket connected');
+      });
+      setSocket(s);
+    } catch (error) {
+      console.log('error', error);
+    }
+  };
+
+  React.useEffect(() => {
+    connectSocket();
+  }, []);
 
   React.useEffect(() => {
     handleAccount();
@@ -106,14 +130,16 @@ const StartUp = () => {
   };
 
   return (
-    <PaperProvider theme={RNPTheme}>
-      <NavigationContainer theme={RNTheme}>
-        <Navigation />
-      </NavigationContainer>
-      <FeedBack />
-      <CancelOrder />
-      <Reason />
-    </PaperProvider>
+    <WebSocket.Provider value={socket}>
+      <PaperProvider theme={RNPTheme}>
+        <NavigationContainer theme={RNTheme}>
+          <Navigation />
+        </NavigationContainer>
+        <FeedBack />
+        <CancelOrder />
+        <Reason />
+      </PaperProvider>
+    </WebSocket.Provider>
   );
 };
 

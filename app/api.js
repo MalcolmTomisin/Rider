@@ -1,5 +1,5 @@
 
-export const baseURL = 'https://dev.api.logistics.churchesapp.com/';
+export const baseURL = 'https://dev.api.logistics.churchesapp.com/api/v1/';
 
 export const pspk = 'pk_test_fef4b69ccc575dec3a8babc10d9371505943faa8';
 

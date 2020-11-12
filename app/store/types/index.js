@@ -10,6 +10,7 @@ export const SIGN_UP_EMAIL = 'SIGN_UP_EMAIL';
 export const SIGN_UP_PASSWORD = 'SIGN_UP_PASSWORD';
 export const SIGN_UP_COURIER = 'SIGN_UP_COURIER';
 export const SIGN_IN = 'SIGN IN';
+export const IS_ONLINE = 'IS ONLINE';
 
 // feedback
 export const LAUNCH_FEEDBACK = 'LAUNCH_FEEDBACK';

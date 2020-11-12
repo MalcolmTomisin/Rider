@@ -13,6 +13,7 @@ import {api} from '../../api';
 import feedbackAction from '../../store/actions/feedback';
 import {FeedBack} from '../../components/Feedback';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import {Loading} from '../../components/Loading';
 
 const Login = ({navigation: {goBack, navigate}}) => {
   const dispatch = useDispatch();
@@ -64,11 +65,11 @@ const Login = ({navigation: {goBack, navigate}}) => {
           }
           throw new Error('Unsuccessful');
         })
-        .then((res) => {
+        .then(async (res) => {
           dispatch(
             feedbackAction.launch({open: true, severity: 's', msg: res.msg}),
           );
-          AsyncStorage.setItem(api.userAuthKey, JSON.stringify(true));
+          await AsyncStorage.setItem(api.userAuthKey, JSON.stringify(true));
           dispatch(setSignInToken({signedIn: true}));
           navigate('Dashboard', {screen: 'Home'});
         })
@@ -94,6 +95,9 @@ const Login = ({navigation: {goBack, navigate}}) => {
             value={mobileNumber}
             placeholder="+234"
             placeholderTextColor="grey"
+            onChangeText={(input) => {
+              handleInput(1, input);
+            }}
           />
           <TextField
             label="Password"
@@ -101,8 +105,18 @@ const Login = ({navigation: {goBack, navigate}}) => {
             secureTextEntry
             placeholder="Enter password"
             placeholderTextColor="grey"
+            onChangeText={(input) => {
+              handleInput(2, input);
+            }}
           />
-          <Button label="Sign In" />
+          <Button
+            label="Sign In"
+            onPress={() => {
+              AsyncStorage.setItem(api.userAuthKey, JSON.stringify(true));
+              dispatch(setSignInToken({signedIn: true}));
+              navigate('Dashboard', {screen: 'Home'});
+            }}
+          />
         </View>
         <View style={classes.footerRoot}>
           <View style={{flexGrow: 1}} />
@@ -117,6 +131,7 @@ const Login = ({navigation: {goBack, navigate}}) => {
         </View>
       </View>
       <FeedBack />
+      <Loading visible={isLoading} size="large" />
     </ScrollView>
   );
 };

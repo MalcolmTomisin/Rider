@@ -11,7 +11,7 @@ export const Default = ({visible, onRequestClose, size}) => {
       animationType="slide"
       transparent>
       <View style={styles.modal}>
-        <ActivityIndicator size={size} color={colors.primary.main} />
+        <ActivityIndicator size={size} color={colors.red.main} />
       </View>
     </Modal>
   );

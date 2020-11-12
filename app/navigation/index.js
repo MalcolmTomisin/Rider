@@ -14,23 +14,19 @@ import ConfirmPickupCode from '../screens/Dashboard/order/confirmPickupCode';
 import ConfirmDeliveryCode from '../screens/Dashboard/order/confirmDeliveryCode';
 import Rate from '../screens/Dashboard/order/rate';
 import {api} from '../api';
-import {useSelector, useDispatch} from 'react-redux';
-import {setSignInToken} from '../store/actions/signUp';
+import {connect} from 'react-redux';
+import {boundSetSignInToken} from '../store';
 
 const Stack = createStackNavigator();
 
-const Navigation = () => {
-  const dispatch = useDispatch();
-
-  const {signedIn} = useSelector(({signup}) => signup);
+const Navigation = ({signedIn}) => {
   useEffect(() => {
     GetAuth().then((result) => {
-      setSignInToken({signedIn: result});
+      boundSetSignInToken({signedIn: result});
     });
   }, []);
   return (
     <Stack.Navigator
-      initialRouteName={signedIn ? 'Dashboard' : 'Onboarding'}
       headerMode="float">
       {signedIn ? (
         <>
@@ -120,7 +116,13 @@ const Navigation = () => {
   );
 };
 
-export default Navigation;
+const MapStateToProps = (state) => {
+  console.log('state', state);
+  const {signup} = state;
+  return {signedIn: signup.signedIn};
+};
+
+export default connect(MapStateToProps, {boundSetSignInToken})(Navigation);
 
 const Left = ({name, goBack, navigate}) => {
   return (
@@ -134,6 +136,8 @@ const Left = ({name, goBack, navigate}) => {
     </View>
   );
 };
+
+
 
 const GetAuth = async () => {
   //check if token exists

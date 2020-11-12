@@ -6,20 +6,26 @@ import {
   Animated,
   Dimensions,
 } from 'react-native';
-import { colors } from '../../../theme';
-import Icon from "react-native-vector-icons/MaterialCommunityIcons"
-import { Caption } from 'react-native-paper';
+import {colors} from '../../../theme';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import {Caption} from 'react-native-paper';
+import {useDispatch, useSelector} from 'react-redux';
+import accountAction from '../../../store/actions/account';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const Switch = () => {
-  const [position, setPosition] = React.useState("");
-  const [status, setStatus] = React.useState(false);
+  const {isOnline} = useSelector(({account}) => account);
+  const dispatch = useDispatch();
 
   return (
-    <View style={[classes.root, !status && classes.offlineRoot]}>
-      {status ? (
+    <View style={[classes.root, !isOnline && classes.offlineRoot]}>
+      {isOnline ? (
         <TouchableOpacity
           style={[classes.container]}
-          onPress={() => setStatus(false)}>
+          onPress={() => {
+            dispatch(accountAction.setOnline({isOnline: false}));
+            AsyncStorage.setItem('@isOnline', JSON.stringify(false));
+          }}>
           {/* <Animated.View style={[classes.container]}> */}
           <Caption style={classes.title}>Online</Caption>
           <View style={classes.iconbg}>
@@ -30,18 +36,21 @@ const Switch = () => {
       ) : (
         <TouchableOpacity
           style={[classes.container, classes.offline]}
-          onPress={() => setStatus(true)}>
+          onPress={() => {
+            dispatch(accountAction.setOnline({isOnline: true}));
+            AsyncStorage.setItem('@isOnline', JSON.stringify(true));
+          }}>
           {/* <Animated.View style={[classes.container, classes.offline]}> */}
-            <View style={classes.iconbg}>
-              <Icon name="bike" size={20} />
-            </View>
-            <Caption style={[classes.offlineText]}>Offline</Caption>
+          <View style={classes.iconbg}>
+            <Icon name="bike" size={20} />
+          </View>
+          <Caption style={[classes.offlineText]}>Offline</Caption>
           {/* </Animated.View> */}
         </TouchableOpacity>
       )}
     </View>
   );
-}
+};
 
 export default Switch;
 
