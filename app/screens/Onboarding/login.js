@@ -1,5 +1,11 @@
 import React, {useState} from 'react';
-import {View, StyleSheet, TouchableOpacity, ScrollView} from 'react-native';
+import {
+  View,
+  StyleSheet,
+  TouchableOpacity,
+  ScrollView,
+  KeyboardAvoidingView,
+} from 'react-native';
 import {Title, Subheading} from 'react-native-paper';
 import {Button} from '../../components/Button';
 import img from '../../image';
@@ -83,56 +89,55 @@ const Login = ({navigation: {goBack, navigate}}) => {
   };
 
   return (
-    <ScrollView>
-      <View style={classes.root}>
-        <View style={classes.headerRoot}>
-          <BackButton goBack={() => goBack()} />
-        </View>
-        <View style={classes.bodyRoot}>
-          <Title style={classes.bodyTitle}>Login</Title>
-          <TextField
-            label="Mobile Number"
-            value={mobileNumber}
-            placeholder="+234"
-            placeholderTextColor="grey"
-            onChangeText={(input) => {
-              handleInput(1, input);
-            }}
-          />
-          <TextField
-            label="Password"
-            value={password}
-            secureTextEntry
-            placeholder="Enter password"
-            placeholderTextColor="grey"
-            onChangeText={(input) => {
-              handleInput(2, input);
-            }}
-          />
-          <Button
-            label="Sign In"
-            onPress={() => {
-              AsyncStorage.setItem(api.userAuthKey, JSON.stringify(true));
-              dispatch(setSignInToken({signedIn: true}));
-              navigate('Dashboard', {screen: 'Home'});
-            }}
-          />
-        </View>
-        <View style={classes.footerRoot}>
-          <View style={{flexGrow: 1}} />
-          <View style={classes.signupRoot}>
-            <Subheading style={classes.signupLeft}>
-              Don't Have An Account Yet?
-              <TouchableOpacity onPress={() => navigate('Register')}>
-                <Subheading style={classes.signupRight}> Sign Up.</Subheading>
-              </TouchableOpacity>
-            </Subheading>
-          </View>
+    <View style={classes.root}>
+      <View style={classes.headerRoot}>
+        <BackButton goBack={() => goBack()} />
+      </View>
+      <View style={classes.bodyRoot}>
+        <Title style={classes.bodyTitle}>Login</Title>
+        <TextField
+          label="Mobile Number"
+          value={mobileNumber}
+          placeholder="+234"
+          placeholderTextColor="grey"
+          onChangeText={(input) => {
+            handleInput(1, input);
+          }}
+        />
+        <TextField
+          label="Password"
+          value={password}
+          secureTextEntry
+          placeholder="Enter password"
+          placeholderTextColor="grey"
+          onChangeText={(input) => {
+            handleInput(2, input);
+          }}
+          password
+        />
+        <Button
+          label="Sign In"
+          onPress={() => {
+            AsyncStorage.setItem(api.userAuthKey, JSON.stringify(true));
+            dispatch(setSignInToken({signedIn: true}));
+            navigate('Dashboard', {screen: 'Home'});
+          }}
+        />
+      </View>
+      <View style={classes.footerRoot}>
+        <View style={{flexGrow: 1}} />
+        <View style={classes.signupRoot}>
+          <Subheading style={classes.signupLeft}>
+            Don't Have An Account Yet?
+            <TouchableOpacity onPress={() => navigate('Register')}>
+              <Subheading style={classes.signupRight}> Sign Up.</Subheading>
+            </TouchableOpacity>
+          </Subheading>
         </View>
       </View>
       <FeedBack />
       <Loading visible={isLoading} size="large" />
-    </ScrollView>
+    </View>
   );
 };
 

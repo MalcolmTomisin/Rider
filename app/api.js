@@ -9,6 +9,7 @@ export const api = {
   verify: `${baseURL}/api/auth/verify`,
   forgotPassword: `${baseURL}/api/auth/forgot-password`,
   resetPassword: `${baseURL}/api/auth/reset-password`,
+  online: `${baseURL}rider/online`,
 
   // food delivery
   popularRestaurant: `${baseURL}/api/restaurant/popular`,

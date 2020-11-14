@@ -12,10 +12,33 @@ import {Caption} from 'react-native-paper';
 import {useDispatch, useSelector} from 'react-redux';
 import accountAction from '../../../store/actions/account';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import {api} from '../../../api';
 
 const Switch = () => {
   const {isOnline} = useSelector(({account}) => account);
   const dispatch = useDispatch();
+
+  const toggleOnlineStatus = () => {
+    fetch(api.online, {
+      method: 'PATCH',
+      headers: {
+        'Content-type': 'application/json',
+      },
+    })
+      .then((res) => {
+        if (res.status === 200) {
+          return res.json();
+        }
+        throw new Error('Unsuccessful');
+      })
+      .then((res) => {
+        dispatch(accountAction.setOnline({isOnline: false}));
+        AsyncStorage.setItem('@isOnline', JSON.stringify(false));
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
 
   return (
     <View style={[classes.root, !isOnline && classes.offlineRoot]}>

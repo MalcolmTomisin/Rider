@@ -130,7 +130,6 @@ const Home = () => {
         )}
       </MapView>
       {isOnline ? <Order /> : <Offline />}
-      <Offline />
       {/* <Order /> */}
       {/* <EnroutePickup /> */}
       {/* <ConfirmPickup /> */}
