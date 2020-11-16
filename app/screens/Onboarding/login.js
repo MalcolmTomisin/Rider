@@ -3,8 +3,7 @@ import {
   View,
   StyleSheet,
   TouchableOpacity,
-  ScrollView,
-  KeyboardAvoidingView,
+  Text
 } from 'react-native';
 import {Title, Subheading} from 'react-native-paper';
 import {Button} from '../../components/Button';
@@ -20,6 +19,7 @@ import feedbackAction from '../../store/actions/feedback';
 import {FeedBack} from '../../components/Feedback';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {Loading} from '../../components/Loading';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 
 const Login = ({navigation: {goBack, navigate}}) => {
   const dispatch = useDispatch();
@@ -28,6 +28,7 @@ const Login = ({navigation: {goBack, navigate}}) => {
   const [password, setPassword] = useState('');
   const [error, setError] = useState({mobileNumber: '', password: ''});
   const [isLoading, setIsLoading] = useState(false);
+
 
   const handleInput = (type, input) => {
     if (type === 1) {
@@ -58,6 +59,7 @@ const Login = ({navigation: {goBack, navigate}}) => {
 
   const submit = () => {
     if (!error.mobileNumber && !error.password) {
+      setIsLoading(true);
       fetch(api.login, {
         method: 'POST',
         headers: {
@@ -65,8 +67,10 @@ const Login = ({navigation: {goBack, navigate}}) => {
         },
         body: JSON.stringify({email: mobileNumber, password}),
       })
-        .then((res) => {
+        .then(async (res) => {
           if (res.status === 200) {
+           const authToken = res.headers.map["x-auth-token"];
+           await AsyncStorage.setItem("x-auth-token", authToken);
             return res.json();
           }
           throw new Error('Unsuccessful');
@@ -89,7 +93,7 @@ const Login = ({navigation: {goBack, navigate}}) => {
   };
 
   return (
-    <View style={classes.root}>
+    <KeyboardAwareScrollView style={classes.root}>
       <View style={classes.headerRoot}>
         <BackButton goBack={() => goBack()} />
       </View>
@@ -104,6 +108,7 @@ const Login = ({navigation: {goBack, navigate}}) => {
             handleInput(1, input);
           }}
         />
+        <View>
         <TextField
           label="Password"
           value={password}
@@ -114,14 +119,23 @@ const Login = ({navigation: {goBack, navigate}}) => {
             handleInput(2, input);
           }}
           password
+          rootStyle={{marginBottom: 10}}
         />
+        <Text
+            style={{
+              position: 'absolute',
+              top: 8,
+              right: 0,
+              fontSize: 12,
+              color: colors.red.main,
+            }}>
+            Forgot Password?
+          </Text>
+        </View>
+        
         <Button
           label="Sign In"
-          onPress={() => {
-            AsyncStorage.setItem(api.userAuthKey, JSON.stringify(true));
-            dispatch(setSignInToken({signedIn: true}));
-            navigate('Dashboard', {screen: 'Home'});
-          }}
+          onPress={submit}
         />
       </View>
       <View style={classes.footerRoot}>
@@ -129,15 +143,15 @@ const Login = ({navigation: {goBack, navigate}}) => {
         <View style={classes.signupRoot}>
           <Subheading style={classes.signupLeft}>
             Don't Have An Account Yet?
-            <TouchableOpacity onPress={() => navigate('Register')}>
-              <Subheading style={classes.signupRight}> Sign Up.</Subheading>
-            </TouchableOpacity>
+            
+              <Subheading style={classes.signupRight} onPress={() => navigate('Register')}> Sign Up.</Subheading>
+            
           </Subheading>
         </View>
       </View>
       <FeedBack />
       <Loading visible={isLoading} size="large" />
-    </View>
+    </KeyboardAwareScrollView>
   );
 };
 

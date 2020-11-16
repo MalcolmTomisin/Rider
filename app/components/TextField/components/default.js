@@ -84,9 +84,10 @@ const classes = StyleSheet.create({
   container: {
     width: '100%',
     flexDirection: 'row',
-    justifyContent: 'space-between',
+    justifyContent: 'space-around',
     alignContent: 'center',
     height: 48,
+    alignItems: 'center'
   },
   outlined: {
     borderColor: '#D9D9D9',

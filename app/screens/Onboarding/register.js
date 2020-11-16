@@ -19,6 +19,7 @@ import {
   boundSetPassword,
 } from '../../store';
 import constants from '../../utils/constants';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 import {connect} from 'react-redux';
 
 const Register = (props) => {
@@ -29,6 +30,8 @@ const Register = (props) => {
   const handleLogin = () => {
     navigate('Login');
   };
+
+  const [show, setShow]  = useState(false);
 
   //handles text input for name field
   const handleInput = (type, input) => {
@@ -73,7 +76,6 @@ const Register = (props) => {
             label="Password"
             onChangeText={(text) => handleInput(4, text)}
             value={signUp.password}
-            password
           />
           <View>
             <Button
@@ -103,8 +105,8 @@ const Register = (props) => {
     );
   } else {
     return (
-      <ScrollView
-        contentContainerStyle={{flex: 1, height: constants.DEVICE_HEIGHT}}>
+      <KeyboardAwareScrollView
+      >
         <View style={classes.headerRoot}>
           <BackButton goBack={() => goBack()} />
         </View>
@@ -113,18 +115,29 @@ const Register = (props) => {
           <TextField
             label="First Name"
             onChangeText={(text) => handleInput(1, text)}
+            placeholder="Adeyemi"
+            placeholderTextColor="grey"
           />
           <TextField
             label="Last Name"
             onChangeText={(text) => handleInput(2, text)}
+            placeholder="Opeyemi"
+            placeholderTextColor="grey"
           />
           <TextField
             label="Email Address"
             onChangeText={(text) => handleInput(3, text)}
+            placeholder="yourmail@email.com"
+            placeholderTextColor="grey"
           />
           <TextField
             label="Password"
             onChangeText={(text) => handleInput(4, text)}
+            rootStyle={{marginBottom: 10}}
+            password
+            secureTextEntry
+            placeholder="Enter Password"
+            placeholderTextColor="grey"
           />
           <View>
             <Button
@@ -140,17 +153,15 @@ const Register = (props) => {
           </View>
         </View>
         <View style={classes.footerRoot}>
-          <View style={{flexGrow: 1}} />
+          
           <View style={classes.signupRoot}>
             <Subheading style={classes.signupLeft}>
               Already Have An Account?
-              <TouchableOpacity onPress={handleLogin}>
-                <Subheading style={classes.signupRight}> Login.</Subheading>
-              </TouchableOpacity>
+                <Subheading onPress={handleLogin} style={classes.signupRight}> Login.</Subheading>
             </Subheading>
           </View>
         </View>
-      </ScrollView>
+      </KeyboardAwareScrollView>
     );
   }
 };
@@ -171,11 +182,10 @@ const classes = StyleSheet.create({
     flex: 1,
   },
   headerRoot: {
-    flex: 1,
     justifyContent: 'flex-end',
   },
   bodyRoot: {
-    flex: 6,
+    
     marginHorizontal: 20,
     justifyContent: 'space-evenly',
   },
@@ -190,7 +200,6 @@ const classes = StyleSheet.create({
     color: colors.red.main,
   },
   footerRoot: {
-    flex: 2,
     justifyContent: 'flex-end',
     alignItems: 'flex-start',
   },
@@ -210,8 +219,11 @@ const classes = StyleSheet.create({
   },
   signupRight: {
     color: colors.red.main,
+    textAlign: "center",
   },
   signupLeft: {
     color: colors.grey.main,
+    justifyContent: "center",
+    alignItems: "center"
   },
 });
