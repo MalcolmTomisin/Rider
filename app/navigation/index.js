@@ -16,6 +16,7 @@ import Rate from '../screens/Dashboard/order/rate';
 import {api} from '../api';
 import {connect} from 'react-redux';
 import {boundSetSignInToken} from '../store';
+import ChangePassword from '../screens/Dashboard/profile/changePassword';
 
 const Stack = createStackNavigator();
 
@@ -103,6 +104,17 @@ const Navigation = ({signedIn}) => {
               headerStyle: classes.header,
             })}
             component={Rate}
+          />
+          <Stack.Screen
+            name="Change Password"
+            options={({navigation: {goBack}}) => ({
+              headerLeft: () => (
+                <Left goBack={goBack} name="Change Password" />
+              ),
+              title: '',
+              headerStyle: classes.header,
+            })}
+            component={ChangePassword}
           />
         </>
       ) : (

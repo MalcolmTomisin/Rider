@@ -103,6 +103,7 @@ const classes = StyleSheet.create({
     width: '100%',
     color: '#2AC940',
     fontSize: 16,
+    fontFamily: 'Manrope-Regular'
   },
   iconRoot: {
     justifyContent: 'center',

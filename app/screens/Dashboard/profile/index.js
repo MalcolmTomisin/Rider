@@ -1,5 +1,5 @@
 import React from 'react';
-import {View, StyleSheet, TouchableOpacity} from 'react-native';
+import {View, StyleSheet, TouchableOpacity, ScrollView} from 'react-native';
 import {
   Subheading,
   Avatar,
@@ -7,11 +7,15 @@ import {
 } from 'react-native-paper';
 import {colors} from '../../../theme';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import {useSelector} from 'react-redux';
+import {useSelector, useDispatch} from 'react-redux';
 import img from '../../../image';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
+import {setSignInToken} from '../../../store/actions/signUp';
 
 const Profile = ({ navigation: { navigate } }) => {
   const {dark} = useSelector(({theme}) => theme);
+  const dispatch = useDispatch();
 
   return (
     <View style={classes.root}>
@@ -28,12 +32,18 @@ const Profile = ({ navigation: { navigate } }) => {
           </View>
         </View>
       </View>
+      <ScrollView>
       <List name="Trips" onPress={() => navigate('Trips')} />
-      <List name="Order Basket" onPress={() => navigate('Trips')} />
+      <List name="Order Basket" onPress={() => navigate('OrderPool')} />
       <List name="Ratings" onPress={() => navigate('Rating')} />
       <List name="Settings" onPress={() => navigate('Settings')} />
       <List name="Help" onPress={() => navigate('Trips')} />
-      <List name="Logout" onPress={() => navigate('Onboarding')} />
+      <List name="Logout" onPress={() => {
+          AsyncStorage.clear();
+          dispatch(setSignInToken({signedIn: false}));
+          navigate('Onboarding');
+      }} />
+      </ScrollView>
     </View>
   );
 };

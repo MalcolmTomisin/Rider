@@ -23,15 +23,17 @@ const StartUp = () => {
   const dispatch = useDispatch();
   const theme = useSelector(({theme}) => theme);
 
-  const connectSocket = () => {
+  const connectSocket = async () => {
+    let token = await AsyncStorage.getItem("x-auth-token");
+    
     try {
       console.log('socket');
-      const s = socketIO('https://dev.api.logistics.churchesapp.com', {
-        transports: ['websocket'],
-        path: '/socket.io'
+      const s = socketIO(`https://dev.api.logistics.churchesapp.com?token=${token}&type=rider`, {
+        path: '/sio',
+        transports:['websocket'],
       });
 
-      s.on('connect', () => {
+      s.on('connected', () => {
         console.log('socket connected');
       });
       setSocket(s);

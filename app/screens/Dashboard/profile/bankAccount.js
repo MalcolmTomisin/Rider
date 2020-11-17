@@ -2,18 +2,38 @@ import React from 'react'
 import {View, StyleSheet } from 'react-native';
 import { Button } from '../../../components/Button';
 import { TextField } from '../../../components/TextField';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 
 const BankAccount = ({ navigation: { goBack, navigate } }) => {
   return (
-    <View style={classes.root}>
-      <View style={classes.bodyRoot}>
-        <TextField label="Bank Name" />
-        <TextField label="Account Number" />
-        <TextField label="Bank Sort Number" />
+    <KeyboardAwareScrollView style={classes.root}>
+        <TextField 
+        label="Bank Name" 
+        rootStyle={classes.margin} 
+        containerStyle={{height: 53}}
+        placeholder="Guarantee Trust bank"
+        placeholderTextColor="#a2a2a2"
+        />
+        <TextField 
+        label="Account Number" 
+        rootStyle={classes.margin} 
+        containerStyle={{height: 53}} 
+        placeholder="2933181931"
+        placeholderTextColor="#a2a2a2"
+        />
+        <TextField 
+        label="Bank Sort Number" 
+        rootStyle={classes.margin} 
+        containerStyle={{height: 53}} 
+        placeholder="2123"
+        placeholderTextColor="#a2a2a2"
+        />
+        <View style={{justifyContent: 'center', alignItems: 'center', marginVertical: 40, marginHorizontal: 15}}>
         <Button label="Add Bank Account" />
-      </View>
+        </View>
+     
       <View style={classes.footerRoot} />
-    </View>
+    </KeyboardAwareScrollView>
   );
 }
 
@@ -39,5 +59,9 @@ const classes = StyleSheet.create({
     flex: 4,
     justifyContent: 'flex-end',
     alignItems: 'flex-start',
+  },
+  margin:{
+    marginHorizontal: 15,
+    marginVertical: 10
   }
 });
