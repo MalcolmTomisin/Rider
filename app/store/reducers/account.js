@@ -33,9 +33,7 @@ export default (state = initialstate, action) => {
     case USER_DATA:
       return {...state, ...action.payload};
     case AUTH_TOKEN:
-      return Object.assign({}, state, {
-        token: action.payload,
-      });
+      return {...state, ...action.payload};
     case LOCATION_DATA:
       return Object.assign({}, state, {
         location: action.payload,

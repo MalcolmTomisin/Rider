@@ -20,6 +20,7 @@ import {FeedBack} from '../../components/Feedback';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {Loading} from '../../components/Loading';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
+import constants from '../../utils/constants';
 
 const Login = ({navigation: {goBack, navigate}}) => {
   const dispatch = useDispatch();
@@ -93,7 +94,7 @@ const Login = ({navigation: {goBack, navigate}}) => {
   };
 
   return (
-    <KeyboardAwareScrollView style={classes.root}>
+    <KeyboardAwareScrollView style={classes.root} contentContainerStyle={{ marginTop: constants.DEVICE_HEIGHT * 0.1}}>
       <View style={classes.headerRoot}>
         <BackButton goBack={() => goBack()} />
       </View>

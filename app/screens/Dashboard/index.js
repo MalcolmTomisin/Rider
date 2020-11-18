@@ -41,7 +41,7 @@ const Home = () => {
   }, []);
   React.useEffect(() => {
     console.log('here');
-    const socket = socketIO('https://dev.api.logistics.churchesapp.com');
+    const socket = socketIO(`https://dev.api.logistics.churchesapp.com`);
     socket.connect();
     socket.on('connect', () => {
       console.log('connected');

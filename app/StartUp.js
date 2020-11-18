@@ -25,10 +25,10 @@ const StartUp = () => {
 
   const connectSocket = async () => {
     let token = await AsyncStorage.getItem("x-auth-token");
-    
+    dispatch(accountAction({token}));
     try {
       console.log('socket');
-      const s = socketIO(`https://dev.api.logistics.churchesapp.com?token=${token}&type=rider`, {
+      const s = socketIO(`https://dev.api.logistics.churchesapp.com?token=${token}`, {
         path: '/sio',
         transports:['websocket'],
       });
