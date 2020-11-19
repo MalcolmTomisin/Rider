@@ -16,7 +16,7 @@ import {Platform, PermissionsAndroid} from 'react-native';
 import Geolocation from 'react-native-geolocation-service';
 import {CancelOrder, Reason} from './components/Modal';
 import WebSocket from './components/Socket/context';
-import socketIO from 'socket.io-client';
+import io from 'socket.io-client';
 
 const StartUp = () => {
   const [socket, setSocket] = React.useState(null);
@@ -25,17 +25,27 @@ const StartUp = () => {
 
   const connectSocket = async () => {
     let token = await AsyncStorage.getItem("x-auth-token");
-    dispatch(accountAction({token}));
+    dispatch(accountAction.setToken({token}));
     try {
-      console.log('socket');
-      const s = socketIO(`https://dev.api.logistics.churchesapp.com?token=${token}`, {
+      console.log(token, 'token');
+      const s = io(`https://dev.api.logistics.churchesapp.com?token=${token}`, {
         path: '/sio',
         transports:['websocket'],
       });
 
-      s.on('connected', () => {
+      s.on('connect', () => {
         console.log('socket connected');
+        // s.on('assignEntry', message => {
+        //   console.log('entry', message);
+        //     dispatch(accountAction.setOrder({message}));
+        // });
       });
+      
+      s.on('assignEntry', message => {
+        console.log('entry', message);
+          dispatch(accountAction.setOrder({message}));
+      });
+      
       setSocket(s);
     } catch (error) {
       console.log('error', error);
@@ -44,7 +54,7 @@ const StartUp = () => {
 
   React.useEffect(() => {
     connectSocket();
-  }, []);
+  },[]);
 
   React.useEffect(() => {
     handleAccount();

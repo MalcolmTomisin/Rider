@@ -1,4 +1,4 @@
-import React, {Component, useState} from 'react';
+import React, {Component, useState, useContext} from 'react';
 import {Dimensions, StyleSheet, View, Alert} from 'react-native';
 import MapView, {PROVIDER_GOOGLE} from 'react-native-maps';
 import MapViewDirections from 'react-native-maps-directions';
@@ -13,7 +13,8 @@ import {
   EnroutePickup,
   ConfirmPickup,
 } from '../../components/Card';
-import socketIO from 'socket.io-client';
+import io from 'socket.io-client';
+import WSContext from '../../components/Socket/context';
 
 const {width, height} = Dimensions.get('window');
 
@@ -24,6 +25,7 @@ Geocoder.init(GOOGLE_MAPS_APIKEY);
 const Home = () => {
   const {isOnline} = useSelector(({account}) => account);
   const {dark} = useSelector(({theme}) => theme);
+  const sockets = useContext(WSContext);
   const mapView = React.useRef(null);
   const [loading, setLoading] = useState(true);
   const [coordinates, setCoordinates] = useState({
@@ -35,18 +37,13 @@ const Home = () => {
     longitude: 3.3171244316839394,
   });
 
+  
+
   React.useEffect(() => {
     handleGetUserLocation();
     // handleGetAddressCordinates();
   }, []);
-  React.useEffect(() => {
-    console.log('here');
-    const socket = socketIO(`https://dev.api.logistics.churchesapp.com`);
-    socket.connect();
-    socket.on('connect', () => {
-      console.log('connected');
-    });
-  });
+  
 
   const handleGetUserLocation = async () => {
     Geolocation.getCurrentPosition(
@@ -94,7 +91,9 @@ const Home = () => {
   const mapStyle = dark ? DARK_MAP_THEME : [];
 
   return (
-    <View style={classes.root}>
+  <WSContext.Consumer>
+    {(socket) => (
+      <View style={classes.root}>
       <MapView
         style={StyleSheet.absoluteFill}
         provider={PROVIDER_GOOGLE}
@@ -129,11 +128,15 @@ const Home = () => {
           />
         )}
       </MapView>
+      
       {isOnline ? null : <Offline />}
       {/* <Order /> */}
       {/* <EnroutePickup /> */}
       {/* <ConfirmPickup /> */}
     </View>
+    )}    
+  </WSContext.Consumer>
+    
   );
 };
 

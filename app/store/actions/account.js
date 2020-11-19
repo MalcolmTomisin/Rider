@@ -1,4 +1,4 @@
-import {USER_DATA, AUTH_TOKEN, LOCATION_DATA, IS_ONLINE} from '../types';
+import {USER_DATA, AUTH_TOKEN, LOCATION_DATA, IS_ONLINE, MESSAGE} from '../types';
 
 // user data action
 const setUserData = (payload) => ({
@@ -23,9 +23,15 @@ const setOnline = (payload) => ({
   payload,
 });
 
+const setOrder = (payload) => ({
+  type: MESSAGE,
+  payload,
+})
+
 export default {
   setUserData,
   setToken,
   setLocation,
   setOnline,
+  setOrder
 };
