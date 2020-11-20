@@ -22,5 +22,6 @@ export const api = {
   checkout: `${baseURL}/api/order/checkout`,
   location: `${baseURL}/api/locations`,
   card: `${baseURL}/api/cards`,
-  userAuthKey: '@user'
+  userAuthKey: '@user',
+  reverseGeocode: 'https://maps.googleapis.com/maps/api/geocode/json?'
 };

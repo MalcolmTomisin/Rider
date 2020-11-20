@@ -1,4 +1,4 @@
-import { AUTH_TOKEN, USER_DATA, LOCATION_DATA, IS_ONLINE, MESSAGE } from '../types';
+import { AUTH_TOKEN, USER_DATA, LOCATION_DATA, IS_ONLINE, MESSAGE, ADDRESS } from '../types';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const initialstate = {
@@ -21,12 +21,13 @@ const initialstate = {
       types: ['street_address'],
     },
     coords: {
-      latitude: 37.4219983,
-      longitude: -122.084,
+      latitude: 6.5568768,
+      longitude: 3.3488896,
     },
   },
   isOnline: true,
   message: null,
+  address: '',
 };
 
 export default (state = initialstate, action) => {
@@ -43,6 +44,8 @@ export default (state = initialstate, action) => {
       return {...state, ...action.payload};
       case MESSAGE:
         return {...state, ...action.payload};
+    case ADDRESS:
+      return {...state, ...action.payload};
     default:
       return state;
   }

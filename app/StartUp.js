@@ -17,11 +17,14 @@ import Geolocation from 'react-native-geolocation-service';
 import {CancelOrder, Reason} from './components/Modal';
 import WebSocket from './components/Socket/context';
 import io from 'socket.io-client';
+import {api} from './api';
+import constants from './utils/constants';
 
 const StartUp = () => {
   const [socket, setSocket] = React.useState(null);
   const dispatch = useDispatch();
   const theme = useSelector(({theme}) => theme);
+  const {location} = useSelector(({account}) => account);
 
   const connectSocket = async () => {
     let token = await AsyncStorage.getItem("x-auth-token");
@@ -51,6 +54,15 @@ const StartUp = () => {
       console.log('error', error);
     }
   };
+
+  const getAddressFromCoordinates = () => {
+    const {longitude,latitude} = location.coords;
+      fetch(`${api.reverseGeocode}latlng=${latitude},${longitude}&result_type=street_address&key=${constants.GOOGLE_MAPS_APIKEY}`)
+      .then(res => res.json())
+      .then(res => { 
+        dispatch(accountAction.setAddress({address: res.results[0].formatted_address}))})
+      .catch(err => {console.log(err, 'err')})
+  }
 
   React.useEffect(() => {
     connectSocket();
@@ -83,6 +95,7 @@ const StartUp = () => {
       (position) => {
         console.log('position', position);
         dispatch(accountAction.setLocation(position));
+        getAddressFromCoordinates();
       },
       (error) => {
         // See error code charts below.

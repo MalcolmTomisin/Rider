@@ -13,6 +13,7 @@ export const SIGN_UP_COURIER = 'SIGN_UP_COURIER';
 export const SIGN_IN = 'SIGN IN';
 export const IS_ONLINE = 'IS ONLINE';
 export const MESSAGE = 'MESSAGE';
+export const ADDRESS = 'ADDRESS';
 
 // feedback
 export const LAUNCH_FEEDBACK = 'LAUNCH_FEEDBACK';

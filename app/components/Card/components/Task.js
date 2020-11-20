@@ -7,15 +7,22 @@ import Icon from "react-native-vector-icons/Feather";
 import {useSelector, useDispatch} from 'react-redux';
 
 
-const Task = () => {
+const Task = ({pickUpAddress, deliveryAddress, estimatedCost, id}) => {
   const {dark} = useSelector(({theme}) => theme);
+  const {message} = useSelector(({account}) => account);
   const hr = {borderBottomColor: dark ? colors.hr.dark : colors.hr.light};
+
+  // const renderOrders = orders => {
+  //   return orders.map((v,i) => (
+
+  //   ))
+  // }
   return (
     <Surface style={classes.root}>
       <View style={[classes.headerRoot, hr]}>
         <View>
           <Subheading>Ready to Deliver</Subheading>
-          <Caption style={classes.content}>#12942124</Caption>
+  <Caption style={classes.content}>{id}</Caption>
         </View>
         <View style={classes.headerIconRoot}>
           <Icon name="arrow-up-right" size={15} color={colors.white} />
@@ -27,7 +34,7 @@ const Task = () => {
             {' '}
             * Pickup address
           </Subheading>
-          <Caption style={classes.content}>7 Hughes Avenue, Sabo, Yaba</Caption>
+  <Caption style={classes.content}>{pickUpAddress}</Caption>
         </View>
 
         <View>
@@ -35,7 +42,7 @@ const Task = () => {
             * Delivery address
           </Subheading>
           <Caption style={classes.content}>
-            422 Olufemi Street, Ogunlana road
+            {deliveryAddress}
           </Caption>
         </View>
       </View>
@@ -43,7 +50,7 @@ const Task = () => {
       <View style={classes.footerRoot}>
         <View>
           <Subheading style={classes.bodyHeaderText}>Payment</Subheading>
-          <Paragraph style={classes.bodyHeaderText1}>₦300.00</Paragraph>
+  <Paragraph style={classes.bodyHeaderText1}>{`${Math.ceil(estimatedCost)}`}</Paragraph>
           <Caption style={classes.content}>Payment on Delivery</Caption>
         </View>
 

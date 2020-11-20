@@ -16,6 +16,7 @@ import {
 import io from 'socket.io-client';
 import WSContext from '../../components/Socket/context';
 
+
 const {width, height} = Dimensions.get('window');
 
 const GOOGLE_MAPS_APIKEY = 'AIzaSyCiOd5vESI31DmPFd6e7QVRVMTX43sm_Ic';
@@ -23,7 +24,7 @@ const GOOGLE_MAPS_APIKEY = 'AIzaSyCiOd5vESI31DmPFd6e7QVRVMTX43sm_Ic';
 Geocoder.init(GOOGLE_MAPS_APIKEY);
 
 const Home = () => {
-  const {isOnline} = useSelector(({account}) => account);
+  const {isOnline, message} = useSelector(({account}) => account);
   const {dark} = useSelector(({theme}) => theme);
   const sockets = useContext(WSContext);
   const mapView = React.useRef(null);
@@ -91,8 +92,6 @@ const Home = () => {
   const mapStyle = dark ? DARK_MAP_THEME : [];
 
   return (
-  <WSContext.Consumer>
-    {(socket) => (
       <View style={classes.root}>
       <MapView
         style={StyleSheet.absoluteFill}
@@ -129,14 +128,10 @@ const Home = () => {
         )}
       </MapView>
       
-      {isOnline ? null : <Offline />}
-      {/* <Order /> */}
+      {!isOnline ? <Offline /> : !message?.data ? null : <Order />}
       {/* <EnroutePickup /> */}
       {/* <ConfirmPickup /> */}
-    </View>
-    )}    
-  </WSContext.Consumer>
-    
+    </View>   
   );
 };
 

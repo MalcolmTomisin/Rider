@@ -12,6 +12,8 @@ import { useNavigation } from "@react-navigation/native";
 const Order = () => {
   const dispatch = useDispatch();
   const {dark} = useSelector(({theme}) => theme);
+  const {message, address} = useSelector(({account}) => account);
+  const {data} = message;
   const { navigate } = useNavigation();
   return (
     <View style={classes.root}>
@@ -19,7 +21,7 @@ const Order = () => {
         <View style={classes.orderRoot}>
           <Avatar.Text label="RT" size={45} />
           <View style={classes.orderContentRoot}>
-            <Subheading>Leonard Elizabeth</Subheading>
+  <Subheading>{data?.name}</Subheading>
             <View style={classes.orderContentAddress}>
               <FeaterIcon
                 name="navigation"
@@ -27,7 +29,7 @@ const Order = () => {
                 color={dark ? colors.grey.light : colors.grey.dark}
               />
               <Caption style={classes.orderContentAddressText}>
-                7 Hughes avenue, Lawal Road
+              {data?.pickupAddress}
               </Caption>
             </View>
             <View style={classes.dash} />
@@ -40,14 +42,15 @@ const Order = () => {
                 color={dark ? colors.grey.light : colors.grey.dark}
               />
               <Caption style={classes.orderContentAddressText}>
-                18 Bailey Street, Off Kayode street, Lagos
+                {`${data?.orders.length > 1 ? `${data?.orders[0].deliveryAddress} and ${data?.orders.length - 1} other locations` 
+                : data?.orders[0].deliveryAddress}`}
               </Caption>
             </View>
-            <TimeDistance />
+            <TimeDistance data={data} />
             <View style={classes.productRoot}>
               <Caption>Picking up </Caption>
               <TouchableOpacity>
-                <Caption style={classes.productId}>#jf2i321 Product</Caption>
+  <Caption style={classes.productId}>{`${data?.orders.length > 1 ? `${data?.orders[0].orderId} and ${data?.orders.length - 1} other IDs`: `${data?.orders[0].orderId}`}`}</Caption>
               </TouchableOpacity>
             </View>
             <View style={classes.imgRoot}>
@@ -104,18 +107,18 @@ const Order = () => {
 
 export default Order;
 
-const TimeDistance = () => {
+const TimeDistance = ({data}) => {
   const {dark} = useSelector(({theme}) => theme);
   return (
     <View style={[classes.timeDistanceRoot, { backgroundColor: dark ? colors.white : colors.black }]}>
-      <Caption style={[classes.timeDistanceText, { color: dark ? colors.black : colors.white }]} >45 mins</Caption>
+      <Caption style={[classes.timeDistanceText, { color: dark ? colors.black : colors.white }]} >{`${Math.ceil(data?.TET)} mins`}</Caption>
       <View
         style={[
           classes.hr,
           {borderRightColor: dark ? colors.grey.main : colors.grey.light},
         ]}
       />
-      <Caption style={[classes.timeDistanceText, { color: dark ? colors.black : colors.white }]} >45 mins</Caption>
+      <Caption style={[classes.timeDistanceText, { color: dark ? colors.black : colors.white }]} >{`${Math.ceil(data?.TED)} km`}</Caption>
     </View>
   );
 }
