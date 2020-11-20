@@ -21,7 +21,7 @@ const OrderPool = () => {
   return (
     <View style={classes.root}>
       {
-        !data ? null : renderTasks(data)
+        !data && !message.accept ? null : renderTasks(data)
       }
     </View>
   );

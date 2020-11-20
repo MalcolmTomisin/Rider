@@ -19,6 +19,18 @@ import WebSocket from './components/Socket/context';
 import io from 'socket.io-client';
 import {api} from './api';
 import constants from './utils/constants';
+import messaging from '@react-native-firebase/messaging';
+
+async function requestUserPermission() {
+  const authStatus = await messaging().requestPermission();
+  const enabled =
+    authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
+    authStatus === messaging.AuthorizationStatus.PROVISIONAL;
+
+  if (enabled) {
+    console.log('Authorization status:', authStatus);
+  }
+}
 
 const StartUp = () => {
   const [socket, setSocket] = React.useState(null);
@@ -71,8 +83,14 @@ const StartUp = () => {
   React.useEffect(() => {
     handleAccount();
     requestLocationPermission();
+    messaging()
+    .getToken()
+    .then(token => {
+      console.log('ftoken', token)
+    })
   }, []);
 
+  
   const requestLocationPermission = async () => {
     if (Platform.OS === 'ios') {
       Geolocation.requestAuthorization('always');

@@ -1,4 +1,4 @@
-import React from 'react';
+import React,{useContext} from 'react';
 import {
   TouchableOpacity,
   StyleSheet,
@@ -13,17 +13,27 @@ import {useDispatch, useSelector} from 'react-redux';
 import accountAction from '../../../store/actions/account';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {api} from '../../../api';
+import WSContext from '../../Socket/context';
 
 const Switch = () => {
-  const {isOnline} = useSelector(({account}) => account);
+  const {isOnline, token} = useSelector(({account}) => account);
   const dispatch = useDispatch();
+  const socket = useContext(WSContext);
 
-  const toggleOnlineStatus = () => {
+  const disconnect = (socket) => {
+    socket.disconnect();
+  }
+
+  const reconnect = (socket) => {
+    socket.connect();
+  }
+
+  const toggleOnlineStatus = (socket) => {
     fetch(api.online, {
       method: 'PATCH',
       headers: {
-        'Content-type': 'application/json',
-      },
+        "x-auth-token": token
+      }
     })
       .then((res) => {
         if (res.status === 200) {
@@ -32,8 +42,17 @@ const Switch = () => {
         throw new Error('Unsuccessful');
       })
       .then((res) => {
-        dispatch(accountAction.setOnline({isOnline: false}));
-        AsyncStorage.setItem('@isOnline', JSON.stringify(false));
+        if(isOnline){
+          socket.disconnect()
+          socket.on('disconnect', () => {
+            console.log("disconnected");
+          })
+        }
+        else {
+          socket.connect();
+        }
+        dispatch(accountAction.setOnline({isOnline: !isOnline}));
+        AsyncStorage.setItem('@isOnline', JSON.stringify(!isOnline));
       })
       .catch((err) => {
         console.log(err);
@@ -46,9 +65,8 @@ const Switch = () => {
         <TouchableOpacity
           style={[classes.container]}
           onPress={() => {
-            dispatch(accountAction.setOnline({isOnline: false}));
-            AsyncStorage.setItem('@isOnline', JSON.stringify(false));
-          }}>
+            toggleOnlineStatus(socket);
+            }}>
           {/* <Animated.View style={[classes.container]}> */}
           <Caption style={classes.title}>Online</Caption>
           <View style={classes.iconbg}>
@@ -60,8 +78,7 @@ const Switch = () => {
         <TouchableOpacity
           style={[classes.container, classes.offline]}
           onPress={() => {
-            dispatch(accountAction.setOnline({isOnline: true}));
-            AsyncStorage.setItem('@isOnline', JSON.stringify(true));
+            toggleOnlineStatus(socket);
           }}>
           {/* <Animated.View style={[classes.container, classes.offline]}> */}
           <View style={classes.iconbg}>

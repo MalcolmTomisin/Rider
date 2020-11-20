@@ -6,7 +6,7 @@ import FeaterIcon from 'react-native-vector-icons/Feather';
 import {useSelector, useDispatch} from 'react-redux';
 import {colors} from '../../../theme';
 import { Button } from '../../Button';
-import { deliveryAction } from "../../../store/actions";
+import { deliveryAction, accountAction } from "../../../store/actions";
 import { useNavigation } from "@react-navigation/native";
 
 const Order = () => {
@@ -68,7 +68,11 @@ const Order = () => {
         <Button
           label="Accept"
           rootStyle={classes.ButtonRoot}
-          onPress={() => navigate("ConfirmPickupCode")}
+          onPress={() => {
+            message.accept = true;
+            dispatch(accountAction.setOrder({message}))
+            navigate("ConfirmPickupCode");
+          }}
         />
 
         <View style={classes.actionRoot}>
@@ -90,8 +94,11 @@ const Order = () => {
           </TouchableOpacity>
           <TouchableOpacity
             style={classes.actionButtonRoot}
-            onPress={() =>
+            onPress={() =>{
               dispatch(deliveryAction.setDeliveryData({cancel: true}))
+              message.accept = false;
+              dispatch(accountAction.setOrder({message}));
+            }
             }>
             <FeaterIcon name="x" size={30} color={colors.red.main} />
             <Caption
