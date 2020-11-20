@@ -20,13 +20,6 @@ const Switch = () => {
   const dispatch = useDispatch();
   const socket = useContext(WSContext);
 
-  const disconnect = (socket) => {
-    socket.disconnect();
-  }
-
-  const reconnect = (socket) => {
-    socket.connect();
-  }
 
   const toggleOnlineStatus = (socket) => {
     fetch(api.online, {

@@ -12,7 +12,7 @@ import {colors} from './theme';
 import {FeedBack} from './components/Feedback';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {accountAction} from './store/actions';
-import {Platform, PermissionsAndroid} from 'react-native';
+import {Platform, PermissionsAndroid, Alert} from 'react-native';
 import Geolocation from 'react-native-geolocation-service';
 import {CancelOrder, Reason} from './components/Modal';
 import WebSocket from './components/Socket/context';
@@ -77,10 +77,6 @@ const StartUp = () => {
   }
 
   React.useEffect(() => {
-    connectSocket();
-  },[]);
-
-  React.useEffect(() => {
     handleAccount();
     requestLocationPermission();
     messaging()
@@ -88,6 +84,12 @@ const StartUp = () => {
     .then(token => {
       console.log('ftoken', token)
     })
+    connectSocket();
+    const unsubscribe = messaging().onMessage(async remoteMessage => {
+      Alert.alert('A new FCM message arrived!', JSON.stringify(remoteMessage));
+    });
+
+    return unsubscribe;
   }, []);
 
   
