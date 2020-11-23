@@ -18,16 +18,19 @@ const setLocation = (payload) => ({
   payload,
 });
 
+//set online/offline status
 const setOnline = (payload) => ({
   type: IS_ONLINE,
   payload,
 });
 
+//hydrate global state with details of order
 const setOrder = (payload) => ({
   type: MESSAGE,
   payload,
 });
 
+//set address of rider from google apis
 const setAddress = (payload) => ({
   payload,
   type: ADDRESS

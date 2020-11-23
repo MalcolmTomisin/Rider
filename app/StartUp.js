@@ -38,6 +38,8 @@ const StartUp = () => {
   const theme = useSelector(({theme}) => theme);
   const {location} = useSelector(({account}) => account);
 
+
+  //connect socket and pass details to global state
   const connectSocket = async () => {
     let token = await AsyncStorage.getItem("x-auth-token");
     dispatch(accountAction.setToken({token}));
@@ -67,6 +69,7 @@ const StartUp = () => {
     }
   };
 
+  //reverse geocode coordinates of rider
   const getAddressFromCoordinates = () => {
     const {longitude,latitude} = location.coords;
       fetch(`${api.reverseGeocode}latlng=${latitude},${longitude}&result_type=street_address&key=${constants.GOOGLE_MAPS_APIKEY}`)
@@ -84,7 +87,6 @@ const StartUp = () => {
     .then(token => {
       console.log('ftoken', token)
     })
-    connectSocket();
     const unsubscribe = messaging().onMessage(async remoteMessage => {
       Alert.alert('A new FCM message arrived!', JSON.stringify(remoteMessage));
     });
@@ -92,6 +94,9 @@ const StartUp = () => {
     return unsubscribe;
   }, []);
 
+  React.useEffect(() => {
+    connectSocket();
+  },[])
   
   const requestLocationPermission = async () => {
     if (Platform.OS === 'ios') {
@@ -189,6 +194,17 @@ const StartUp = () => {
 };
 
 export default StartUp;
+
+const GetAuth = async () => {
+  //check if token exists
+  try {
+    const value = await AsyncStorage.getItem(api.userAuthKey);
+    return value != null ? JSON.parse(value) : false;
+  } catch (e) {
+    //failure
+  }
+  return false;
+};
 
 const fontConfig = {
   ios: {

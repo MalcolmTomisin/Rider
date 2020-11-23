@@ -7,6 +7,8 @@ import {
   SIGN_UP_LASTNAME,
 } from '../types';
 
+//function names indicates actions during signup
+
 export const setSignUpName = (payload) => ({
   action: SIGN_UP_NAME,
   payload,

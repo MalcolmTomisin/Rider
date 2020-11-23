@@ -8,8 +8,9 @@ import {colors} from '../../../theme';
 import { Button } from '../../Button';
 import { deliveryAction, accountAction } from "../../../store/actions";
 import { useNavigation } from "@react-navigation/native";
+import CountDown from 'react-native-countdown-component';
 
-const Order = () => {
+const Order = ({onAccept, onCountDownFinish, timerIsRunning}) => {
   const dispatch = useDispatch();
   const {dark} = useSelector(({theme}) => theme);
   const {message, address} = useSelector(({account}) => account);
@@ -46,7 +47,7 @@ const Order = () => {
                 : data?.orders[0].deliveryAddress}`}
               </Caption>
             </View>
-            <TimeDistance data={data} />
+            <TimeDistance data={data} onFinish={onCountDownFinish} running={timerIsRunning} />
             <View style={classes.productRoot}>
               <Caption>Picking up </Caption>
               <TouchableOpacity>
@@ -68,15 +69,11 @@ const Order = () => {
         <Button
           label="Accept"
           rootStyle={classes.ButtonRoot}
-          onPress={() => {
-            message.accept = true;
-            dispatch(accountAction.setOrder({message}))
-            navigate("ConfirmPickupCode");
-          }}
+          onPress={onAccept}
         />
 
         <View style={classes.actionRoot}>
-          <TouchableOpacity style={classes.actionButtonRoot}>
+          {/* <TouchableOpacity style={classes.actionButtonRoot}>
             <FeaterIcon
               name="phone-call"
               size={30}
@@ -91,7 +88,7 @@ const Order = () => {
               color={dark ? colors.grey.light : colors.grey.dark}
             />
             <Caption style={classes.actionButtonText}>Message</Caption>
-          </TouchableOpacity>
+          </TouchableOpacity> */}
           <TouchableOpacity
             style={classes.actionButtonRoot}
             onPress={() =>{
@@ -114,7 +111,7 @@ const Order = () => {
 
 export default Order;
 
-const TimeDistance = ({data}) => {
+const TimeDistance = ({data, onFinish, running}) => {
   const {dark} = useSelector(({theme}) => theme);
   return (
     <View style={[classes.timeDistanceRoot, { backgroundColor: dark ? colors.white : colors.black }]}>
@@ -126,6 +123,13 @@ const TimeDistance = ({data}) => {
         ]}
       />
       <Caption style={[classes.timeDistanceText, { color: dark ? colors.black : colors.white }]} >{`${Math.ceil(data?.TED)} km`}</Caption>
+      <CountDown sizze={5} until={120} timeToShow={['M','S']} 
+      onFinish={onFinish} digitStyle={{backgroundColor: 'transparent'}} 
+      style={{alignItems: 'center', justifyContent: 'center'}}
+      timeLabels={{m: '', s: ''}} digitTxtStyle={{color: colors.red.main}}
+      showSeparator separatorStyle={{color: colors.red.main}}
+      running={running}
+      />
     </View>
   );
 }
@@ -167,7 +171,7 @@ const classes = StyleSheet.create({
   },
   timeDistanceRoot: {
     height: 35,
-    width: 130,
+    width: 200,
     borderRadius: 5,
     flexDirection: 'row',
     justifyContent: 'space-evenly',

@@ -1,5 +1,5 @@
 import React from 'react'
-import {View, StyleSheet} from 'react-native';
+import {View, StyleSheet, ScrollView} from 'react-native';
 import { Task } from '../../../components/Card'
 import {useSelector} from 'react-redux';
 
@@ -7,9 +7,15 @@ import {useSelector} from 'react-redux';
 const OrderPool = () => {
   const {message} = useSelector(({account}) => account);
   const {data} = message;
+  console.log('data', data);
   const renderTasks = orders => {
+    if (!orders){
+      return null;
+    }
+    
     return orders.map((v, i) => (
-      <Task 
+      <Task
+      key={i} 
       pickUpAddress={data?.pickupAddress} 
       deliveryAddress={v?.deliveryAddress}
       estimatedCost={v?.estimatedCost}
@@ -20,9 +26,11 @@ const OrderPool = () => {
 
   return (
     <View style={classes.root}>
+      <ScrollView>
       {
-        !data && !message.accept ? null : renderTasks(data)
+        !data && !message.accept ? null : renderTasks(data?.orders)
       }
+      </ScrollView>
     </View>
   );
 }

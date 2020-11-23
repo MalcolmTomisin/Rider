@@ -66,7 +66,7 @@ const Login = ({navigation: {goBack, navigate}}) => {
         headers: {
           'Content-type': 'application/json',
         },
-        body: JSON.stringify({email: mobileNumber, password}),
+        body: JSON.stringify({email: mobileNumber.trim(), password: password.trim()}),
       })
         .then(async (res) => {
           if (res.status === 200) {

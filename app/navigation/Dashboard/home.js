@@ -13,7 +13,6 @@ const Stack = createStackNavigator();
 
 const Dashboard = () => {
   const {message, isOnline} = useSelector(({account}) => account);
-  const {data} = message;
   return (
     <Stack.Navigator initialRouteName="Home" headerMode="screen">
       <Stack.Screen
@@ -26,7 +25,7 @@ const Dashboard = () => {
           ),
           headerTitle: () => (
             <TouchableOpacity style={{justifyContent: 'center', alignItems: 'center'}} onPress={() => navigate('OrderPool')}>
-              {isOnline && data ? <Badge style={classes.badge}>{`${data?.orders.length}`}</Badge> : null}
+              {/* {isOnline && typeof message?.data !== 'undefined'  ? <Badge style={classes.badge}>{`${data?.orders.length}`}</Badge> : null} */}
               <Icon size={35} name="basket" />
             </TouchableOpacity>
           ),

@@ -6,7 +6,7 @@ import Geolocation from 'react-native-geolocation-service';
 import Geocoder from 'react-native-geocoding';
 import {ActivityIndicator, Surface} from 'react-native-paper';
 import {colors, DARK_MAP_THEME} from '../../theme';
-import {useSelector} from 'react-redux';
+import {useSelector, useDispatch} from 'react-redux';
 import {
   Offline,
   Order,
@@ -15,7 +15,11 @@ import {
 } from '../../components/Card';
 import io from 'socket.io-client';
 import WSContext from '../../components/Socket/context';
-
+import {Loading} from '../../components/Loading';
+import {api} from '../../api';
+import {FeedBack} from '../../components/Feedback';
+import {accountAction} from '../../store/actions';
+import feedbackAction from '../../store/actions/feedback';
 
 const {width, height} = Dimensions.get('window');
 
@@ -23,12 +27,14 @@ const GOOGLE_MAPS_APIKEY = 'AIzaSyCiOd5vESI31DmPFd6e7QVRVMTX43sm_Ic';
 
 Geocoder.init(GOOGLE_MAPS_APIKEY);
 
-const Home = () => {
-  const {isOnline, message} = useSelector(({account}) => account);
+const Home = ({navigation: {navigate}}) => {
+  let {isOnline, message, token} = useSelector(({account}) => account);
   const {dark} = useSelector(({theme}) => theme);
   const sockets = useContext(WSContext);
   const mapView = React.useRef(null);
-  const [loading, setLoading] = useState(true);
+  const [running, setTimerIsRunning] = useState(true);
+  const dispatch = useDispatch();
+  const [loading, setLoading] = useState(false);
   const [coordinates, setCoordinates] = useState({
     latitude: 6.6052898,
     longitude: 3.3149357,
@@ -38,13 +44,48 @@ const Home = () => {
     longitude: 3.3171244316839394,
   });
 
-  
+  const accept = () => {
+    const {data} = message;
+    console.log("data",data._id)
+    setLoading(true);
+    setTimerIsRunning(false);
+      fetch(api.acceptEntry, {
+        method: 'POST',
+        headers: {
+          'x-auth-token': token
+        },
+        body: {entry: data._id}
+      })
+      .then(res => {
+        console.log(res.status);
+        return res.json()
+      })
+      .then(res => {
+        console.log("res",res);
+        message.accept = true;
+        dispatch(feedbackAction.launch({open: true, severity: 's', msg: 'Accepted'}))
+        dispatch(accountAction.setOrder({message}))
+        navigate("OrderPool");
+      })
+      .catch(err => {
+        console.log('err', err);
+        dispatch(feedbackAction.launch({open: true, severity: 'w', msg: 'Unsuccessful'}));
+        setTimerIsRunning(true);
+       })
+      .finally(() => {
+        setLoading(false);
+      })
+    }
 
   React.useEffect(() => {
     handleGetUserLocation();
     // handleGetAddressCordinates();
   }, []);
   
+  const onCountDownFinish = () => {
+    message.data = null;
+    dispatch(accountAction.setOrder({message}));
+  }
 
   const handleGetUserLocation = async () => {
     Geolocation.getCurrentPosition(
@@ -128,7 +169,9 @@ const Home = () => {
         )}
       </MapView>
       
-      {!isOnline ? <Offline /> : !message?.data ? null : <Order />}
+      {!isOnline ? <Offline /> : !message?.data ? null : 
+      <Order onAccept={accept} onCountDownFinish={onCountDownFinish} timerIsRunning={running} />}
+      <Loading visible={loading} size="large" />
       {/* <EnroutePickup /> */}
       {/* <ConfirmPickup /> */}
     </View>   

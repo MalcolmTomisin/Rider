@@ -10,17 +10,7 @@ export const api = {
   forgotPassword: `${baseURL}/api/auth/forgot-password`,
   resetPassword: `${baseURL}/api/auth/reset-password`,
   online: `${baseURL}rider/online`,
-
-  // food delivery
-  popularRestaurant: `${baseURL}/api/restaurant/popular`,
-  restaurant: `${baseURL}/api/restaurants`,
-  menuCategory: `${baseURL}/api/restaurant/menu/categories`,
-  fastestNear: `${baseURL}/api/restaurant/near`,
-  getDish: `${baseURL}/api/restaurant/menu`,
-  getOption: `${baseURL}/api/restaurant/menu/options`,
-  getDeal: `${baseURL}/api/restaurant/deals/today`,
-  checkout: `${baseURL}/api/order/checkout`,
-  location: `${baseURL}/api/locations`,
+  acceptEntry: `${baseURL}entry/rider-accept`,
   card: `${baseURL}/api/cards`,
   userAuthKey: '@user',
   reverseGeocode: 'https://maps.googleapis.com/maps/api/geocode/json?'

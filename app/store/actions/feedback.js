@@ -1,6 +1,6 @@
 import {LAUNCH_FEEDBACK, DISMISS_FEEDBACK} from '../types';
 
-// themes action
+// notify results
 const launch = payload => ({
   type: LAUNCH_FEEDBACK,
   payload,
