@@ -5,14 +5,14 @@ import Home from '../../screens/Dashboard';
 import {Avatar, Badge} from 'react-native-paper';
 import {colors} from '../../theme';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import {Indicator} from '../../components/Feedback';
 import {Switch} from '../../components/Switch';
-import {useDispatch, useSelector} from 'react-redux';
-import constants from '../../utils/constants';
+import {useSelector} from 'react-redux';
+
 const Stack = createStackNavigator();
 
 const Dashboard = () => {
-  const {message, isOnline} = useSelector(({account}) => account);
+  const {isOnline, acceptedOrders} = useSelector(({account}) => account);
+
   return (
     <Stack.Navigator initialRouteName="Home" headerMode="screen">
       <Stack.Screen
@@ -24,8 +24,13 @@ const Dashboard = () => {
             </View>
           ),
           headerTitle: () => (
-            <TouchableOpacity style={{justifyContent: 'center', alignItems: 'center'}} onPress={() => navigate('OrderPool')}>
-              {/* {isOnline && typeof message?.data !== 'undefined'  ? <Badge style={classes.badge}>{`${data?.orders.length}`}</Badge> : null} */}
+            <TouchableOpacity
+              style={{justifyContent: 'center', alignItems: 'center'}}
+              onPress={() => navigate('OrderPool')}>
+              {isOnline && acceptedOrders?.length > 0 ? (
+                <Badge
+                  style={classes.badge}>{`${acceptedOrders.length}`}</Badge>
+              ) : null}
               <Icon size={35} name="basket" />
             </TouchableOpacity>
           ),
@@ -61,7 +66,7 @@ const classes = StyleSheet.create({
   },
   badge: {
     position: 'absolute',
-    left: 25,
+    left: 120,
     bottom: 18,
     zIndex: 5,
     backgroundColor: colors.red.main,

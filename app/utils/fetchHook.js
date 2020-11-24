@@ -1,18 +1,25 @@
 import React, {useState, useEffect} from 'react';
+import {useDispatch} from 'react-redux';
+import {accountAction} from '../store/actions/index';
 
 export const useFetch = (url, options) => {
   const [response, setResponse] = useState(null);
   const [error, setError] = useState(null);
-  const [isLoading, setIsLoading] = useState(false);
 
-  setIsLoading(true);
+  const dispatch = useDispatch();
+
   useEffect(() => {
-    setIsLoading(true);
+    dispatch(accountAction.setLoadingStatus({loading: true}));
     fetch(url, options)
       .then((res) => res.json())
-      .then(setResponse)
+      .then((res) => {
+        setResponse(res);
+        dispatch(accountAction.setAcceptedOrders({acceptedOrders: res.data}));
+      })
       .catch(setError)
-      .finally(() => setIsLoading(false));
+      .finally(() =>
+        dispatch(accountAction.setLoadingStatus({loading: false})),
+      );
   }, []);
-  return {response, error, isLoading};
+  return {response, error};
 };

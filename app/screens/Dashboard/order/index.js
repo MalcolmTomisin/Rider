@@ -1,47 +1,68 @@
-import React from 'react'
+import React from 'react';
 import {View, StyleSheet, ScrollView} from 'react-native';
-import { Task } from '../../../components/Card'
-import {useSelector} from 'react-redux';
+import {Task} from '../../../components/Card';
+import {useSelector, useDispatch} from 'react-redux';
+import {useFetch} from '../../../utils/fetchHook';
+import {api} from '../../../api';
+import {Loading} from '../../../components/Loading';
+import {deliveryAction} from '../../../store/actions';
 
+const OrderPool = ({navigation: {navigate, push}}) => {
+  const dispatch = useDispatch();
+  const {token, loading, acceptedOrders} = useSelector(({account}) => account);
 
-const OrderPool = () => {
-  const {message} = useSelector(({account}) => account);
-  const {data} = message;
-  console.log('data', data);
-  const renderTasks = orders => {
-    if (!orders){
+  const {response} = useFetch(api.riderBasket, {
+    method: 'GET',
+    headers: {
+      'x-auth-token': token,
+    },
+  });
+
+  const pickUp = (item) => {
+    dispatch(
+      deliveryAction.setDeliveryNavigation({
+        pickUp: {
+          latitude: item.pickupLatitude,
+          longitude: item.pickupLongitude,
+        },
+      }),
+    );
+    push('Dashboard');
+  };
+
+  console.log('resposne', response);
+  const renderTasks = () => {
+    if (!acceptedOrders || acceptedOrders.length < 1) {
       return null;
     }
-    
-    return orders.map((v, i) => (
+
+    return acceptedOrders.map((v, i) => (
       <Task
-      key={i} 
-      pickUpAddress={data?.pickupAddress} 
-      deliveryAddress={v?.deliveryAddress}
-      estimatedCost={v?.estimatedCost}
-      id={v?.orderId}
+        key={i}
+        pickUpAddress={v?.pickupAddress}
+        deliveryAddress={v?.deliveryAddress}
+        estimatedCost={v?.estimatedCost}
+        id={v?.orderId}
+        pickUpAction={() => pickUp(v)}
       />
-    ))
-  }
+    ));
+  };
 
   return (
     <View style={classes.root}>
-      <ScrollView>
-      {
-        !data && !message.accept ? null : renderTasks(data?.orders)
-      }
-      </ScrollView>
+      <ScrollView>{renderTasks()}</ScrollView>
+      <Loading visible={loading} size="large" />
     </View>
   );
-}
+};
 
-export default OrderPool
+export default OrderPool;
 
 const classes = StyleSheet.create({
   root: {
     flex: 1,
     marginHorizontal: 20,
     paddingVertical: 15,
-    justifyContent: 'space-evenly'
+    justifyContent: 'space-evenly',
   },
 });

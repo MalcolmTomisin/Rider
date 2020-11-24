@@ -1,4 +1,4 @@
-import React, {Component, useState, useContext} from 'react';
+import React, {Component, useState, useContext, useEffect} from 'react';
 import {Dimensions, StyleSheet, View, Alert} from 'react-native';
 import MapView, {PROVIDER_GOOGLE} from 'react-native-maps';
 import MapViewDirections from 'react-native-maps-directions';
@@ -20,6 +20,8 @@ import {api} from '../../api';
 import {FeedBack} from '../../components/Feedback';
 import {accountAction} from '../../store/actions';
 import feedbackAction from '../../store/actions/feedback';
+import {rejectOrder} from '../../components/Modal/components/CancelOrder';
+import {useFetch} from '../../utils/fetchHook';
 
 const {width, height} = Dimensions.get('window');
 
@@ -28,13 +30,13 @@ const GOOGLE_MAPS_APIKEY = 'AIzaSyCiOd5vESI31DmPFd6e7QVRVMTX43sm_Ic';
 Geocoder.init(GOOGLE_MAPS_APIKEY);
 
 const Home = ({navigation: {navigate}}) => {
-  let {isOnline, message, token} = useSelector(({account}) => account);
+  let {isOnline, message, token, loading, location} = useSelector(({account}) => account);
+  let {pickUp} = useSelector(({delivery}) => delivery);
   const {dark} = useSelector(({theme}) => theme);
-  const sockets = useContext(WSContext);
+  const socket = useContext(WSContext);
   const mapView = React.useRef(null);
   const [running, setTimerIsRunning] = useState(true);
   const dispatch = useDispatch();
-  const [loading, setLoading] = useState(false);
   const [coordinates, setCoordinates] = useState({
     latitude: 6.6052898,
     longitude: 3.3149357,
@@ -44,50 +46,73 @@ const Home = ({navigation: {navigate}}) => {
     longitude: 3.3171244316839394,
   });
 
+  useFetch(api.riderBasket, {
+    method: 'GET',
+    headers: {
+      'x-auth-token': token,
+    },
+  });
   const accept = () => {
     const {data} = message;
-    console.log("data",data._id)
-    setLoading(true);
+    console.log('data', data._id);
+    dispatch(accountAction.setLoadingStatus({loading: true}));
     setTimerIsRunning(false);
-      fetch(api.acceptEntry, {
-        method: 'POST',
-        headers: {
-          'x-auth-token': token
-        },
-        body: {entry: data._id}
-      })
-      .then(res => {
+    fetch(api.acceptEntry, {
+      method: 'POST',
+      headers: {
+        'x-auth-token': token,
+        'Content-type': 'application/json',
+      },
+      body: JSON.stringify({entry: data._id}),
+    })
+      .then((res) => {
         console.log(res.status);
-        return res.json()
+        return res.json();
       })
-      .then(res => {
-        console.log("res",res);
+      .then((res) => {
+        console.log('res', res);
         message.accept = true;
-        dispatch(feedbackAction.launch({open: true, severity: 's', msg: 'Accepted'}))
-        dispatch(accountAction.setOrder({message}))
-        navigate("OrderPool");
+        dispatch(
+          feedbackAction.launch({open: true, severity: 's', msg: res.msg}),
+        );
+        dispatch(accountAction.setOrder({message}));
+        navigate('OrderPool');
       })
-      .catch(err => {
+      .catch((err) => {
         console.log('err', err);
-        dispatch(feedbackAction.launch({open: true, severity: 'w', msg: 'Unsuccessful'}));
+        dispatch(
+          feedbackAction.launch({
+            open: true,
+            severity: 'w',
+            msg: 'Unsuccessful',
+          }),
+        );
         setTimerIsRunning(true);
-       })
-      .finally(() => {
-        setLoading(false);
       })
-    }
+      .finally(() => {
+        dispatch(accountAction.setLoadingStatus({loading: false}));
+      });
+  };
 
-  React.useEffect(() => {
+  useEffect(() => {
     handleGetUserLocation();
     // handleGetAddressCordinates();
   }, []);
-  
+
+  useEffect(() => {
+    if (socket) {
+      socket.on('assignEntry', (message) => {
+        console.log('entry', message);
+        dispatch(accountAction.setOrder({message}));
+      });
+    }
+  }, []);
   const onCountDownFinish = () => {
-    message.data = null;
-    dispatch(accountAction.setOrder({message}));
-  }
+    rejectOrder(message, dispatch, token);
+  };
 
   const handleGetUserLocation = async () => {
+    dispatch(accountAction.setLoadingStatus({loading: true}));
     Geolocation.getCurrentPosition(
       (info) => {
         console.log('location', info.coords.latitude);
@@ -96,9 +121,10 @@ const Home = ({navigation: {navigate}}) => {
           latitude: info.coords.latitude,
           longitude: info.coords.longitude,
         });
-        setLoading(false);
+        dispatch(accountAction.setLoadingStatus({loading: false}));
       },
       (error) => {
+        dispatch(accountAction.setLoadingStatus({loading: false}));
         // See error code charts below.
         console.log(error.code, error.message);
       },
@@ -133,7 +159,7 @@ const Home = ({navigation: {navigate}}) => {
   const mapStyle = dark ? DARK_MAP_THEME : [];
 
   return (
-      <View style={classes.root}>
+    <View style={classes.root}>
       <MapView
         style={StyleSheet.absoluteFill}
         provider={PROVIDER_GOOGLE}
@@ -142,10 +168,10 @@ const Home = ({navigation: {navigate}}) => {
         onPress={onMapPress}>
         <MapView.Marker coordinate={coordinates} />
         <MapView.Marker coordinate={destination} />
-        {coordinates && (
+        {pickUp && (
           <MapViewDirections
             origin={coordinates}
-            destination={destination}
+            destination={pickUp}
             apikey={GOOGLE_MAPS_APIKEY}
             strokeWidth={4}
             strokeColor="red"
@@ -168,13 +194,20 @@ const Home = ({navigation: {navigate}}) => {
           />
         )}
       </MapView>
-      
-      {!isOnline ? <Offline /> : !message?.data ? null : 
-      <Order onAccept={accept} onCountDownFinish={onCountDownFinish} timerIsRunning={running} />}
+
+      {!isOnline ? (
+        <Offline />
+      ) : !message?.data ? null : message?.accept ? null : (
+        <Order
+          onAccept={accept}
+          onCountDownFinish={onCountDownFinish}
+          timerIsRunning={running}
+        />
+      )}
       <Loading visible={loading} size="large" />
       {/* <EnroutePickup /> */}
       {/* <ConfirmPickup /> */}
-    </View>   
+    </View>
   );
 };
 

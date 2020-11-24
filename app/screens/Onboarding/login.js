@@ -21,10 +21,12 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import {Loading} from '../../components/Loading';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import constants from '../../utils/constants';
+import {accountAction} from '../../store/actions';
 
 const Login = ({navigation: {goBack, navigate}}) => {
   const dispatch = useDispatch();
   const {signedIn} = useSelector(({signup}) => signup);
+  const {loading} = useSelector(({account}) => account);
   const [mobileNumber, setMobileNumber] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState({mobileNumber: '', password: ''});
@@ -60,7 +62,7 @@ const Login = ({navigation: {goBack, navigate}}) => {
 
   const submit = () => {
     if (!error.mobileNumber && !error.password) {
-      setIsLoading(true);
+      dispatch(accountAction.setLoadingStatus({loading: true}));
       fetch(api.login, {
         method: 'POST',
         headers: {
@@ -89,7 +91,7 @@ const Login = ({navigation: {goBack, navigate}}) => {
             feedbackAction.launch({open: true, severity: 'w', msg: 'Error'}),
           );
         })
-        .finally(() => setIsLoading(false));
+        .finally(() => dispatch(accountAction.setLoadingStatus({loading: false})));
     }
   };
 
@@ -151,7 +153,7 @@ const Login = ({navigation: {goBack, navigate}}) => {
         </View>
       </View>
       <FeedBack />
-      <Loading visible={isLoading} size="large" />
+      <Loading visible={loading} size="large" />
     </KeyboardAwareScrollView>
   );
 };

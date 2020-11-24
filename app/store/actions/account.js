@@ -1,4 +1,13 @@
-import {USER_DATA, AUTH_TOKEN, LOCATION_DATA, IS_ONLINE, MESSAGE, ADDRESS} from '../types';
+import {
+  USER_DATA,
+  AUTH_TOKEN,
+  LOCATION_DATA,
+  IS_ONLINE,
+  MESSAGE,
+  ADDRESS,
+  LOADING,
+  ACCEPTED_ORDERS,
+} from '../types';
 
 // user data action
 const setUserData = (payload) => ({
@@ -33,14 +42,27 @@ const setOrder = (payload) => ({
 //set address of rider from google apis
 const setAddress = (payload) => ({
   payload,
-  type: ADDRESS
-})
- 
+  type: ADDRESS,
+});
+
+//set loading status of loading component
+const setLoadingStatus = (payload) => ({
+  payload,
+  type: LOADING,
+});
+
+const setAcceptedOrders = (payload) => ({
+  payload,
+  type: ACCEPTED_ORDERS,
+});
+
 export default {
   setUserData,
   setToken,
   setLocation,
   setOnline,
   setOrder,
-  setAddress
+  setAddress,
+  setLoadingStatus,
+  setAcceptedOrders,
 };

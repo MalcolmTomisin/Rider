@@ -93,8 +93,6 @@ const Order = ({onAccept, onCountDownFinish, timerIsRunning}) => {
             style={classes.actionButtonRoot}
             onPress={() =>{
               dispatch(deliveryAction.setDeliveryData({cancel: true}))
-              message.accept = false;
-              dispatch(accountAction.setOrder({message}));
             }
             }>
             <FeaterIcon name="x" size={30} color={colors.red.main} />

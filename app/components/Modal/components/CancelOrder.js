@@ -10,13 +10,18 @@ import {useDispatch, useSelector} from 'react-redux';
 import { Surface, Subheading } from "react-native-paper"
 import { Button } from '../../Button';
 import { colors } from '../../../theme';
-import { deliveryAction } from '../../../store/actions';
+import { deliveryAction, accountAction, feedbackAction } from '../../../store/actions';
+import {api} from '../../../api';
 const {width, height} = Dimensions.get('screen');
 
 const CancelOrder = () => {
   const {cancel} = useSelector(({delivery}) => delivery);
-  const {dark} = useSelector(({theme}) => theme);
+  let {message, token} = useSelector(({account}) => account);
   const dispatch = useDispatch();
+  
+  
+  const {dark} = useSelector(({theme}) => theme);
+ 
   return (
     <Modal animationType="slide" transparent={true} visible={cancel}>
       <View
@@ -32,10 +37,10 @@ const CancelOrder = () => {
           <Button
             label="Yes, Cancel"
             rootStyle={classes.cancel}
-            onPress={() =>
-              dispatch(
-                deliveryAction.setDeliveryData({reason: true, cancel: false}),
-              )
+            onPress={() => {
+              dispatch(deliveryAction.setDeliveryData({reason: true, cancel: false}))
+              rejectOrder(message, dispatch, token);
+            }
             }
           />
 
@@ -53,6 +58,28 @@ const CancelOrder = () => {
 
 export default CancelOrder;
 
+export const rejectOrder = (message, dispatch, token) => {
+  const {data} = message;
+  dispatch(accountAction.setLoadingStatus({loading: true}));
+  fetch(api.rejectEntry, {
+    method: 'POST',
+    headers: {
+      'Content-type': 'application/json',
+      'x-auth-token': token
+    },
+    body: JSON.stringify({entry: data._id})
+  })
+  .then(res => res.json())
+  .then(res => {
+    message = null;
+    dispatch(feedbackAction.launch({open: true, severity: 's', msg: res.msg}));
+    dispatch(accountAction.setOrder({message}));
+  })
+  .catch(err => {
+    dispatch(feedbackAction.launch({open: true, severity: 'w', msg: 'unsuccessful'}));
+  })
+  .finally(() => { dispatch(accountAction.setLoadingStatus({loading: false}))})
+}
 
 const classes = StyleSheet.create({
   // container: {

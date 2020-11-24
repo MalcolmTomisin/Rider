@@ -38,56 +38,32 @@ const StartUp = () => {
   const theme = useSelector(({theme}) => theme);
   const {location} = useSelector(({account}) => account);
 
-
-  //connect socket and pass details to global state
-  const connectSocket = async () => {
-    let token = await AsyncStorage.getItem("x-auth-token");
-    dispatch(accountAction.setToken({token}));
-    try {
-      console.log(token, 'token');
-      const s = io(`https://dev.api.logistics.churchesapp.com?token=${token}`, {
-        path: '/sio',
-        transports:['websocket'],
-      });
-
-      s.on('connect', () => {
-        console.log('socket connected');
-        // s.on('assignEntry', message => {
-        //   console.log('entry', message);
-        //     dispatch(accountAction.setOrder({message}));
-        // });
-      });
-      
-      s.on('assignEntry', message => {
-        console.log('entry', message);
-          dispatch(accountAction.setOrder({message}));
-      });
-      
-      setSocket(s);
-    } catch (error) {
-      console.log('error', error);
-    }
-  };
-
   //reverse geocode coordinates of rider
   const getAddressFromCoordinates = () => {
-    const {longitude,latitude} = location.coords;
-      fetch(`${api.reverseGeocode}latlng=${latitude},${longitude}&result_type=street_address&key=${constants.GOOGLE_MAPS_APIKEY}`)
-      .then(res => res.json())
-      .then(res => { 
-        dispatch(accountAction.setAddress({address: res.results[0].formatted_address}))})
-      .catch(err => {console.log(err, 'err')})
-  }
+    const {longitude, latitude} = location.coords;
+    fetch(
+      `${api.reverseGeocode}latlng=${latitude},${longitude}&result_type=street_address&key=${constants.GOOGLE_MAPS_APIKEY}`,
+    )
+      .then((res) => res.json())
+      .then((res) => {
+        dispatch(
+          accountAction.setAddress({address: res.results[0].formatted_address}),
+        );
+      })
+      .catch((err) => {
+        console.log(err, 'err');
+      });
+  };
 
   React.useEffect(() => {
     handleAccount();
     requestLocationPermission();
     messaging()
-    .getToken()
-    .then(token => {
-      console.log('ftoken', token)
-    })
-    const unsubscribe = messaging().onMessage(async remoteMessage => {
+      .getToken()
+      .then((token) => {
+        console.log('ftoken', token);
+      });
+    const unsubscribe = messaging().onMessage(async (remoteMessage) => {
       Alert.alert('A new FCM message arrived!', JSON.stringify(remoteMessage));
     });
 
@@ -95,9 +71,39 @@ const StartUp = () => {
   }, []);
 
   React.useEffect(() => {
-    connectSocket();
-  },[])
-  
+    (async () => {
+      let token = await AsyncStorage.getItem('x-auth-token');
+      dispatch(accountAction.setToken({token}));
+      try {
+        console.log(token, 'token');
+        const s = io(
+          `https://dev.api.logistics.churchesapp.com?token=${token}`,
+          {
+            path: '/sio',
+            transports: ['websocket'],
+          },
+        );
+
+        s.on('connect', () => {
+          console.log('socket connected');
+          // s.on('assignEntry', message => {
+          //   console.log('entry', message);
+          //     dispatch(accountAction.setOrder({message}));
+          // });
+        });
+
+        s.on('assignEntry', (message) => {
+          console.log('entry', message);
+          dispatch(accountAction.setOrder({message}));
+        });
+
+        setSocket(s);
+      } catch (error) {
+        console.log('error', error);
+      }
+    })();
+  }, []);
+
   const requestLocationPermission = async () => {
     if (Platform.OS === 'ios') {
       Geolocation.requestAuthorization('always');

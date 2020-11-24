@@ -7,11 +7,10 @@ export const api = {
   login: `${baseURL}auth/rider`,
   register: `${baseURL}user`,
   verify: `${baseURL}/api/auth/verify`,
-  forgotPassword: `${baseURL}/api/auth/forgot-password`,
-  resetPassword: `${baseURL}/api/auth/reset-password`,
   online: `${baseURL}rider/online`,
   acceptEntry: `${baseURL}entry/rider-accept`,
-  card: `${baseURL}/api/cards`,
   userAuthKey: '@user',
-  reverseGeocode: 'https://maps.googleapis.com/maps/api/geocode/json?'
+  reverseGeocode: 'https://maps.googleapis.com/maps/api/geocode/json?',
+  rejectEntry: `${baseURL}entry/rider-reject`,
+  riderBasket: `${baseURL}rider/basket`
 };

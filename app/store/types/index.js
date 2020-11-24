@@ -14,7 +14,9 @@ export const SIGN_IN = 'SIGN IN';
 export const IS_ONLINE = 'IS ONLINE';
 export const MESSAGE = 'MESSAGE';
 export const ADDRESS = 'ADDRESS';
-
+export const LOADING = 'LOADING';
+export const ACCEPTED_ORDERS = 'ACCEPTED_ORDERS';
+export const PICK_UP = 'PICK_UP';
 // feedback
 export const LAUNCH_FEEDBACK = 'LAUNCH_FEEDBACK';
 export const DISMISS_FEEDBACK = 'DISMISS_FEEDBACK';

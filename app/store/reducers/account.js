@@ -1,5 +1,13 @@
-import { AUTH_TOKEN, USER_DATA, LOCATION_DATA, IS_ONLINE, MESSAGE, ADDRESS } from '../types';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import {
+  AUTH_TOKEN,
+  USER_DATA,
+  LOCATION_DATA,
+  IS_ONLINE,
+  MESSAGE,
+  ADDRESS,
+  LOADING,
+  ACCEPTED_ORDERS,
+} from '../types';
 
 const initialstate = {
   token: null,
@@ -28,6 +36,8 @@ const initialstate = {
   isOnline: true,
   message: null,
   address: '',
+  loading: false,
+  acceptedOrders: [],
 };
 
 export default (state = initialstate, action) => {
@@ -42,9 +52,13 @@ export default (state = initialstate, action) => {
       });
     case IS_ONLINE:
       return {...state, ...action.payload};
-      case MESSAGE:
-        return {...state, ...action.payload};
+    case MESSAGE:
+      return {...state, ...action.payload};
     case ADDRESS:
+      return {...state, ...action.payload};
+    case LOADING:
+      return {...state, ...action.payload};
+    case ACCEPTED_ORDERS:
       return {...state, ...action.payload};
     default:
       return state;
