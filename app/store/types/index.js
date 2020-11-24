@@ -17,6 +17,7 @@ export const ADDRESS = 'ADDRESS';
 export const LOADING = 'LOADING';
 export const ACCEPTED_ORDERS = 'ACCEPTED_ORDERS';
 export const PICK_UP = 'PICK_UP';
+export const CURRENT_PICK_UP = 'CURRENT_PICK_UP';
 // feedback
 export const LAUNCH_FEEDBACK = 'LAUNCH_FEEDBACK';
 export const DISMISS_FEEDBACK = 'DISMISS_FEEDBACK';

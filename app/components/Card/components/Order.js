@@ -5,9 +5,9 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import FeaterIcon from 'react-native-vector-icons/Feather';
 import {useSelector, useDispatch} from 'react-redux';
 import {colors} from '../../../theme';
-import { Button } from '../../Button';
-import { deliveryAction, accountAction } from "../../../store/actions";
-import { useNavigation } from "@react-navigation/native";
+import {Button} from '../../Button';
+import {deliveryAction, accountAction} from '../../../store/actions';
+import {useNavigation} from '@react-navigation/native';
 import CountDown from 'react-native-countdown-component';
 
 const Order = ({onAccept, onCountDownFinish, timerIsRunning}) => {
@@ -15,14 +15,14 @@ const Order = ({onAccept, onCountDownFinish, timerIsRunning}) => {
   const {dark} = useSelector(({theme}) => theme);
   const {message, address} = useSelector(({account}) => account);
   const {data} = message;
-  const { navigate } = useNavigation();
+  const {navigate} = useNavigation();
   return (
     <View style={classes.root}>
       <Surface style={classes.container}>
         <View style={classes.orderRoot}>
           <Avatar.Text label="RT" size={45} />
           <View style={classes.orderContentRoot}>
-  <Subheading>{data?.name}</Subheading>
+            <Subheading>{data?.name}</Subheading>
             <View style={classes.orderContentAddress}>
               <FeaterIcon
                 name="navigation"
@@ -30,7 +30,7 @@ const Order = ({onAccept, onCountDownFinish, timerIsRunning}) => {
                 color={dark ? colors.grey.light : colors.grey.dark}
               />
               <Caption style={classes.orderContentAddressText}>
-              {data?.pickupAddress}
+                {data?.pickupAddress}
               </Caption>
             </View>
             <View style={classes.dash} />
@@ -43,15 +43,30 @@ const Order = ({onAccept, onCountDownFinish, timerIsRunning}) => {
                 color={dark ? colors.grey.light : colors.grey.dark}
               />
               <Caption style={classes.orderContentAddressText}>
-                {`${data?.orders.length > 1 ? `${data?.orders[0].deliveryAddress} and ${data?.orders.length - 1} other locations` 
-                : data?.orders[0].deliveryAddress}`}
+                {`${
+                  data?.orders.length > 1
+                    ? `${data?.orders[0].deliveryAddress} and ${
+                        data?.orders.length - 1
+                      } other locations`
+                    : data?.orders[0].deliveryAddress
+                }`}
               </Caption>
             </View>
-            <TimeDistance data={data} onFinish={onCountDownFinish} running={timerIsRunning} />
+            <TimeDistance
+              data={data}
+              onFinish={onCountDownFinish}
+              running={timerIsRunning}
+            />
             <View style={classes.productRoot}>
               <Caption>Picking up </Caption>
               <TouchableOpacity>
-  <Caption style={classes.productId}>{`${data?.orders.length > 1 ? `${data?.orders[0].orderId} and ${data?.orders.length - 1} other IDs`: `${data?.orders[0].orderId}`}`}</Caption>
+                <Caption style={classes.productId}>{`${
+                  data?.orders.length > 1
+                    ? `${data?.orders[0].orderId} and ${
+                        data?.orders.length - 1
+                      } other IDs`
+                    : `${data?.orders[0].orderId}`
+                }`}</Caption>
               </TouchableOpacity>
             </View>
             <View style={classes.imgRoot}>
@@ -91,10 +106,9 @@ const Order = ({onAccept, onCountDownFinish, timerIsRunning}) => {
           </TouchableOpacity> */}
           <TouchableOpacity
             style={classes.actionButtonRoot}
-            onPress={() =>{
-              dispatch(deliveryAction.setDeliveryData({cancel: true}))
-            }
-            }>
+            onPress={() => {
+              dispatch(deliveryAction.setDeliveryData({cancel: true}));
+            }}>
             <FeaterIcon name="x" size={30} color={colors.red.main} />
             <Caption
               style={[classes.actionButtonText, {color: colors.red.main}]}>
@@ -112,25 +126,43 @@ export default Order;
 const TimeDistance = ({data, onFinish, running}) => {
   const {dark} = useSelector(({theme}) => theme);
   return (
-    <View style={[classes.timeDistanceRoot, { backgroundColor: dark ? colors.white : colors.black }]}>
-      <Caption style={[classes.timeDistanceText, { color: dark ? colors.black : colors.white }]} >{`${Math.ceil(data?.TET)} mins`}</Caption>
+    <View
+      style={[
+        classes.timeDistanceRoot,
+        {backgroundColor: dark ? colors.white : colors.black},
+      ]}>
+      <Caption
+        style={[
+          classes.timeDistanceText,
+          {color: dark ? colors.black : colors.white},
+        ]}>{`${Math.ceil(data?.TET)} mins`}</Caption>
       <View
         style={[
           classes.hr,
           {borderRightColor: dark ? colors.grey.main : colors.grey.light},
         ]}
       />
-      <Caption style={[classes.timeDistanceText, { color: dark ? colors.black : colors.white }]} >{`${Math.ceil(data?.TED)} km`}</Caption>
-      <CountDown sizze={5} until={120} timeToShow={['M','S']} 
-      onFinish={onFinish} digitStyle={{backgroundColor: 'transparent'}} 
-      style={{alignItems: 'center', justifyContent: 'center'}}
-      timeLabels={{m: '', s: ''}} digitTxtStyle={{color: colors.red.main}}
-      showSeparator separatorStyle={{color: colors.red.main}}
-      running={running}
+      <Caption
+        style={[
+          classes.timeDistanceText,
+          {color: dark ? colors.black : colors.white},
+        ]}>{`${Math.ceil(data?.TED)} km`}</Caption>
+      <CountDown
+        sizze={5}
+        until={120}
+        timeToShow={['M', 'S']}
+        onFinish={onFinish}
+        digitStyle={{backgroundColor: 'transparent'}}
+        style={{alignItems: 'center', justifyContent: 'center'}}
+        timeLabels={{m: '', s: ''}}
+        digitTxtStyle={{color: colors.red.main}}
+        showSeparator
+        separatorStyle={{color: colors.red.main}}
+        running={running}
       />
     </View>
   );
-}
+};
 
 const classes = StyleSheet.create({
   root: {position: 'absolute', bottom: 0, paddingHorizontal: 20, width: '100%'},
@@ -205,9 +237,9 @@ const classes = StyleSheet.create({
   },
   actionRoot: {
     flexDirection: 'row',
-    justifyContent: "space-evenly",
-    alignItems: "center",
-    width: "100%"
+    justifyContent: 'space-evenly',
+    alignItems: 'center',
+    width: '100%',
   },
   actionButtonRoot: {
     justifyContent: 'center',
@@ -215,6 +247,6 @@ const classes = StyleSheet.create({
   },
   actionButtonText: {
     fontSize: 9,
-    fontWeight: "400"
+    fontWeight: '400',
   },
 });

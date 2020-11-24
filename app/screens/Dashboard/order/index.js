@@ -27,6 +27,7 @@ const OrderPool = ({navigation: {navigate, push}}) => {
         },
       }),
     );
+    dispatch(deliveryAction.setCurrentPickupInfo({currentEntry: item}));
     push('Dashboard');
   };
 

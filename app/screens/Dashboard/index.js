@@ -30,8 +30,10 @@ const GOOGLE_MAPS_APIKEY = 'AIzaSyCiOd5vESI31DmPFd6e7QVRVMTX43sm_Ic';
 Geocoder.init(GOOGLE_MAPS_APIKEY);
 
 const Home = ({navigation: {navigate}}) => {
-  let {isOnline, message, token, loading, location} = useSelector(({account}) => account);
-  let {pickUp} = useSelector(({delivery}) => delivery);
+  let {isOnline, message, token, loading, location} = useSelector(
+    ({account}) => account,
+  );
+  let {pickUp, currentEntry} = useSelector(({delivery}) => delivery);
   const {dark} = useSelector(({theme}) => theme);
   const socket = useContext(WSContext);
   const mapView = React.useRef(null);
@@ -166,8 +168,12 @@ const Home = ({navigation: {navigate}}) => {
         ref={mapView}
         customMapStyle={mapStyle}
         onPress={onMapPress}>
-        <MapView.Marker coordinate={coordinates} />
-        <MapView.Marker coordinate={destination} />
+        {pickUp && (
+          <>
+            <MapView.Marker coordinate={coordinates} />
+            <MapView.Marker coordinate={pickUp} />
+          </>
+        )}
         {pickUp && (
           <MapViewDirections
             origin={coordinates}
@@ -205,7 +211,7 @@ const Home = ({navigation: {navigate}}) => {
         />
       )}
       <Loading visible={loading} size="large" />
-      {/* <EnroutePickup /> */}
+      {currentEntry && <EnroutePickup />}
       {/* <ConfirmPickup /> */}
     </View>
   );
