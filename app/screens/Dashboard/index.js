@@ -12,16 +12,17 @@ import {
   Order,
   EnroutePickup,
   ConfirmPickup,
+  AddressBanner,
 } from '../../components/Card';
 import io from 'socket.io-client';
 import WSContext from '../../components/Socket/context';
 import {Loading} from '../../components/Loading';
 import {api} from '../../api';
 import {FeedBack} from '../../components/Feedback';
-import {accountAction} from '../../store/actions';
+import {accountAction, deliveryAction} from '../../store/actions';
 import feedbackAction from '../../store/actions/feedback';
 import {rejectOrder} from '../../components/Modal/components/CancelOrder';
-import {useFetch} from '../../utils/fetchHook';
+import constants from '../../utils/constants';
 
 const {width, height} = Dimensions.get('window');
 
@@ -33,7 +34,7 @@ const Home = ({navigation: {navigate}}) => {
   let {isOnline, message, token, loading, location} = useSelector(
     ({account}) => account,
   );
-  let {pickUp, currentEntry} = useSelector(({delivery}) => delivery);
+  let {pickUp, currentEntry, enroute} = useSelector(({delivery}) => delivery);
   const {dark} = useSelector(({theme}) => theme);
   const socket = useContext(WSContext);
   const mapView = React.useRef(null);
@@ -48,12 +49,7 @@ const Home = ({navigation: {navigate}}) => {
     longitude: 3.3171244316839394,
   });
 
-  useFetch(api.riderBasket, {
-    method: 'GET',
-    headers: {
-      'x-auth-token': token,
-    },
-  });
+  //accept entry order
   const accept = () => {
     const {data} = message;
     console.log('data', data._id);
@@ -96,10 +92,60 @@ const Home = ({navigation: {navigate}}) => {
       });
   };
 
+  //notify api rider already enroute
+  const goingEnroute = () => {
+    dispatch(accountAction.setLoadingStatus({loading: true}));
+    fetch(api.enroute, {
+      method: 'POST',
+      headers: {
+        'Content-type': 'application/json',
+        'x-auth-token': token,
+      },
+      body: JSON.stringify({entry: currentEntry.entry._id}),
+    })
+      .then((res) => {
+        return res.json();
+      })
+      .then((res) => {
+        dispatch(
+          feedbackAction.launch({open: true, severity: 's', msg: res.msg}),
+        );
+        dispatch(deliveryAction.setEnrouteToPickUp({enroute: true}));
+      })
+      .catch((err) => {
+        console.err(err);
+        dispatch(
+          feedbackAction.launch({open: true, severity: 's', msg: `${err}`}),
+        );
+      })
+      .finally(() => dispatch(accountAction.setLoadingStatus({loading: true})));
+  };
+
   useEffect(() => {
     handleGetUserLocation();
     // handleGetAddressCordinates();
   }, []);
+
+  useEffect(() => {
+    if (enroute) {
+      Geolocation.watchPosition(
+        ({coords: {longitude, latitude}}) => {
+          fetch(api.location, {
+            method: 'POST',
+            headers: {
+              'Content-type': 'application/json',
+              'x-auth-token': token,
+            },
+            body: JSON.stringify({latitude, longitude}),
+          });
+        },
+        (error) => {
+          console.error(error);
+        },
+        {interval: 120000, enableHighAccuracy: true},
+      );
+    }
+  }, [enroute]);
 
   useEffect(() => {
     if (socket) {
@@ -211,8 +257,19 @@ const Home = ({navigation: {navigate}}) => {
         />
       )}
       <Loading visible={loading} size="large" />
-      {currentEntry && <EnroutePickup />}
-      {/* <ConfirmPickup /> */}
+      {/* {currentEntry && <EnroutePickup />} */}
+      {currentEntry && currentEntry?.entry.status !== constants.PICK_UP ? (
+        <>
+          <EnroutePickup onPress={goingEnroute} />
+          <AddressBanner />
+        </>
+      ) : null}
+      {currentEntry && currentEntry?.entry.status === constants.PICK_UP ? (
+        <>
+          <ConfirmPickup />
+          <AddressBanner />
+        </>
+      ) : null}
     </View>
   );
 };

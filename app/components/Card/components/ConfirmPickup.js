@@ -5,12 +5,13 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import FeaterIcon from 'react-native-vector-icons/Feather';
 import {useSelector, useDispatch} from 'react-redux';
 import {colors} from '../../../theme';
-import { Button } from '../../Button';
-import { deliveryAction } from "../../../store/actions"
+import {Button} from '../../Button';
+import {deliveryAction} from '../../../store/actions';
 
 const ConfirmPickup = () => {
   const dispatch = useDispatch();
   const {dark} = useSelector(({theme}) => theme);
+  const {currentEntry} = useSelector(({delivery}) => delivery);
 
   return (
     <View style={classes.root}>
@@ -22,7 +23,7 @@ const ConfirmPickup = () => {
               size={20}
               color={dark ? colors.grey.light : colors.grey.dark}
             />
-            <TimeDistance />
+            <TimeDistance entryInfo={currentEntry?.entry} />
           </View>
 
           <View style={classes.item}>
@@ -61,21 +62,37 @@ const ConfirmPickup = () => {
 
 export default ConfirmPickup;
 
-const TimeDistance = () => {
+const TimeDistance = ({entryInfo}) => {
   const {dark} = useSelector(({theme}) => theme);
   return (
-    <View style={[classes.timeDistanceRoot, { backgroundColor: dark ? colors.white : colors.black }]}>
-      <Caption style={[classes.timeDistanceText, { color: dark ? colors.black : colors.white }]} >45 mins</Caption>
+    <View
+      style={[
+        classes.timeDistanceRoot,
+        {backgroundColor: dark ? colors.white : colors.black},
+      ]}>
+      <Caption
+        style={[
+          classes.timeDistanceText,
+          {color: dark ? colors.black : colors.white},
+        ]}>
+        {`${Math.ceil(entryInfo?.TET)} min`}
+      </Caption>
       <View
         style={[
           classes.hr,
           {borderRightColor: dark ? colors.grey.main : colors.grey.light},
         ]}
       />
-      <Caption style={[classes.timeDistanceText, { color: dark ? colors.black : colors.white }]} >45 mins</Caption>
+      <Caption
+        style={[
+          classes.timeDistanceText,
+          {color: dark ? colors.black : colors.white},
+        ]}>
+        {`${Math.ceil(entryInfo?.TED)} km`}
+      </Caption>
     </View>
   );
-}
+};
 
 const classes = StyleSheet.create({
   root: {position: 'absolute', bottom: 0, paddingHorizontal: 20, width: '100%'},
@@ -132,6 +149,6 @@ const classes = StyleSheet.create({
     alignItems: 'center',
   },
   arriveButton: {
-    fontSize: 15
+    fontSize: 15,
   },
 });

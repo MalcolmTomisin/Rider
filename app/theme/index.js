@@ -23,7 +23,6 @@ const colors = {
   },
 };
 
-
 const DARK_MAP_THEME = [
   {
     elementType: 'geometry',

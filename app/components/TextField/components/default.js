@@ -87,7 +87,7 @@ const classes = StyleSheet.create({
     justifyContent: 'space-around',
     alignContent: 'center',
     height: 48,
-    alignItems: 'center'
+    alignItems: 'center',
   },
   outlined: {
     borderColor: '#D9D9D9',
@@ -103,7 +103,7 @@ const classes = StyleSheet.create({
     width: '100%',
     color: '#2AC940',
     fontSize: 16,
-    fontFamily: 'Manrope-Regular'
+    fontFamily: 'Manrope-Regular',
   },
   iconRoot: {
     justifyContent: 'center',

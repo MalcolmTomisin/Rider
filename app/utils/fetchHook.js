@@ -11,8 +11,12 @@ export const useFetch = (url, options) => {
   useEffect(() => {
     dispatch(accountAction.setLoadingStatus({loading: true}));
     fetch(url, options)
-      .then((res) => res.json())
       .then((res) => {
+        console.log('test', res.status);
+        return res.json();
+      })
+      .then((res) => {
+        console.log('test', res);
         setResponse(res);
         dispatch(accountAction.setAcceptedOrders({acceptedOrders: res.data}));
       })

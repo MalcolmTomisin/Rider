@@ -20,6 +20,7 @@ import io from 'socket.io-client';
 import {api} from './api';
 import constants from './utils/constants';
 import messaging from '@react-native-firebase/messaging';
+import {useFetch} from './utils/fetchHook';
 
 async function requestUserPermission() {
   const authStatus = await messaging().requestPermission();
@@ -36,7 +37,7 @@ const StartUp = () => {
   const [socket, setSocket] = React.useState(null);
   const dispatch = useDispatch();
   const theme = useSelector(({theme}) => theme);
-  const {location} = useSelector(({account}) => account);
+  const {location, token} = useSelector(({account}) => account);
 
   //reverse geocode coordinates of rider
   const getAddressFromCoordinates = () => {
@@ -56,8 +57,6 @@ const StartUp = () => {
   };
 
   React.useEffect(() => {
-    handleAccount();
-    requestLocationPermission();
     messaging()
       .getToken()
       .then((token) => {
@@ -74,6 +73,8 @@ const StartUp = () => {
     (async () => {
       let token = await AsyncStorage.getItem('x-auth-token');
       dispatch(accountAction.setToken({token}));
+      await handleAccount();
+      await requestLocationPermission();
       try {
         console.log(token, 'token');
         const s = io(
@@ -135,6 +136,13 @@ const StartUp = () => {
       {enableHighAccuracy: true, timeout: 15000, maximumAge: 10000},
     );
   };
+
+  useFetch(api.riderBasket, {
+    method: 'GET',
+    headers: {
+      'x-auth-token': token,
+    },
+  });
 
   const handleAccount = async () => {
     try {

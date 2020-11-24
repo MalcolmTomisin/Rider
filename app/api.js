@@ -12,5 +12,7 @@ export const api = {
   userAuthKey: '@user',
   reverseGeocode: 'https://maps.googleapis.com/maps/api/geocode/json?',
   rejectEntry: `${baseURL}entry/rider-reject`,
-  riderBasket: `${baseURL}rider/basket`
+  riderBasket: `${baseURL}rider/basket`,
+  enroute: `${baseURL}entry/enroute-pickup`,
+  location: `${baseURL}rider/location`,
 };

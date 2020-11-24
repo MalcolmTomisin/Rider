@@ -7,7 +7,7 @@ import {useSelector} from 'react-redux';
 import {colors} from '../../../theme';
 import {Button} from '../../Button';
 
-const EnroutePickup = () => {
+const EnroutePickup = ({onPress}) => {
   const {dark} = useSelector(({theme}) => theme);
   const {currentEntry} = useSelector(({delivery}) => delivery);
   return (
@@ -45,6 +45,7 @@ const EnroutePickup = () => {
           label="Enroute to Pickup"
           rootStyle={classes.ButtonRoot}
           labelStyle={classes.Button}
+          onPress={onPress}
         />
 
         <View style={classes.productRoot}>
