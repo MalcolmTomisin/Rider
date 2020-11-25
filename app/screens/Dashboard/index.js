@@ -13,6 +13,7 @@ import {
   EnroutePickup,
   ConfirmPickup,
   AddressBanner,
+  ConfirmPayment,
 } from '../../components/Card';
 import io from 'socket.io-client';
 import WSContext from '../../components/Socket/context';
@@ -131,7 +132,7 @@ const Home = ({navigation: {navigate}}) => {
       Geolocation.watchPosition(
         ({coords: {longitude, latitude}}) => {
           fetch(api.location, {
-            method: 'POST',
+            method: 'PATCH',
             headers: {
               'Content-type': 'application/json',
               'x-auth-token': token,
@@ -270,6 +271,7 @@ const Home = ({navigation: {navigate}}) => {
           <AddressBanner />
         </>
       ) : null}
+      <ConfirmPayment />
     </View>
   );
 };
