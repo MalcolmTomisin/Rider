@@ -18,7 +18,7 @@ import {
 import {api} from '../../../api';
 const {width, height} = Dimensions.get('screen');
 
-const CancelOrder = () => {
+const ConfirmDialog = ({acceptedPayment, paymentNotAccepted}) => {
   const {cancel} = useSelector(({delivery}) => delivery);
   let {message, token} = useSelector(({account}) => account);
   const dispatch = useDispatch();
@@ -33,26 +33,18 @@ const CancelOrder = () => {
           {backgroundColor: dark ? 'rgba(0,0,0,0.5)' : 'rgba(225,225,225,0.5)'},
         ]}>
         <Surface style={classes.surface}>
-          <Subheading style={classes.message}>
-            Cancel Leonard’s Order Pickup
-          </Subheading>
+          <Subheading style={classes.message}>Proceed</Subheading>
 
           <Button
-            label="Yes, Cancel"
+            label="Yes, Proceed"
             rootStyle={classes.cancel}
-            onPress={() => {
-              dispatch(
-                deliveryAction.setDeliveryData({reason: true, cancel: false}),
-              );
-              rejectOrder(message, dispatch, token);
-            }}
+            onPress={acceptedPayment}
           />
 
-          <TouchableOpacity
-            onPress={() =>
-              dispatch(deliveryAction.setDeliveryData({cancel: false}))
-            }>
-            <Subheading style={classes.dontCancel}>No, don’t cancel</Subheading>
+          <TouchableOpacity onPress={paymentNotAccepted}>
+            <Subheading style={classes.dontCancel}>
+              No, don’t proceed
+            </Subheading>
           </TouchableOpacity>
         </Surface>
       </View>
@@ -60,36 +52,7 @@ const CancelOrder = () => {
   );
 };
 
-export default CancelOrder;
-
-export const rejectOrder = (message, dispatch, token) => {
-  const {data} = message;
-  dispatch(accountAction.setLoadingStatus({loading: true}));
-  fetch(api.rejectEntry, {
-    method: 'POST',
-    headers: {
-      'Content-type': 'application/json',
-      'x-auth-token': token,
-    },
-    body: JSON.stringify({entry: data._id}),
-  })
-    .then((res) => res.json())
-    .then((res) => {
-      message = null;
-      dispatch(
-        feedbackAction.launch({open: true, severity: 's', msg: res.msg}),
-      );
-      dispatch(accountAction.setOrder({message}));
-    })
-    .catch((err) => {
-      dispatch(
-        feedbackAction.launch({open: true, severity: 'w', msg: 'unsuccessful'}),
-      );
-    })
-    .finally(() => {
-      dispatch(accountAction.setLoadingStatus({loading: false}));
-    });
-};
+export default ConfirmDialog;
 
 const classes = StyleSheet.create({
   // container: {
