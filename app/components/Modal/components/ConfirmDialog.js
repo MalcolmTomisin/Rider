@@ -62,6 +62,10 @@ const ConfirmDialog = () => {
             dispatch(
               accountAction.setAcceptedOrders({acceptedOrders: res.data}),
             );
+          })
+          .catch((err) => console.error(err))
+          .finally(() => {
+            dispatch(accountAction.setLoadingStatus({loading: false}));
           });
       })
       .catch((err) => {

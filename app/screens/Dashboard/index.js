@@ -32,7 +32,7 @@ const GOOGLE_MAPS_APIKEY = 'AIzaSyCiOd5vESI31DmPFd6e7QVRVMTX43sm_Ic';
 
 Geocoder.init(GOOGLE_MAPS_APIKEY);
 
-const Home = ({navigation: {navigate}}) => {
+const Home = ({navigation: {navigate, push}}) => {
   let {isOnline, message, token, loading, location} = useSelector(
     ({account}) => account,
   );
@@ -144,6 +144,7 @@ const Home = ({navigation: {navigate}}) => {
           feedbackAction.launch({open: true, severity: 's', msg: res.msg}),
         );
         dispatch(deliveryAction.setEnrouteToPickUp({enroute: true}));
+        push('Dashboard');
       })
       .catch((err) => {
         console.err(err);
@@ -151,7 +152,9 @@ const Home = ({navigation: {navigate}}) => {
           feedbackAction.launch({open: true, severity: 's', msg: `${err}`}),
         );
       })
-      .finally(() => dispatch(accountAction.setLoadingStatus({loading: true})));
+      .finally(() =>
+        dispatch(accountAction.setLoadingStatus({loading: false})),
+      );
   };
 
   useEffect(() => {
@@ -291,11 +294,14 @@ const Home = ({navigation: {navigate}}) => {
       )}
       <Loading visible={loading} size="large" />
 
-      {currentEntry && currentEntry?.entry.status !== constants.PICK_UP ? (
-        <>
-          <EnroutePickup onPress={goingEnroute} />
-          <AddressBanner />
-        </>
+      {currentEntry ? (
+        currentEntry.entry.status === constants.PICK_UP ||
+        currentEntry.entry.status === 'arrivedAtPickup' ? null : (
+          <>
+            <EnroutePickup onPress={goingEnroute} />
+            <AddressBanner />
+          </>
+        )
       ) : null}
 
       {currentEntry && currentEntry?.entry.status === constants.PICK_UP ? (

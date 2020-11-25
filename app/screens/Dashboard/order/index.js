@@ -28,7 +28,11 @@ const OrderPool = ({navigation: {navigate, push}}) => {
       }),
     );
     dispatch(deliveryAction.setCurrentPickupInfo({currentEntry: item}));
-    push('Dashboard');
+    if (item.entry.status === 'arrivedAtPickup') {
+      navigate('ConfirmPickupCode');
+    } else {
+      push('Dashboard');
+    }
   };
 
   console.log('resposne', response);

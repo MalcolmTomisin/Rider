@@ -3,15 +3,59 @@ import {View, StyleSheet, TouchableOpacity} from 'react-native';
 import {Title, Subheading, Paragraph} from 'react-native-paper';
 import {Button} from '../../../components/Button';
 import {colors} from '../../../theme';
-import {useSelector} from 'react-redux';
+import {useSelector, useDispatch} from 'react-redux';
 import OTPTextInput from 'react-native-otp-textinput';
+import {api} from '../../../api';
+import {accountAction, feedbackAction} from '../../../store/actions';
 
 const ConfirmPickupCode = ({navigation: {goBack, navigate}}) => {
   const {dark} = useSelector(({theme}) => theme);
+  const {token} = useSelector(({account}) => account);
+  const {currentEntry} = useSelector(({delivery}) => delivery);
+  const dispatch = useDispatch();
   const [value, setValue] = React.useState('');
 
   const handleTextChange = (value) => {
     setValue(value);
+  };
+
+  const submit = () => {
+    if (value.length < 4) {
+      return;
+    }
+    dispatch(accountAction.setLoadingStatus({loading: true}));
+    fetch(api.confirmPickUp, {
+      method: 'POST',
+      headers: {
+        'x-auth-token': token,
+        'Content-type': 'application/json',
+      },
+      body: JSON.stringify({entry: currentEntry.entry._id, OTPCode: value}),
+    })
+      .then((res) => {
+        if (res.status !== 200) {
+          throw new Error('unsuccessful');
+        }
+        return res.json();
+      })
+      .then((res) => {
+        dispatch(
+          feedbackAction.launch({open: true, severity: 's', msg: res.msg}),
+        );
+      })
+      .catch((err) => {
+        console.error(err);
+        dispatch(
+          feedbackAction.launch({
+            open: true,
+            severity: 's',
+            msg: 'unsuccessful',
+          }),
+        );
+      })
+      .finally(() => {
+        dispatch(accountAction.setLoadingStatus({loading: false}));
+      });
   };
 
   return (
@@ -31,7 +75,7 @@ const ConfirmPickupCode = ({navigation: {goBack, navigate}}) => {
           containerStyle={classes.containerStyle}
         />
         <View>
-          <Button label="Confirm Code" onPress={() => navigate('Rate')} />
+          <Button label="Confirm Code" onPress={submit} />
         </View>
       </View>
       <View style={classes.footerRoot} />

@@ -16,4 +16,5 @@ export const api = {
   location: `${baseURL}rider/location`,
   cashPayment: `${baseURL}entry/confirm/cash-payment`,
   alertArrival: `${baseURL}entry/arrived-pickup`,
+  confirmPickUp: `${baseURL}entry/confirm-pickup`,
 };
