@@ -10,38 +10,95 @@ import {useDispatch, useSelector} from 'react-redux';
 import {Surface, Subheading} from 'react-native-paper';
 import {Button} from '../../Button';
 import {colors} from '../../../theme';
+import {api} from '../../../api';
 import {
-  deliveryAction,
   accountAction,
+  deliveryAction,
   feedbackAction,
 } from '../../../store/actions';
-import {api} from '../../../api';
-const {width, height} = Dimensions.get('screen');
 
-const ConfirmDialog = ({acceptedPayment, paymentNotAccepted}) => {
-  const {cancel} = useSelector(({delivery}) => delivery);
-  let {message, token} = useSelector(({account}) => account);
+const ConfirmDialog = () => {
   const dispatch = useDispatch();
-
+  const {recievedPayment} = useSelector(({delivery}) => delivery);
+  const {loading, token} = useSelector(({account}) => account);
   const {dark} = useSelector(({theme}) => theme);
-
+  const handlePayment = () => {
+    dispatch(accountAction.setLoadingStatus({loading: true}));
+    fetch(api.cashPayment, {
+      method: 'POST',
+      headers: {
+        'Content-type': 'application/json',
+        'x-auth-token': token,
+      },
+      body: JSON.stringify({
+        status: recievedPayment === 1 ? 'approved' : 'disapproved',
+      }),
+    })
+      .then((res) => {
+        if (res.status !== 200) {
+          throw new Error('unsucessful');
+        }
+        return res.json();
+      })
+      .then((res) => {
+        if (recievedPayment !== 0) {
+          dispatch(accountAction.setOrder({message: null}));
+        }
+        dispatch(
+          deliveryAction.setPaymentRecieved({
+            recievedPayment: null,
+            cashPaid: recievedPayment !== 0 ? true : false,
+          }),
+        );
+        //get recent report from api everytime an effect is made
+        fetch(api.riderBasket, {
+          method: 'GET',
+          headers: {
+            'x-auth-token': token,
+          },
+        })
+          .then((response) => response.json())
+          .then((response) => {
+            dispatch(
+              accountAction.setAcceptedOrders({acceptedOrders: res.data}),
+            );
+          });
+      })
+      .catch((err) => {
+        console.error(err);
+        dispatch(
+          feedbackAction.launch({open: true, severity: 'w', msg: err.message}),
+        );
+      })
+      .finally(() => {
+        dispatch(accountAction.setLoadingStatus({loading: false}));
+      });
+  };
   return (
-    <Modal animationType="slide" transparent={true} visible={cancel}>
+    <Modal
+      animationType="slide"
+      transparent={true}
+      visible={recievedPayment === 1 || recievedPayment === 0}>
       <View
         style={[
           classes.container,
           {backgroundColor: dark ? 'rgba(0,0,0,0.5)' : 'rgba(225,225,225,0.5)'},
         ]}>
         <Surface style={classes.surface}>
-          <Subheading style={classes.message}>Proceed</Subheading>
+          <Subheading style={classes.message}>Proceed ?</Subheading>
 
           <Button
             label="Yes, Proceed"
             rootStyle={classes.cancel}
-            onPress={acceptedPayment}
+            onPress={handlePayment}
           />
 
-          <TouchableOpacity onPress={paymentNotAccepted}>
+          <TouchableOpacity
+            onPress={() => {
+              dispatch(
+                deliveryAction.setPaymentRecieved({recievedPayment: null}),
+              );
+            }}>
             <Subheading style={classes.dontCancel}>
               No, don’t proceed
             </Subheading>
@@ -55,13 +112,6 @@ const ConfirmDialog = ({acceptedPayment, paymentNotAccepted}) => {
 export default ConfirmDialog;
 
 const classes = StyleSheet.create({
-  // container: {
-  //   flex: 1,
-  //   alignItems: 'center',
-  //   justifyContent: 'center',
-  //   padding: 30,
-  //   height: 5000,
-  // },
   container: {
     flex: 1,
     flexDirection: 'column',

@@ -1,18 +1,18 @@
-import React from 'react'
+import React from 'react';
 import {View, StyleSheet, TouchableOpacity} from 'react-native';
 import {Title, Subheading, Paragraph} from 'react-native-paper';
-import { Button } from '../../../components/Button';
-import { colors } from '../../../theme';
-import { useSelector } from "react-redux";
-import OTPTextInput from "react-native-otp-textinput";
+import {Button} from '../../../components/Button';
+import {colors} from '../../../theme';
+import {useSelector} from 'react-redux';
+import OTPTextInput from 'react-native-otp-textinput';
 
 const ConfirmPickupCode = ({navigation: {goBack, navigate}}) => {
-  const { dark } = useSelector(({ theme }) => theme);
-  const [value, setValue] = React.useState("");
+  const {dark} = useSelector(({theme}) => theme);
+  const [value, setValue] = React.useState('');
 
   const handleTextChange = (value) => {
     setValue(value);
-  }
+  };
 
   return (
     <View style={classes.root}>

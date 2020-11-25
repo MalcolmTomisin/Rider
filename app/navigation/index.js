@@ -27,8 +27,7 @@ const Navigation = ({signedIn}) => {
     });
   }, []);
   return (
-    <Stack.Navigator
-      headerMode="float">
+    <Stack.Navigator headerMode="float">
       {signedIn ? (
         <>
           <Stack.Screen
@@ -108,9 +107,7 @@ const Navigation = ({signedIn}) => {
           <Stack.Screen
             name="Change Password"
             options={({navigation: {goBack}}) => ({
-              headerLeft: () => (
-                <Left goBack={goBack} name="Change Password" />
-              ),
+              headerLeft: () => <Left goBack={goBack} name="Change Password" />,
               title: '',
               headerStyle: classes.header,
             })}
@@ -148,8 +145,6 @@ const Left = ({name, goBack, navigate}) => {
     </View>
   );
 };
-
-
 
 const GetAuth = async () => {
   //check if token exists

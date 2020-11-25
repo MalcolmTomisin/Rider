@@ -1,4 +1,10 @@
-import {DELIVERY_DATA, PICK_UP, CURRENT_PICK_UP, ENROUTE} from '../types';
+import {
+  DELIVERY_DATA,
+  PICK_UP,
+  CURRENT_PICK_UP,
+  ENROUTE,
+  PAYMENT_RECIEVED,
+} from '../types';
 
 const setDeliveryData = (payload) => ({
   type: DELIVERY_DATA,
@@ -20,9 +26,15 @@ const setEnrouteToPickUp = (payload) => ({
   payload,
 });
 
+const setPaymentRecieved = (payload) => ({
+  type: PAYMENT_RECIEVED,
+  payload,
+});
+
 export default {
   setDeliveryData,
   setDeliveryNavigation,
   setCurrentPickupInfo,
   setEnrouteToPickUp,
+  setPaymentRecieved,
 };

@@ -11,7 +11,7 @@ import {deliveryAction} from '../../../store/actions';
 const ConfirmPayment = () => {
   const dispatch = useDispatch();
   const {dark} = useSelector(({theme}) => theme);
-  const {currentEntry} = useSelector(({delivery}) => delivery);
+  const {currentEntry, recievedPayment} = useSelector(({delivery}) => delivery);
 
   return (
     <View style={classes.root}>
@@ -31,12 +31,18 @@ const ConfirmPayment = () => {
           label="Confirm Payment Recieved"
           rootStyle={classes.ButtonRoot}
           labelStyle={classes.Button}
+          onPress={() => {
+            dispatch(deliveryAction.setPaymentRecieved({recievedPayment: 1}));
+          }}
         />
 
         <Button
           label="Payment Not Recieved"
           rootStyle={classes.productRoot}
           labelStyle={classes.Button}
+          onPress={() => {
+            dispatch(deliveryAction.setPaymentRecieved({recievedPayment: 0}));
+          }}
         />
       </Surface>
     </View>

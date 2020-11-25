@@ -24,6 +24,7 @@ import {accountAction, deliveryAction} from '../../store/actions';
 import feedbackAction from '../../store/actions/feedback';
 import {rejectOrder} from '../../components/Modal/components/CancelOrder';
 import constants from '../../utils/constants';
+import {ConfirmDialog} from '../../components/Modal';
 
 const {width, height} = Dimensions.get('window');
 
@@ -35,7 +36,9 @@ const Home = ({navigation: {navigate}}) => {
   let {isOnline, message, token, loading, location} = useSelector(
     ({account}) => account,
   );
-  let {pickUp, currentEntry, enroute} = useSelector(({delivery}) => delivery);
+  let {pickUp, currentEntry, enroute, cashPaid} = useSelector(
+    ({delivery}) => delivery,
+  );
   const {dark} = useSelector(({theme}) => theme);
   const socket = useContext(WSContext);
   const mapView = React.useRef(null);
@@ -49,6 +52,35 @@ const Home = ({navigation: {navigate}}) => {
     latitude: 6.605284535830513,
     longitude: 3.3171244316839394,
   });
+
+  //alert user of arrival
+  const alertUserOfArrival = () => {
+    dispatch(accountAction.setLoadingStatus({loading: true}));
+    fetch(api.alertArrival, {
+      method: 'POST',
+      headers: {
+        'x-auth-token': token,
+        'Content-type': 'application/json',
+      },
+      body: JSON.stringify({entry: currentEntry.entry._id}),
+    })
+      .then((res) => {
+        if (res.status !== 200) {
+          throw new Error('Unsuccessful');
+        }
+        return res.json();
+      })
+      .then((res) => {
+        dispatch(
+          feedbackAction.launch({open: true, severity: 's', msg: res.msg}),
+        );
+        navigate('ConfirmPickupCode');
+      })
+      .catch((err) => console.error(err))
+      .finally(() => {
+        dispatch(accountAction.setLoadingStatus({loading: false}));
+      });
+  };
 
   //accept entry order
   const accept = () => {
@@ -258,20 +290,33 @@ const Home = ({navigation: {navigate}}) => {
         />
       )}
       <Loading visible={loading} size="large" />
-      {/* {currentEntry && <EnroutePickup />} */}
+
       {currentEntry && currentEntry?.entry.status !== constants.PICK_UP ? (
         <>
           <EnroutePickup onPress={goingEnroute} />
           <AddressBanner />
         </>
       ) : null}
+
       {currentEntry && currentEntry?.entry.status === constants.PICK_UP ? (
         <>
-          <ConfirmPickup />
+          <ConfirmPickup confirmArrival={alertUserOfArrival} />
           <AddressBanner />
         </>
+      ) : currentEntry &&
+        currentEntry?.entry.paymentMethod !== 'card' &&
+        enroute ? (
+        <ConfirmPayment />
       ) : null}
-      <ConfirmPayment />
+
+      {cashPaid && (
+        <>
+          <ConfirmPickup confirmArrival={alertUserOfArrival} />
+          <AddressBanner />
+        </>
+      )}
+
+      <ConfirmDialog />
     </View>
   );
 };

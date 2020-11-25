@@ -5,27 +5,27 @@ import {
   Dimensions,
   TouchableOpacity,
   Modal,
-  SafeAreaView
+  SafeAreaView,
 } from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
-import { Surface, Subheading } from "react-native-paper";
-import { Button } from '../../Button';
-import { colors } from '../../../theme';
-import { deliveryAction } from '../../../store/actions';
+import {Surface, Subheading} from 'react-native-paper';
+import {Button} from '../../Button';
+import {colors} from '../../../theme';
+import {deliveryAction} from '../../../store/actions';
 import BackButton from '../../../navigation/custom/BackButton';
 import TitleButton from '../../../navigation/custom/TitleButton';
-import { Radio } from '../../Radio';
+import {Radio} from '../../Radio';
 const {width, height} = Dimensions.get('screen');
 
 const Reason = () => {
   const {reason} = useSelector(({delivery}) => delivery);
   const {dark} = useSelector(({theme}) => theme);
   const dispatch = useDispatch();
-  const [selected, setSelected] = React.useState("");
+  const [selected, setSelected] = React.useState('');
 
   const selectedReason = (reas) => {
     setSelected(reas);
-  }
+  };
 
   return (
     <Modal animationType="slide" transparent={true} visible={reason}>
@@ -113,11 +113,9 @@ const Reason = () => {
       </SafeAreaView>
     </Modal>
   );
-}
+};
 
 export default Reason;
-
-
 
 const classes = StyleSheet.create({
   root: {

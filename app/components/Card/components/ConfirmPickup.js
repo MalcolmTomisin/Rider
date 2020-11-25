@@ -8,7 +8,7 @@ import {colors} from '../../../theme';
 import {Button} from '../../Button';
 import {deliveryAction} from '../../../store/actions';
 
-const ConfirmPickup = () => {
+const ConfirmPickup = ({confirmArrival}) => {
   const dispatch = useDispatch();
   const {dark} = useSelector(({theme}) => theme);
   const {currentEntry} = useSelector(({delivery}) => delivery);
@@ -48,6 +48,7 @@ const ConfirmPickup = () => {
           label="Confirm Pickup Code"
           rootStyle={classes.ButtonRoot}
           labelStyle={classes.Button}
+          onPress={confirmArrival}
         />
 
         <TouchableOpacity style={classes.productRoot}>
