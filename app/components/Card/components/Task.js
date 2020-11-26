@@ -11,6 +11,7 @@ const Task = ({
   estimatedCost,
   id,
   pickUpAction,
+  status,
 }) => {
   const {dark} = useSelector(({theme}) => theme);
   const hr = {borderBottomColor: dark ? colors.hr.dark : colors.hr.light};
@@ -57,8 +58,30 @@ const Task = ({
           <Caption style={classes.content}>Payment on Delivery</Caption>
         </View>
 
-        <TouchableOpacity style={classes.buttonRoot} onPress={pickUpAction}>
-          <Caption style={classes.buttonText}>Proceed Pickup</Caption>
+        <TouchableOpacity
+          style={
+            ([classes.buttonRoot],
+            {
+              backgroundColor:
+                status !== 'pickedup' ||
+                status !== 'enrouteToDelivery' ||
+                status !== 'arrivedAtDelivery' ||
+                status !== 'delivered'
+                  ? colors.blue.main
+                  : colors.red.main,
+            })
+          }
+          onPress={pickUpAction}>
+          <Caption style={classes.buttonText}>{`
+          ${
+            status !== 'pickedup' ||
+            status !== 'enrouteToDelivery' ||
+            status !== 'arrivedAtDelivery' ||
+            status !== 'delivered'
+              ? 'Proceed Pickup'
+              : 'Start Delivery'
+          }
+          `}</Caption>
           <Icon name="arrow-right" size={10} color={colors.white} />
         </TouchableOpacity>
       </View>
@@ -113,7 +136,6 @@ const classes = StyleSheet.create({
     justifyContent: 'space-between',
   },
   buttonRoot: {
-    backgroundColor: colors.blue.main,
     shadowColor: '#000',
     shadowOffset: {
       width: 0,

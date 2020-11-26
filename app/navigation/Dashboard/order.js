@@ -11,6 +11,6 @@ const OrderPoolStack = () => {
       <Tab.Screen name="Completed" component={CompletedOrder} />
     </Tab.Navigator>
   );
-}
+};
 
 export default OrderPoolStack;

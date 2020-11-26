@@ -30,6 +30,8 @@ const OrderPool = ({navigation: {navigate, push}}) => {
     dispatch(deliveryAction.setCurrentPickupInfo({currentEntry: item}));
     if (item.entry.status === 'arrivedAtPickup') {
       navigate('ConfirmPickupCode');
+    } else if (item.entry.status === 'arrivedAtDelivery') {
+      navigate('ConfirmDeliveryCode');
     } else {
       push('Dashboard');
     }
@@ -49,6 +51,7 @@ const OrderPool = ({navigation: {navigate, push}}) => {
         estimatedCost={v?.estimatedCost}
         id={v?.orderId}
         pickUpAction={() => pickUp(v)}
+        status={v?.entry?.status}
       />
     ));
   };

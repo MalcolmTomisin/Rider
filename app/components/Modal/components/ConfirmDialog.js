@@ -31,7 +31,7 @@ const ConfirmDialog = () => {
         'x-auth-token': token,
       },
       body: JSON.stringify({
-        status: recievedPayment === 1 ? 'approved' : 'disapproved',
+        status: recievedPayment === 1 ? 'approved' : 'declined',
       }),
     })
       .then((res) => {
@@ -60,7 +60,7 @@ const ConfirmDialog = () => {
           .then((response) => response.json())
           .then((response) => {
             dispatch(
-              accountAction.setAcceptedOrders({acceptedOrders: res.data}),
+              accountAction.setAcceptedOrders({acceptedOrders: response.data}),
             );
           })
           .catch((err) => console.error(err))
