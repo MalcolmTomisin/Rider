@@ -1,15 +1,23 @@
-import React from 'react';
-import {View, StyleSheet, ScrollView} from 'react-native';
+import React, {useState} from 'react';
+import {View, StyleSheet, ScrollView, RefreshControl} from 'react-native';
 import {Task} from '../../../components/Card';
 import {useSelector, useDispatch} from 'react-redux';
 import {useFetch} from '../../../utils/fetchHook';
 import {api} from '../../../api';
 import {Loading} from '../../../components/Loading';
-import {deliveryAction} from '../../../store/actions';
+import {
+  deliveryAction,
+  accountAction,
+  feedbackAction,
+} from '../../../store/actions';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import {callBasket} from '../../../utils';
 
 const OrderPool = ({navigation: {navigate, push}}) => {
   const dispatch = useDispatch();
   const {token, loading, acceptedOrders} = useSelector(({account}) => account);
+  const {currentIndex} = useSelector(({delivery}) => delivery);
+  const [refresh, setRefresh] = useState(false);
 
   const {response} = useFetch(api.riderBasket, {
     method: 'GET',
@@ -18,7 +26,34 @@ const OrderPool = ({navigation: {navigate, push}}) => {
     },
   });
 
-  const pickUp = (item) => {
+  const refreshBasket = () => {
+    setRefresh(true);
+    fetch(api.riderBasket, {
+      method: 'GET',
+      headers: {
+        'x-auth-token': token,
+      },
+    })
+      .then((res) => {
+        if (res.status !== 200) {
+          throw new Error('Unable to fetch orders');
+        }
+        return res.json();
+      })
+      .then((res) => {
+        dispatch(accountAction.setAcceptedOrders({acceptedOrders: res.data}));
+      })
+      .catch((err) => {
+        dispatch(
+          feedbackAction.launch({open: true, severity: 'w', msg: `${err}`}),
+        );
+      })
+      .finally(() => {
+        setRefresh(false);
+      });
+  };
+
+  const pickUp = (item, index) => {
     dispatch(
       deliveryAction.setDeliveryNavigation({
         pickUp: {
@@ -27,7 +62,9 @@ const OrderPool = ({navigation: {navigate, push}}) => {
         },
       }),
     );
+    AsyncStorage.setItem('currentEntry', `${index}`);
     dispatch(deliveryAction.setCurrentPickupInfo({currentEntry: item}));
+    dispatch(deliveryAction.setIndexOfEntry({currentIndex: index}));
     if (item.entry.status === 'arrivedAtPickup') {
       navigate('ConfirmPickupCode');
     } else if (item.entry.status === 'arrivedAtDelivery') {
@@ -58,7 +95,12 @@ const OrderPool = ({navigation: {navigate, push}}) => {
 
   return (
     <View style={classes.root}>
-      <ScrollView>{renderTasks()}</ScrollView>
+      <ScrollView
+        refreshControl={
+          <RefreshControl refreshing={refresh} onRefresh={refreshBasket} />
+        }>
+        {renderTasks()}
+      </ScrollView>
       <Loading visible={loading} size="large" />
     </View>
   );

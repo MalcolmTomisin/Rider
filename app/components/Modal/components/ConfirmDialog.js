@@ -1,11 +1,5 @@
 import React from 'react';
-import {
-  View,
-  StyleSheet,
-  Dimensions,
-  TouchableOpacity,
-  Modal,
-} from 'react-native';
+import {View, StyleSheet, TouchableOpacity, Modal} from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
 import {Surface, Subheading} from 'react-native-paper';
 import {Button} from '../../Button';

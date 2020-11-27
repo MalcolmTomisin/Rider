@@ -1,6 +1,7 @@
-// import {io} from 'socket.io-client';
-// let socket;
-// email validation utils
+
+import {accountAction, deliveryAction} from '../store/actions';
+import { setSignInToken } from '../store/actions/signUp';
+
 export const validateEmail = (email) => {
   const re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
   return re.test(String(email).toLowerCase());
@@ -38,6 +39,38 @@ export const formatMoney = (
   } catch (e) {
     console.log(e);
   }
+};
+
+export const callBasket = async (url, token, dispatch, currentIndex) => {
+  dispatch(accountAction.setLoadingStatus({loading: true}));
+  fetch(url, {
+    method: 'GET',
+    headers: {
+      'x-auth-token': token,
+    },
+  })
+    .then((res) => {
+      if (res.status !== 200){
+        throw new Error('unsuccessful');
+      }
+      return res.json();
+    })
+    .then((res) => {
+      console.log('test', res);
+
+      dispatch(accountAction.setAcceptedOrders({acceptedOrders: res.data}));
+      if (currentIndex) {
+        dispatch(
+          deliveryAction.setCurrentPickupInfo({
+            currentEntry: res.data[currentIndex],
+          }),
+        );
+      }
+    })
+    .catch((err) => {
+      console.error(err);
+    })
+    .finally(() => dispatch(accountAction.setLoadingStatus({loading: false})));
 };
 
 // export const initializeSocket = () => {

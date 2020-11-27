@@ -8,7 +8,7 @@ import OTPTextInput from 'react-native-otp-textinput';
 import {api} from '../../../api';
 import {accountAction, feedbackAction} from '../../../store/actions';
 
-const ConfirmPickupCode = ({navigation: {goBack, navigate}}) => {
+const ConfirmPickupCode = ({navigation: {goBack, navigate, push}}) => {
   const {dark} = useSelector(({theme}) => theme);
   const {token} = useSelector(({account}) => account);
   const {currentEntry} = useSelector(({delivery}) => delivery);
@@ -42,6 +42,7 @@ const ConfirmPickupCode = ({navigation: {goBack, navigate}}) => {
         dispatch(
           feedbackAction.launch({open: true, severity: 's', msg: res.msg}),
         );
+        push('OrderPool');
       })
       .catch((err) => {
         console.error(err);
@@ -49,7 +50,7 @@ const ConfirmPickupCode = ({navigation: {goBack, navigate}}) => {
           feedbackAction.launch({
             open: true,
             severity: 's',
-            msg: 'unsuccessful',
+            msg: `${err}`,
           }),
         );
       })

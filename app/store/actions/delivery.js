@@ -4,6 +4,7 @@ import {
   CURRENT_PICK_UP,
   ENROUTE,
   PAYMENT_RECIEVED,
+  INDEX_OF_ENTRY,
 } from '../types';
 
 const setDeliveryData = (payload) => ({
@@ -31,10 +32,16 @@ const setPaymentRecieved = (payload) => ({
   payload,
 });
 
+const setIndexOfEntry = (payload) => ({
+  type: INDEX_OF_ENTRY,
+  payload,
+});
+
 export default {
   setDeliveryData,
   setDeliveryNavigation,
   setCurrentPickupInfo,
   setEnrouteToPickUp,
   setPaymentRecieved,
+  setIndexOfEntry,
 };

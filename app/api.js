@@ -17,4 +17,6 @@ export const api = {
   cashPayment: `${baseURL}entry/confirm/cash-payment`,
   alertArrival: `${baseURL}entry/arrived-pickup`,
   confirmPickUp: `${baseURL}entry/confirm-pickup`,
+  startDelivery: `${baseURL}order/enroute-delivery`,
+  alertArrivalAtDelivery: `${baseURL}order/arrived-delivery`,
 };

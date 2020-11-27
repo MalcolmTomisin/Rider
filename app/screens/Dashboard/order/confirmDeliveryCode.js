@@ -18,7 +18,7 @@ const ConfirmDeliveryCode = ({navigation: {goBack, navigate}}) => {
     <View style={classes.root}>
       <View style={classes.bodyRoot}>
         <Subheading style={classes.chnageNumber}>
-          Enter Pickup code sent
+          Enter Delivery code sent
         </Subheading>
 
         <OTPTextInput

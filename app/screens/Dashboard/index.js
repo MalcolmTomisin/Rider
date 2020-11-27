@@ -14,17 +14,23 @@ import {
   ConfirmPickup,
   AddressBanner,
   ConfirmPayment,
+  EnrouteDelivery,
+  ConfirmDelivery,
 } from '../../components/Card';
 import io from 'socket.io-client';
 import WSContext from '../../components/Socket/context';
 import {Loading} from '../../components/Loading';
 import {api} from '../../api';
 import {FeedBack} from '../../components/Feedback';
-import {accountAction, deliveryAction} from '../../store/actions';
-import feedbackAction from '../../store/actions/feedback';
+import {
+  accountAction,
+  deliveryAction,
+  feedbackAction,
+} from '../../store/actions';
 import {rejectOrder} from '../../components/Modal/components/CancelOrder';
 import constants from '../../utils/constants';
 import {ConfirmDialog} from '../../components/Modal';
+import {callBasket} from '../../utils';
 
 const {width, height} = Dimensions.get('window');
 
@@ -36,7 +42,7 @@ const Home = ({navigation: {navigate, push}}) => {
   let {isOnline, message, token, loading, location} = useSelector(
     ({account}) => account,
   );
-  let {pickUp, currentEntry, enroute, cashPaid} = useSelector(
+  let {pickUp, currentEntry, enroute, cashPaid, currentIndex} = useSelector(
     ({delivery}) => delivery,
   );
   const {dark} = useSelector(({theme}) => theme);
@@ -70,7 +76,8 @@ const Home = ({navigation: {navigate, push}}) => {
         }
         return res.json();
       })
-      .then((res) => {
+      .then(async (res) => {
+        await callBasket(api.riderBasket, token, dispatch, currentIndex);
         dispatch(
           feedbackAction.launch({open: true, severity: 's', msg: res.msg}),
         );
@@ -97,12 +104,15 @@ const Home = ({navigation: {navigate, push}}) => {
       body: JSON.stringify({entry: data._id}),
     })
       .then((res) => {
-        console.log(res.status);
+        if (res.status !== 200) {
+          throw new Error('unsuccessful');
+        }
         return res.json();
       })
-      .then((res) => {
-        console.log('res', res);
+      .then(async (res) => {
+        // console.log('res', res);
         message.accept = true;
+        await callBasket(api.riderBasket, token, dispatch, currentIndex);
         dispatch(
           feedbackAction.launch({open: true, severity: 's', msg: res.msg}),
         );
@@ -137,9 +147,13 @@ const Home = ({navigation: {navigate, push}}) => {
       body: JSON.stringify({entry: currentEntry.entry._id}),
     })
       .then((res) => {
+        if (res.status !== 200) {
+          throw new Error('unsuccessful');
+        }
         return res.json();
       })
-      .then((res) => {
+      .then(async (res) => {
+        await callBasket(api.riderBasket, token, dispatch, currentIndex);
         dispatch(
           feedbackAction.launch({open: true, severity: 's', msg: res.msg}),
         );
@@ -147,7 +161,7 @@ const Home = ({navigation: {navigate, push}}) => {
         push('Dashboard');
       })
       .catch((err) => {
-        console.err(err);
+        console.error(err);
         dispatch(
           feedbackAction.launch({open: true, severity: 's', msg: `${err}`}),
         );
@@ -155,6 +169,65 @@ const Home = ({navigation: {navigate, push}}) => {
       .finally(() =>
         dispatch(accountAction.setLoadingStatus({loading: false})),
       );
+  };
+
+  const startDelievery = () => {
+    dispatch(accountAction.setLoadingStatus({loading: true}));
+    fetch(api.startDelivery, {
+      method: 'POST',
+      headers: {
+        'x-auth-token': token,
+        'Content-type': 'application/json',
+      },
+      body: JSON.stringify({order: currentEntry.entry._id}),
+    })
+      .then((res) => {
+        if (res !== 200) {
+          throw new Error('unsuccessful');
+        }
+        return res.json();
+      })
+      .then(async (res) => {
+        await callBasket(api.riderBasket, token, dispatch, currentIndex);
+        dispatch(
+          feedbackAction.launch({open: true, severity: 's', msg: res.msg}),
+        );
+      })
+      .catch((err) => console.error(err))
+      .finally(() => {
+        dispatch(accountAction.setLoadingStatus({loading: false}));
+      });
+  };
+
+  const announceArrivalAtDelivery = () => {
+    dispatch(accountAction.setLoadingStatus({loading: true}));
+    fetch(api.alertArrivalAtDelivery, {
+      method: 'POST',
+      headers: {
+        'x-auth-token': token,
+        'Content-type': 'application/json',
+      },
+      body: JSON.stringify({
+        order: currentEntry.entry._id,
+      }),
+    })
+      .then((res) => {
+        if (res.status !== 200) {
+          throw new Error('unsuccessful');
+        }
+        return res.json();
+      })
+      .then(async (res) => {
+        await callBasket(api.riderBasket, token, dispatch, currentIndex);
+        dispatch(
+          feedbackAction.launch({open: true, severity: 's', msg: res.msg}),
+        );
+        navigate('ConfirmDeliveryCode');
+      })
+      .catch((err) => console.error(err))
+      .finally(() => {
+        dispatch(accountAction.setLoadingStatus({loading: false}));
+      });
   };
 
   useEffect(() => {
@@ -294,7 +367,14 @@ const Home = ({navigation: {navigate, push}}) => {
       )}
       <Loading visible={loading} size="large" />
 
-      {currentEntry ? (
+      {currentEntry?.entry?.status === 'driverAccepted' ? (
+        <>
+          <EnroutePickup onPress={goingEnroute} />
+          <AddressBanner />
+        </>
+      ) : null}
+
+      {/* {currentEntry ? (
         currentEntry.entry.status === constants.PICK_UP ||
         currentEntry.entry.status === 'arrivedAtPickup' ? null : (
           <>
@@ -302,16 +382,17 @@ const Home = ({navigation: {navigate, push}}) => {
             <AddressBanner />
           </>
         )
-      ) : null}
+      ) : null} */}
 
-      {currentEntry && currentEntry?.entry.status === constants.PICK_UP ? (
+      {currentEntry?.entry?.status === 'enrouteToPickup' ? (
         <>
           <ConfirmPickup confirmArrival={alertUserOfArrival} />
           <AddressBanner />
         </>
-      ) : currentEntry &&
-        currentEntry?.entry.paymentMethod !== 'card' &&
-        enroute ? (
+      ) : null}
+
+      {currentEntry?.entry.status === 'arriveAtPickup' &&
+      currentEntry.entry.paymentMethod !== 'card' ? (
         <ConfirmPayment />
       ) : null}
 
@@ -321,6 +402,39 @@ const Home = ({navigation: {navigate, push}}) => {
           <AddressBanner />
         </>
       )}
+
+      {currentEntry?.entry.status === 'arriveAtPickup' &&
+      currentEntry.entry.paymentMethod === 'card' ? (
+        <>
+          <ConfirmPickup confirmArrival={alertUserOfArrival} />
+          <AddressBanner />
+        </>
+      ) : null}
+
+      {/* {currentEntry && currentEntry?.entry.status === constants.PICK_UP ? (
+        <>
+          <ConfirmPickup confirmArrival={alertUserOfArrival} />
+          <AddressBanner />
+        </>
+      ) : currentEntry &&
+        currentEntry?.entry.paymentMethod !== 'card' &&
+        enroute ? (
+        <ConfirmPayment />
+      ) : null} */}
+
+      {currentEntry?.entry.status === 'pickedup' ? (
+        <>
+          <AddressBanner />
+          <EnrouteDelivery onPress={startDelievery} />
+        </>
+      ) : null}
+
+      {currentEntry?.entry.status === 'enrouteToDelivery' ? (
+        <>
+          <AddressBanner />
+          <ConfirmDelivery confirmDelivery={announceArrivalAtDelivery} />
+        </>
+      ) : null}
 
       <ConfirmDialog />
     </View>

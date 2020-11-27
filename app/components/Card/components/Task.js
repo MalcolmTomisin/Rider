@@ -59,8 +59,8 @@ const Task = ({
         </View>
 
         <TouchableOpacity
-          style={
-            ([classes.buttonRoot],
+          style={[
+            classes.buttonRoot,
             {
               backgroundColor:
                 status !== 'pickedup' ||
@@ -69,19 +69,17 @@ const Task = ({
                 status !== 'delivered'
                   ? colors.blue.main
                   : colors.red.main,
-            })
-          }
+            },
+          ]}
           onPress={pickUpAction}>
-          <Caption style={classes.buttonText}>{`
-          ${
+          <Caption style={classes.buttonText}>{`${
             status !== 'pickedup' ||
             status !== 'enrouteToDelivery' ||
             status !== 'arrivedAtDelivery' ||
             status !== 'delivered'
               ? 'Proceed Pickup'
               : 'Start Delivery'
-          }
-          `}</Caption>
+          }`}</Caption>
           <Icon name="arrow-right" size={10} color={colors.white} />
         </TouchableOpacity>
       </View>

@@ -4,6 +4,7 @@ import {
   CURRENT_PICK_UP,
   ENROUTE,
   PAYMENT_RECIEVED,
+  INDEX_OF_ENTRY,
 } from '../types';
 
 const initialstate = {
@@ -15,6 +16,7 @@ const initialstate = {
   enroute: false,
   recievedPayment: null,
   cashPaid: false,
+  currentIndex: null,
 };
 
 export default (state = initialstate, action) => {
@@ -30,6 +32,8 @@ export default (state = initialstate, action) => {
     case ENROUTE:
       return {...state, ...action.payload};
     case PAYMENT_RECIEVED:
+      return {...state, ...action.payload};
+    case INDEX_OF_ENTRY:
       return {...state, ...action.payload};
     default:
       return state;

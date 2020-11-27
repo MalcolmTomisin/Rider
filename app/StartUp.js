@@ -11,7 +11,7 @@ import {useSelector, useDispatch} from 'react-redux';
 import {colors} from './theme';
 import {FeedBack} from './components/Feedback';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {accountAction} from './store/actions';
+import {accountAction, deliveryAction} from './store/actions';
 import {Platform, PermissionsAndroid, Alert} from 'react-native';
 import Geolocation from 'react-native-geolocation-service';
 import {CancelOrder, Reason} from './components/Modal';
@@ -71,9 +71,15 @@ const StartUp = () => {
 
   React.useEffect(() => {
     (async () => {
-      let token = await AsyncStorage.getItem('x-auth-token');
+      let token, entryIndex;
+      token = await AsyncStorage.getItem('x-auth-token');
+      entryIndex = await AsyncStorage.getItem('currentEntry');
+      if (entryIndex) {
+        dispatch(
+          deliveryAction.setIndexOfEntry({currentIndex: parseInt(entryIndex)}),
+        );
+      }
       dispatch(accountAction.setToken({token}));
-      await handleAccount();
       await requestLocationPermission();
       try {
         console.log(token, 'token');
@@ -143,25 +149,6 @@ const StartUp = () => {
       'x-auth-token': token,
     },
   });
-
-  const handleAccount = async () => {
-    try {
-      const user = await AsyncStorage.getItem('user');
-      const token = await AsyncStorage.getItem('token');
-
-      console.log('user, token', user, token);
-
-      if (user) {
-        dispatch(accountAction.setUserData(JSON.parse(user)));
-      }
-
-      if (token) {
-        dispatch(accountAction.setToken(JSON.parse(token)));
-      }
-    } catch (error) {
-      console.log('error', error);
-    }
-  };
 
   const RNPTheme = {
     dark: theme.dark,
