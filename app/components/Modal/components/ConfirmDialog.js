@@ -13,7 +13,7 @@ import {
 
 const ConfirmDialog = () => {
   const dispatch = useDispatch();
-  const {recievedPayment} = useSelector(({delivery}) => delivery);
+  const {recievedPayment, currentEntry} = useSelector(({delivery}) => delivery);
   const {loading, token} = useSelector(({account}) => account);
   const {dark} = useSelector(({theme}) => theme);
   const handlePayment = () => {
@@ -26,12 +26,11 @@ const ConfirmDialog = () => {
       },
       body: JSON.stringify({
         status: recievedPayment === 1 ? 'approved' : 'declined',
+        entry: currentEntry?.entry?._id,
       }),
     })
       .then((res) => {
-        if (res.status !== 200) {
-          throw new Error('unsucessful');
-        }
+        console.log('stat', res);
         return res.json();
       })
       .then((res) => {

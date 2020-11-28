@@ -72,6 +72,7 @@ const Home = ({navigation: {navigate, push}}) => {
     })
       .then((res) => {
         if (res.status !== 200) {
+          console.log('stat', res.status);
           throw new Error('Unsuccessful');
         }
         return res.json();
@@ -82,6 +83,9 @@ const Home = ({navigation: {navigate, push}}) => {
           feedbackAction.launch({open: true, severity: 's', msg: res.msg}),
         );
         navigate('ConfirmPickupCode');
+        // if (currentEntry.entry.paymentMethod !== 'cash') {
+        //   navigate('ConfirmPickupCode');
+        // }
       })
       .catch((err) => console.error(err))
       .finally(() => {
@@ -147,12 +151,15 @@ const Home = ({navigation: {navigate, push}}) => {
       body: JSON.stringify({entry: currentEntry.entry._id}),
     })
       .then((res) => {
-        if (res.status !== 200) {
-          throw new Error('unsuccessful');
-        }
+        console.log('stat', res);
+        // if (res.status !== 200) {
+        //   console.log('stat', res);
+        //   throw new Error('unsuccessful');
+        // }
         return res.json();
       })
       .then(async (res) => {
+        console.log('json', res);
         await callBasket(api.riderBasket, token, dispatch, currentIndex);
         dispatch(
           feedbackAction.launch({open: true, severity: 's', msg: res.msg}),
@@ -161,9 +168,9 @@ const Home = ({navigation: {navigate, push}}) => {
         push('Dashboard');
       })
       .catch((err) => {
-        console.error(err);
+        console.log('err', err);
         dispatch(
-          feedbackAction.launch({open: true, severity: 's', msg: `${err}`}),
+          feedbackAction.launch({open: true, severity: 'w', msg: `${err}`}),
         );
       })
       .finally(() =>
@@ -263,7 +270,7 @@ const Home = ({navigation: {navigate, push}}) => {
         dispatch(accountAction.setOrder({message}));
       });
     }
-  }, []);
+  }, [socket]);
   const onCountDownFinish = () => {
     rejectOrder(message, dispatch, token);
   };
@@ -391,8 +398,9 @@ const Home = ({navigation: {navigate, push}}) => {
         </>
       ) : null}
 
-      {currentEntry?.entry.status === 'arriveAtPickup' &&
-      currentEntry.entry.paymentMethod !== 'card' ? (
+      {/* {currentEntry?.entry?.status === 'arrivedAtPickup' &&
+      currentEntry.entry.paymentMethod !== 'card' &&
+      !cashPaid ? (
         <ConfirmPayment />
       ) : null}
 
@@ -401,15 +409,16 @@ const Home = ({navigation: {navigate, push}}) => {
           <ConfirmPickup confirmArrival={alertUserOfArrival} />
           <AddressBanner />
         </>
-      )}
+      )} */}
 
-      {currentEntry?.entry.status === 'arriveAtPickup' &&
-      currentEntry.entry.paymentMethod === 'card' ? (
+      {/* {currentEntry?.entry?.status === 'arrivedAtPickup' ?
+      //&& currentEntry?.entry.paymentMethod === 'card' ? 
+      (
         <>
           <ConfirmPickup confirmArrival={alertUserOfArrival} />
           <AddressBanner />
         </>
-      ) : null}
+      ) : null} */}
 
       {/* {currentEntry && currentEntry?.entry.status === constants.PICK_UP ? (
         <>
@@ -422,14 +431,14 @@ const Home = ({navigation: {navigate, push}}) => {
         <ConfirmPayment />
       ) : null} */}
 
-      {currentEntry?.entry.status === 'pickedup' ? (
+      {currentEntry?.entry?.status === 'pickedup' ? (
         <>
           <AddressBanner />
           <EnrouteDelivery onPress={startDelievery} />
         </>
       ) : null}
 
-      {currentEntry?.entry.status === 'enrouteToDelivery' ? (
+      {currentEntry?.entry?.status === 'enrouteToDelivery' ? (
         <>
           <AddressBanner />
           <ConfirmDelivery confirmDelivery={announceArrivalAtDelivery} />

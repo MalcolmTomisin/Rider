@@ -6,7 +6,7 @@ import {colors} from '../../../theme';
 import {useSelector} from 'react-redux';
 import OTPTextInput from 'react-native-otp-textinput';
 
-const ConfirmDeliveryCode = ({navigation: {goBack, navigate}}) => {
+const ConfirmDeliveryCode = ({navigation: {goBack, navigate, push}}) => {
   const {dark} = useSelector(({theme}) => theme);
   const [value, setValue] = React.useState('');
 
@@ -31,10 +31,7 @@ const ConfirmDeliveryCode = ({navigation: {goBack, navigate}}) => {
           containerStyle={classes.containerStyle}
         />
         <View>
-          <Button
-            label="Confirm Code"
-            onPress={() => navigate('VerificationCompleted')}
-          />
+          <Button label="Confirm Code" onPress={() => push('OrderPool')} />
         </View>
       </View>
       <View style={classes.footerRoot} />

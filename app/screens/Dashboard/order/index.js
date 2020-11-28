@@ -53,7 +53,7 @@ const OrderPool = ({navigation: {navigate, push}}) => {
       });
   };
 
-  const pickUp = (item, index) => {
+  const pickUp = async (item, index) => {
     dispatch(
       deliveryAction.setDeliveryNavigation({
         pickUp: {
@@ -62,10 +62,13 @@ const OrderPool = ({navigation: {navigate, push}}) => {
         },
       }),
     );
-    AsyncStorage.setItem('currentEntry', `${index}`);
+    await AsyncStorage.setItem('currentEntry', `${index}`);
     dispatch(deliveryAction.setCurrentPickupInfo({currentEntry: item}));
     dispatch(deliveryAction.setIndexOfEntry({currentIndex: index}));
-    if (item.entry.status === 'arrivedAtPickup') {
+    if (
+      item.entry.status === 'arrivedAtPickup' 
+      //&& item.entry.paymentMethod !== 'cash'
+    ) {
       navigate('ConfirmPickupCode');
     } else if (item.entry.status === 'arrivedAtDelivery') {
       navigate('ConfirmDeliveryCode');
@@ -87,7 +90,7 @@ const OrderPool = ({navigation: {navigate, push}}) => {
         deliveryAddress={v?.deliveryAddress}
         estimatedCost={v?.estimatedCost}
         id={v?.orderId}
-        pickUpAction={() => pickUp(v)}
+        pickUpAction={() => pickUp(v, i)}
         status={v?.entry?.status}
       />
     ));
