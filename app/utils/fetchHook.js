@@ -13,11 +13,11 @@ export const useFetch = (url, options) => {
     dispatch(accountAction.setLoadingStatus({loading: true}));
     fetch(url, options)
       .then((res) => {
-        console.log('test', res.status);
+        //console.log('test', res.status);
         return res.json();
       })
       .then((res) => {
-        console.log('test', res);
+        //console.log('test', res);
         setResponse(res);
         dispatch(accountAction.setAcceptedOrders({acceptedOrders: res.data}));
         if (currentIndex) {

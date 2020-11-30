@@ -41,7 +41,15 @@ const OrderPool = ({navigation: {navigate, push}}) => {
         return res.json();
       })
       .then((res) => {
+        console.log('details', res.data[1]);
         dispatch(accountAction.setAcceptedOrders({acceptedOrders: res.data}));
+        if (currentIndex !== null) {
+          dispatch(
+            deliveryAction.setCurrentPickupInfo({
+              currentEntry: res.data[currentIndex],
+            }),
+          );
+        }
       })
       .catch((err) => {
         dispatch(
@@ -66,18 +74,20 @@ const OrderPool = ({navigation: {navigate, push}}) => {
     dispatch(deliveryAction.setCurrentPickupInfo({currentEntry: item}));
     dispatch(deliveryAction.setIndexOfEntry({currentIndex: index}));
     if (
-      item.entry.status === 'arrivedAtPickup' 
-      //&& item.entry.paymentMethod !== 'cash'
+      item.entry.status === 'arrivedAtPickup' &&
+      item.transaction.status === 'pending'
     ) {
-      navigate('ConfirmPickupCode');
-    } else if (item.entry.status === 'arrivedAtDelivery') {
+      push('Dashboard');
+    } else if (item.entry.status === 'arrivedAtPickup') {
+      push('ConfirmPickupCode');
+    } else if (item.status === 'arrivedAtDelivery') {
       navigate('ConfirmDeliveryCode');
     } else {
       push('Dashboard');
     }
   };
 
-  console.log('resposne', response);
+  //console.log('resposne', response);
   const renderTasks = () => {
     if (!acceptedOrders || acceptedOrders.length < 1) {
       return null;

@@ -1,4 +1,11 @@
+import axios from 'axios';
+
 export const baseURL = 'https://dev.api.logistics.churchesapp.com/api/v1/';
+import {} from 'react-redux';
+
+export const instance = axios.create({
+  baseURL,
+});
 
 export const pspk = 'pk_test_fef4b69ccc575dec3a8babc10d9371505943faa8';
 
@@ -19,4 +26,5 @@ export const api = {
   confirmPickUp: `${baseURL}entry/confirm-pickup`,
   startDelivery: `${baseURL}order/enroute-delivery`,
   alertArrivalAtDelivery: `${baseURL}order/arrived-delivery`,
+  confirmDelivery: `${baseURL}order/confirm-delivery`,
 };

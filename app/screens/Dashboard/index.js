@@ -38,7 +38,7 @@ const GOOGLE_MAPS_APIKEY = 'AIzaSyCiOd5vESI31DmPFd6e7QVRVMTX43sm_Ic';
 
 Geocoder.init(GOOGLE_MAPS_APIKEY);
 
-const Home = ({navigation: {navigate, push}}) => {
+const Home = ({navigation: {navigate, push, pop}}) => {
   let {isOnline, message, token, loading, location} = useSelector(
     ({account}) => account,
   );
@@ -72,7 +72,7 @@ const Home = ({navigation: {navigate, push}}) => {
     })
       .then((res) => {
         if (res.status !== 200) {
-          console.log('stat', res.status);
+          //console.log('stat', res.status);
           throw new Error('Unsuccessful');
         }
         return res.json();
@@ -82,10 +82,10 @@ const Home = ({navigation: {navigate, push}}) => {
         dispatch(
           feedbackAction.launch({open: true, severity: 's', msg: res.msg}),
         );
-        navigate('ConfirmPickupCode');
-        // if (currentEntry.entry.paymentMethod !== 'cash') {
-        //   navigate('ConfirmPickupCode');
-        // }
+        //navigate('ConfirmPickupCode');
+        if (currentEntry.entry.paymentMethod !== 'cash') {
+          navigate('ConfirmPickupCode');
+        }
       })
       .catch((err) => console.error(err))
       .finally(() => {
@@ -96,7 +96,7 @@ const Home = ({navigation: {navigate, push}}) => {
   //accept entry order
   const accept = () => {
     const {data} = message;
-    console.log('data', data._id);
+    //console.log('data', data._id);
     dispatch(accountAction.setLoadingStatus({loading: true}));
     setTimerIsRunning(false);
     fetch(api.acceptEntry, {
@@ -121,10 +121,10 @@ const Home = ({navigation: {navigate, push}}) => {
           feedbackAction.launch({open: true, severity: 's', msg: res.msg}),
         );
         dispatch(accountAction.setOrder({message}));
-        navigate('OrderPool');
+        push('OrderPool');
       })
       .catch((err) => {
-        console.log('err', err);
+        //console.log('err', err);
         dispatch(
           feedbackAction.launch({
             open: true,
@@ -151,7 +151,7 @@ const Home = ({navigation: {navigate, push}}) => {
       body: JSON.stringify({entry: currentEntry.entry._id}),
     })
       .then((res) => {
-        console.log('stat', res);
+        //console.log('stat', res);
         // if (res.status !== 200) {
         //   console.log('stat', res);
         //   throw new Error('unsuccessful');
@@ -159,16 +159,17 @@ const Home = ({navigation: {navigate, push}}) => {
         return res.json();
       })
       .then(async (res) => {
-        console.log('json', res);
+        //console.log('json', res);
         await callBasket(api.riderBasket, token, dispatch, currentIndex);
         dispatch(
           feedbackAction.launch({open: true, severity: 's', msg: res.msg}),
         );
         dispatch(deliveryAction.setEnrouteToPickUp({enroute: true}));
+        pop();
         push('Dashboard');
       })
       .catch((err) => {
-        console.log('err', err);
+        //console.log('err', err);
         dispatch(
           feedbackAction.launch({open: true, severity: 'w', msg: `${err}`}),
         );
@@ -178,6 +179,7 @@ const Home = ({navigation: {navigate, push}}) => {
       );
   };
 
+  //notify api delivery has started
   const startDelievery = () => {
     dispatch(accountAction.setLoadingStatus({loading: true}));
     fetch(api.startDelivery, {
@@ -186,10 +188,11 @@ const Home = ({navigation: {navigate, push}}) => {
         'x-auth-token': token,
         'Content-type': 'application/json',
       },
-      body: JSON.stringify({order: currentEntry.entry._id}),
+      body: JSON.stringify({order: currentEntry._id}),
     })
       .then((res) => {
-        if (res !== 200) {
+        //console.log('statres', res);
+        if (!res.ok) {
           throw new Error('unsuccessful');
         }
         return res.json();
@@ -206,6 +209,7 @@ const Home = ({navigation: {navigate, push}}) => {
       });
   };
 
+  //notify api delivery has arrived
   const announceArrivalAtDelivery = () => {
     dispatch(accountAction.setLoadingStatus({loading: true}));
     fetch(api.alertArrivalAtDelivery, {
@@ -215,7 +219,7 @@ const Home = ({navigation: {navigate, push}}) => {
         'Content-type': 'application/json',
       },
       body: JSON.stringify({
-        order: currentEntry.entry._id,
+        order: currentEntry._id,
       }),
     })
       .then((res) => {
@@ -229,6 +233,7 @@ const Home = ({navigation: {navigate, push}}) => {
         dispatch(
           feedbackAction.launch({open: true, severity: 's', msg: res.msg}),
         );
+        pop();
         navigate('ConfirmDeliveryCode');
       })
       .catch((err) => console.error(err))
@@ -246,6 +251,7 @@ const Home = ({navigation: {navigate, push}}) => {
     if (enroute) {
       Geolocation.watchPosition(
         ({coords: {longitude, latitude}}) => {
+          console.log('it has happened');
           fetch(api.location, {
             method: 'PATCH',
             headers: {
@@ -266,7 +272,7 @@ const Home = ({navigation: {navigate, push}}) => {
   useEffect(() => {
     if (socket) {
       socket.on('assignEntry', (message) => {
-        console.log('entry', message);
+        //console.log('entry', message);
         dispatch(accountAction.setOrder({message}));
       });
     }
@@ -276,21 +282,21 @@ const Home = ({navigation: {navigate, push}}) => {
   };
 
   const handleGetUserLocation = async () => {
-    dispatch(accountAction.setLoadingStatus({loading: true}));
+    // dispatch(accountAction.setLoadingStatus({loading: true}));
     Geolocation.getCurrentPosition(
       (info) => {
-        console.log('location', info.coords.latitude);
-        console.log('location', info.coords.longitude);
+        //console.log('location', info.coords.latitude);
+        //console.log('location', info.coords.longitude);
         setCoordinates({
           latitude: info.coords.latitude,
           longitude: info.coords.longitude,
         });
-        dispatch(accountAction.setLoadingStatus({loading: false}));
+        //dispatch(accountAction.setLoadingStatus({loading: false}));
       },
       (error) => {
-        dispatch(accountAction.setLoadingStatus({loading: false}));
+        //dispatch(accountAction.setLoadingStatus({loading: false}));
         // See error code charts below.
-        console.log(error.code, error.message);
+        // console.log(error.code, error.message);
       },
       {
         enableHighAccuracy: true,
@@ -312,13 +318,13 @@ const Home = ({navigation: {navigate, push}}) => {
   };
 
   const onMapPress = (e) => {
-    console.log('e.nativeEvent', e.nativeEvent);
+    //console.log('e.nativeEvent', e.nativeEvent);
     if (typeof e.nativeEvent.coordinate.latitude !== 'undefined') {
       setDestination(e.nativeEvent.coordinate);
     }
   };
 
-  console.log('coordinates', coordinates);
+  //console.log('coordinates', coordinates);
 
   const mapStyle = dark ? DARK_MAP_THEME : [];
 
@@ -330,37 +336,85 @@ const Home = ({navigation: {navigate, push}}) => {
         ref={mapView}
         customMapStyle={mapStyle}
         onPress={onMapPress}>
-        {pickUp && (
-          <>
-            <MapView.Marker coordinate={coordinates} />
-            <MapView.Marker coordinate={pickUp} />
-          </>
-        )}
-        {pickUp && (
-          <MapViewDirections
-            origin={coordinates}
-            destination={pickUp}
-            apikey={GOOGLE_MAPS_APIKEY}
-            strokeWidth={4}
-            strokeColor="red"
-            language="en"
-            // optimizeWaypoints={true}
-            // mode="BICYCLING"
-            precision="high"
-            timePrecision="now"
-            onStart={(params) => {
-              console.log(
-                `Started routing between "${params.origin}" and "${params.destination}"`,
-              );
-            }}
-            onReady={onReady}
-            onError={(errorMessage) => {
-              console.log('GOT AN ERROR', errorMessage);
-            }}
-            resetOnChange={false}
-            mode="DRIVING"
-          />
-        )}
+        {currentEntry?.entry?.status !== 'pickedup' &&
+          pickUp &&
+          currentEntry?.entry?.status !== 'enrouteToDelivery' &&
+          currentEntry?.entry?.status !== 'arrivedAtDelivery' &&
+          currentEntry?.entry?.status !== 'delivered' && (
+            <>
+              <MapView.Marker coordinate={coordinates} />
+              <MapView.Marker coordinate={pickUp} />
+              <MapViewDirections
+                origin={coordinates}
+                destination={{
+                  latitude: currentEntry?.pickupLatitude,
+                  longitude: currentEntry?.pickupLongitude,
+                }}
+                apikey={GOOGLE_MAPS_APIKEY}
+                strokeWidth={4}
+                strokeColor="red"
+                language="en"
+                // optimizeWaypoints={true}
+                // mode="BICYCLING"
+                precision="high"
+                timePrecision="now"
+                onStart={(params) => {
+                  // console.log(
+                  //   `Started routing between "${params.origin}" and "${params.destination}"`,
+                  // );
+                }}
+                onReady={onReady}
+                onError={(errorMessage) => {
+                  //console.log('GOT AN ERROR', errorMessage);
+                }}
+                resetOnChange={false}
+                mode="DRIVING"
+              />
+            </>
+          )}
+        {currentEntry?.entry?.status !== 'enrouteToPickup' &&
+          currentEntry?.entry?.status !== 'driverAccepted' &&
+          currentEntry?.entry?.status !== 'arriveAtPickup' &&
+          coordinates &&
+          currentEntry &&
+          currentEntry?.entry?.status !== 'completed' &&
+          currentEntry?.entry?.status !== 'cancelled' && (
+            <>
+              <MapView.Marker coordinate={coordinates} />
+              <MapView.Marker
+                coordinate={{
+                  latitude: currentEntry?.deliveryLatitude,
+                  longitude: currentEntry?.deliveryLongitude,
+                }}
+              />
+              <MapViewDirections
+                origin={coordinates}
+                destination={{
+                  latitude: currentEntry?.deliveryLatitude,
+                  longitude: currentEntry?.deliveryLongitude,
+                }}
+                apikey={GOOGLE_MAPS_APIKEY}
+                strokeWidth={4}
+                strokeColor="red"
+                language="en"
+                // optimizeWaypoints={true}
+                // mode="BICYCLING"
+                precision="high"
+                timePrecision="now"
+                onStart={(params) => {
+                  // console.log(
+                  //   `Started routing between "${params.origin}" and "${params.destination}"`,
+                  // );
+                }}
+                onReady={onReady}
+                onError={(errorMessage) => {
+                  //console.log('GOT AN ERROR', errorMessage);
+                }}
+                resetOnChange={false}
+                mode="DRIVING"
+              />
+            </>
+          )}
       </MapView>
 
       {!isOnline ? (
@@ -398,13 +452,13 @@ const Home = ({navigation: {navigate, push}}) => {
         </>
       ) : null}
 
-      {/* {currentEntry?.entry?.status === 'arrivedAtPickup' &&
+      {currentEntry?.entry?.status === 'arrivedAtPickup' &&
       currentEntry.entry.paymentMethod !== 'card' &&
-      !cashPaid ? (
+      currentEntry?.transaction?.status !== 'approved' ? (
         <ConfirmPayment />
       ) : null}
 
-      {cashPaid && (
+      {/* {cashPaid && (
         <>
           <ConfirmPickup confirmArrival={alertUserOfArrival} />
           <AddressBanner />
@@ -412,7 +466,7 @@ const Home = ({navigation: {navigate, push}}) => {
       )} */}
 
       {/* {currentEntry?.entry?.status === 'arrivedAtPickup' ?
-      //&& currentEntry?.entry.paymentMethod === 'card' ? 
+      //&& currentEntry?.entry.paymentMethod === 'card' ?
       (
         <>
           <ConfirmPickup confirmArrival={alertUserOfArrival} />
@@ -438,14 +492,14 @@ const Home = ({navigation: {navigate, push}}) => {
         </>
       ) : null}
 
-      {currentEntry?.entry?.status === 'enrouteToDelivery' ? (
+      {currentEntry?.status === 'enrouteToDelivery' ? (
         <>
           <AddressBanner />
           <ConfirmDelivery confirmDelivery={announceArrivalAtDelivery} />
         </>
       ) : null}
 
-      <ConfirmDialog />
+      <ConfirmDialog navigation={push} />
     </View>
   );
 };

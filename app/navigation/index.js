@@ -126,7 +126,7 @@ const Navigation = ({signedIn}) => {
 };
 
 const MapStateToProps = (state) => {
-  console.log('state', state);
+  //console.log('state', state);
   const {signup} = state;
   return {signedIn: signup.signedIn};
 };

@@ -1,4 +1,4 @@
-import React,{useContext} from 'react';
+import React, {useContext} from 'react';
 import {
   TouchableOpacity,
   StyleSheet,
@@ -20,13 +20,12 @@ const Switch = () => {
   const dispatch = useDispatch();
   const socket = useContext(WSContext);
 
-
   const toggleOnlineStatus = (socket) => {
     fetch(api.online, {
       method: 'PATCH',
       headers: {
-        "x-auth-token": token
-      }
+        'x-auth-token': token,
+      },
     })
       .then((res) => {
         if (res.status === 200) {
@@ -35,20 +34,19 @@ const Switch = () => {
         throw new Error('Unsuccessful');
       })
       .then((res) => {
-        if(isOnline){
-          socket.disconnect()
+        if (isOnline) {
+          socket.disconnect();
           socket.on('disconnect', () => {
-            console.log("disconnected");
-          })
-        }
-        else {
+            //console.log("disconnected");
+          });
+        } else {
           socket.connect();
         }
         dispatch(accountAction.setOnline({isOnline: !isOnline}));
         AsyncStorage.setItem('@isOnline', JSON.stringify(!isOnline));
       })
       .catch((err) => {
-        console.log(err);
+        //console.log(err);
       });
   };
 
@@ -59,7 +57,7 @@ const Switch = () => {
           style={[classes.container]}
           onPress={() => {
             toggleOnlineStatus(socket);
-            }}>
+          }}>
           {/* <Animated.View style={[classes.container]}> */}
           <Caption style={classes.title}>Online</Caption>
           <View style={classes.iconbg}>

@@ -63,9 +63,9 @@ const Task = ({
             classes.buttonRoot,
             {
               backgroundColor:
-                status !== 'pickedup' ||
-                status !== 'enrouteToDelivery' ||
-                status !== 'arrivedAtDelivery' ||
+                status !== 'pickedup' &&
+                status !== 'enrouteToDelivery' &&
+                status !== 'arrivedAtDelivery' &&
                 status !== 'delivered'
                   ? colors.blue.main
                   : colors.red.main,
@@ -73,9 +73,9 @@ const Task = ({
           ]}
           onPress={pickUpAction}>
           <Caption style={classes.buttonText}>{`${
-            status !== 'pickedup' ||
-            status !== 'enrouteToDelivery' ||
-            status !== 'arrivedAtDelivery' ||
+            status !== 'pickedup' &&
+            status !== 'enrouteToDelivery' &&
+            status !== 'arrivedAtDelivery' &&
             status !== 'delivered'
               ? 'Proceed Pickup'
               : 'Start Delivery'

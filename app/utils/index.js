@@ -36,7 +36,7 @@ export const formatMoney = (
         : '')
     );
   } catch (e) {
-    console.log(e);
+    //console.log(e);
   }
 };
 
@@ -55,7 +55,7 @@ export const callBasket = async (url, token, dispatch, currentIndex) => {
       return res.json();
     })
     .then(async (res) => {
-      console.log('test', res);
+      //console.log('test', res);
 
       dispatch(accountAction.setAcceptedOrders({acceptedOrders: res.data}));
       if (currentIndex) {
@@ -76,7 +76,7 @@ export const callBasket = async (url, token, dispatch, currentIndex) => {
       }
     })
     .catch((err) => {
-      console.log(err, 'callback err');
+      //console.log(err, 'callback err');
     })
     .finally(() => dispatch(accountAction.setLoadingStatus({loading: false})));
 };
