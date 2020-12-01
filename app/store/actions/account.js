@@ -52,11 +52,13 @@ const setLoadingStatus = (payload) => ({
   type: LOADING,
 });
 
+//gets data from the basket api and hydrates this data structure
 const setAcceptedOrders = (payload) => ({
   payload,
   type: ACCEPTED_ORDERS,
 });
 
+//sets loading icon in button on long running activities when button pressed
 const setIconLoading = (payload) => ({
   payload,
   type: ICON_LOADING,
