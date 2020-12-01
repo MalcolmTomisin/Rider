@@ -7,6 +7,7 @@ import {useSelector, useDispatch} from 'react-redux';
 import OTPTextInput from 'react-native-otp-textinput';
 import {api} from '../../../api';
 import {accountAction, feedbackAction} from '../../../store/actions';
+import {makeNetworkCalls} from '../../../utils';
 
 const ConfirmPickupCode = ({navigation: {goBack, navigate, push, pop}}) => {
   const {dark} = useSelector(({theme}) => theme);
@@ -25,25 +26,21 @@ const ConfirmPickupCode = ({navigation: {goBack, navigate, push, pop}}) => {
     }
     //console.log('req', currentEntry);
     dispatch(accountAction.setLoadingStatus({loading: true}));
-    fetch(api.confirmPickUp, {
-      method: 'POST',
+    makeNetworkCalls({
+      url: api.confirmPickUp,
+      method: 'post',
       headers: {
         'x-auth-token': token,
         'Content-type': 'application/json',
       },
-      body: JSON.stringify({entry: currentEntry.entry._id, OTPCode: value}),
+      data: {
+        entry: currentEntry.entry._id,
+        OTPCode: value,
+      },
     })
       .then((res) => {
-        //console.log('mad', res);
-        if (res.status !== 200) {
-          throw new Error('unsuccessful');
-        }
-        return res.json();
-      })
-      .then((res) => {
-        dispatch(
-          feedbackAction.launch({open: true, severity: 's', msg: res.msg}),
-        );
+        const {msg} = res.data;
+        dispatch(feedbackAction.launch({open: true, severity: 's', msg}));
         pop();
         push('OrderPool');
       })

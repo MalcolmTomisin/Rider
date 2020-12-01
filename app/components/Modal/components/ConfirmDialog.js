@@ -10,6 +10,7 @@ import {
   deliveryAction,
   feedbackAction,
 } from '../../../store/actions';
+import {makeNetworkCalls, callBasket} from '../../../utils';
 
 const ConfirmDialog = ({navigation}) => {
   const dispatch = useDispatch();
@@ -20,22 +21,21 @@ const ConfirmDialog = ({navigation}) => {
   const {dark} = useSelector(({theme}) => theme);
   const handlePayment = () => {
     dispatch(accountAction.setLoadingStatus({loading: true}));
-    fetch(api.cashPayment, {
-      method: 'POST',
+    makeNetworkCalls({
+      url: api.cashPayment,
+      method: 'post',
       headers: {
         'Content-type': 'application/json',
         'x-auth-token': token,
       },
-      body: JSON.stringify({
+      data: {
         status: recievedPayment === 1 ? 'approved' : 'declined',
         entry: currentEntry?.entry?._id,
-      }),
+      },
     })
-      .then((res) => {
-        //console.log('stat', res);
-        return res.json();
-      })
-      .then((res) => {
+      .then(async (res) => {
+        await callBasket(api.riderBasket, token, dispatch, currentIndex);
+        const {msg} = res.data;
         if (recievedPayment === 0) {
           dispatch(accountAction.setOrder({message: null}));
           dispatch(
@@ -51,27 +51,8 @@ const ConfirmDialog = ({navigation}) => {
             cashPaid: recievedPayment !== 0 ? true : false,
           }),
         );
-        //get recent report from api everytime an effect is made
-        fetch(api.riderBasket, {
-          method: 'GET',
-          headers: {
-            'x-auth-token': token,
-          },
-        })
-          .then((response) => response.json())
-          .then((response) => {
-            dispatch(
-              accountAction.setAcceptedOrders({
-                acceptedOrders: response.data,
-                currentEntry: response.data[currentEntry],
-              }),
-            );
-          })
-          .catch((err) => console.error(err))
-          .finally(() => {
-            dispatch(accountAction.setLoadingStatus({loading: false}));
-          });
-        navigation('ConfirmPickupCode');
+        dispatch(feedbackAction.launch({open: true, severity: 's', msg}));
+        navigation('OrderPool');
       })
       .catch((err) => {
         console.error(err);

@@ -95,6 +95,7 @@ const Home = ({navigation: {navigate, push, pop}}) => {
     dispatch(accountAction.setLoadingStatus({loading: true}));
     setTimerIsRunning(false);
     makeNetworkCalls({
+      url: api.acceptEntry,
       method: 'post',
       headers: {
         'x-auth-token': token,
@@ -110,9 +111,7 @@ const Home = ({navigation: {navigate, push, pop}}) => {
           feedbackAction.launch({open: true, severity: 's', msg: res.data.msg}),
         );
         dispatch(accountAction.setOrder({message}));
-        if (res.statusText === 'OK') {
-          push('OrderPool');
-        }
+        push('OrderPool');
       })
       .catch((err) => {
         dispatch(
@@ -142,14 +141,12 @@ const Home = ({navigation: {navigate, push, pop}}) => {
       data: {entry: currentEntry.entry._id},
     })
       .then(async (res) => {
+        await callBasket(api.riderBasket, token, dispatch, currentIndex);
         const {data, msg} = res.data;
         dispatch(feedbackAction.launch({open: true, severity: 's', msg}));
-        if (res.statusText === 'OK') {
-          dispatch(deliveryAction.setEnrouteToPickUp({enroute: true}));
-          await callBasket(api.riderBasket, token, dispatch, currentIndex);
-          pop();
-          push('Dashboard');
-        }
+        dispatch(deliveryAction.setEnrouteToPickUp({enroute: true}));
+        pop();
+        push('Dashboard');
       })
       .catch((err) => {
         dispatch(
@@ -201,15 +198,11 @@ const Home = ({navigation: {navigate, push, pop}}) => {
       data: {order: currentEntry._id},
     })
       .then(async (res) => {
+        await callBasket(api.riderBasket, token, dispatch, currentIndex);
         const {msg} = res.data;
-        dispatch(
-          feedbackAction.launch({open: true, severity: 's', msg: res.msg}),
-        );
-        if (res.statusText === 'OK') {
-          await callBasket(api.riderBasket, token, dispatch, currentIndex);
-          pop();
-          navigate('ConfirmDeliveryCode');
-        }
+        dispatch(feedbackAction.launch({open: true, severity: 's', msg}));
+        pop();
+        navigate('ConfirmDeliveryCode');
       })
       .catch((err) => {
         dispatch(
@@ -305,7 +298,8 @@ const Home = ({navigation: {navigate, push, pop}}) => {
         ref={mapView}
         customMapStyle={mapStyle}
         onPress={onMapPress}>
-        {currentEntry?.entry?.status !== 'pickedup' &&
+        {currentEntry &&
+          currentEntry?.entry?.status !== 'pickedup' &&
           pickUp &&
           currentEntry?.entry?.status !== 'enrouteToDelivery' &&
           currentEntry?.entry?.status !== 'arrivedAtDelivery' &&
@@ -333,7 +327,8 @@ const Home = ({navigation: {navigate, push, pop}}) => {
               />
             </>
           )}
-        {currentEntry?.entry?.status !== 'enrouteToPickup' &&
+        {currentEntry &&
+          currentEntry?.entry?.status !== 'enrouteToPickup' &&
           currentEntry?.entry?.status !== 'driverAccepted' &&
           currentEntry?.entry?.status !== 'arriveAtPickup' &&
           coordinates &&

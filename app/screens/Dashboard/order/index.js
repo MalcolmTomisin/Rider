@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {View, StyleSheet, ScrollView, RefreshControl} from 'react-native';
 import {Task} from '../../../components/Card';
 import {useSelector, useDispatch} from 'react-redux';
@@ -13,18 +13,22 @@ import {
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {callBasket, makeNetworkCalls} from '../../../utils';
 
-const OrderPool = ({navigation: {navigate, push}}) => {
+const OrderPool = ({navigation: {navigate, push, isFocused}}) => {
   const dispatch = useDispatch();
   const {token, loading, acceptedOrders} = useSelector(({account}) => account);
   const {currentIndex} = useSelector(({delivery}) => delivery);
   const [refresh, setRefresh] = useState(false);
 
-  const {response} = useFetch(api.riderBasket, {
-    method: 'get',
-    headers: {
-      'x-auth-token': token,
-    },
-  });
+  // const {response} = useFetch(api.riderBasket, {
+  //   method: 'get',
+  //   headers: {
+  //     'x-auth-token': token,
+  //   },
+  // });
+
+  useEffect(() => {
+    refreshBasket();
+  }, []);
 
   const refreshBasket = () => {
     setRefresh(true);
@@ -36,21 +40,26 @@ const OrderPool = ({navigation: {navigate, push}}) => {
       },
     })
       .then((res) => {
-        if (res.statusText === 'OK') {
-          dispatch(accountAction.setAcceptedOrders({acceptedOrders: res.data}));
-          if (currentIndex !== null) {
-            dispatch(
-              deliveryAction.setCurrentPickupInfo({
-                currentEntry: res.data[currentIndex],
-              }),
-            );
-          }
+        //console.log('res', res);
+        const {data, msg} = res.data;
+        dispatch(accountAction.setAcceptedOrders({acceptedOrders: data}));
+        if (currentIndex !== null) {
+          dispatch(
+            deliveryAction.setCurrentPickupInfo({
+              currentEntry: data[currentIndex],
+            }),
+          );
+        }
+        if (isFocused()) {
+          dispatch(feedbackAction.launch({open: true, severity: 's', msg}));
         }
       })
       .catch((err) => {
-        dispatch(
-          feedbackAction.launch({open: true, severity: 'w', msg: `${err}`}),
-        );
+        if (isFocused()) {
+          dispatch(
+            feedbackAction.launch({open: true, severity: 'w', msg: `${err}`}),
+          );
+        }
       })
       .finally(() => {
         setRefresh(false);
@@ -72,13 +81,13 @@ const OrderPool = ({navigation: {navigate, push}}) => {
     dispatch(deliveryAction.setIndexOfEntry({currentIndex: index}));
 
     if (
-      item.entry.status === 'arrivedAtPickup' &&
-      item.transaction.status === 'pending'
+      item?.entry?.status === 'arrivedAtPickup' &&
+      item?.transaction?.status === 'pending'
     ) {
       push('Dashboard');
-    } else if (item.entry.status === 'arrivedAtPickup') {
+    } else if (item?.entry?.status === 'arrivedAtPickup') {
       push('ConfirmPickupCode');
-    } else if (item.status === 'arrivedAtDelivery') {
+    } else if (item?.status === 'arrivedAtDelivery') {
       navigate('ConfirmDeliveryCode');
     } else {
       push('Dashboard');

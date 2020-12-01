@@ -11,6 +11,7 @@ import {
   deliveryAction,
 } from '../../../store/actions';
 import {api} from '../../../api';
+import {makeNetworkCalls, callBasket} from '../../../utils';
 
 const ConfirmDeliveryCode = ({navigation: {goBack, navigate, push, pop}}) => {
   const {dark} = useSelector(({theme}) => theme);
@@ -28,25 +29,21 @@ const ConfirmDeliveryCode = ({navigation: {goBack, navigate, push, pop}}) => {
       return;
     }
     dispatch(accountAction.setLoadingStatus({loading: true}));
-    fetch(api.confirmDelivery, {
-      method: 'POST',
+    makeNetworkCalls({
+      url: api.confirmDelivery,
+      method: 'post',
       headers: {
         'x-auth-token': token,
         'Content-type': 'application/json',
       },
-      body: JSON.stringify({order: currentEntry._id, OTPCode: value}),
+      data: {
+        order: currentEntry._id,
+        OTPCode: value,
+      },
     })
       .then((res) => {
-        //console.log('delivery', res);
-        if (!res.ok) {
-          throw new Error('unsuccessful');
-        }
-        return res.json();
-      })
-      .then((res) => {
-        dispatch(
-          feedbackAction.launch({open: true, severity: 's', msg: res.msg}),
-        );
+        const {msg} = res.data;
+        dispatch(feedbackAction.launch({open: true, severity: 's', msg}));
         dispatch(deliveryAction.setCurrentPickupInfo({currentEntry: null}));
         pop();
         push('OrderPool');
@@ -56,7 +53,7 @@ const ConfirmDeliveryCode = ({navigation: {goBack, navigate, push, pop}}) => {
         dispatch(
           feedbackAction.launch({
             open: true,
-            severity: 's',
+            severity: 'w',
             msg: `${err}`,
           }),
         );
