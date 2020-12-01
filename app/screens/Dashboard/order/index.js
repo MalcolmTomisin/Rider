@@ -11,7 +11,7 @@ import {
   feedbackAction,
 } from '../../../store/actions';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {callBasket} from '../../../utils';
+import {callBasket, makeNetworkCalls} from '../../../utils';
 
 const OrderPool = ({navigation: {navigate, push}}) => {
   const dispatch = useDispatch();
@@ -20,7 +20,7 @@ const OrderPool = ({navigation: {navigate, push}}) => {
   const [refresh, setRefresh] = useState(false);
 
   const {response} = useFetch(api.riderBasket, {
-    method: 'GET',
+    method: 'get',
     headers: {
       'x-auth-token': token,
     },
@@ -28,27 +28,23 @@ const OrderPool = ({navigation: {navigate, push}}) => {
 
   const refreshBasket = () => {
     setRefresh(true);
-    fetch(api.riderBasket, {
-      method: 'GET',
+    makeNetworkCalls({
+      url: api.riderBasket,
+      method: 'get',
       headers: {
         'x-auth-token': token,
       },
     })
       .then((res) => {
-        if (res.status !== 200) {
-          throw new Error('Unable to fetch orders');
-        }
-        return res.json();
-      })
-      .then((res) => {
-        console.log('details', res.data[1]);
-        dispatch(accountAction.setAcceptedOrders({acceptedOrders: res.data}));
-        if (currentIndex !== null) {
-          dispatch(
-            deliveryAction.setCurrentPickupInfo({
-              currentEntry: res.data[currentIndex],
-            }),
-          );
+        if (res.statusText === 'OK') {
+          dispatch(accountAction.setAcceptedOrders({acceptedOrders: res.data}));
+          if (currentIndex !== null) {
+            dispatch(
+              deliveryAction.setCurrentPickupInfo({
+                currentEntry: res.data[currentIndex],
+              }),
+            );
+          }
         }
       })
       .catch((err) => {

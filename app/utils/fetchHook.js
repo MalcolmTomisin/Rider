@@ -1,6 +1,7 @@
 import React, {useState, useEffect} from 'react';
 import {useDispatch, useSelector} from 'react-redux';
 import {accountAction, deliveryAction} from '../store/actions';
+import {makeNetworkCalls} from './index';
 
 export const useFetch = (url, options) => {
   const [response, setResponse] = useState(null);
@@ -11,27 +12,26 @@ export const useFetch = (url, options) => {
 
   useEffect(() => {
     dispatch(accountAction.setLoadingStatus({loading: true}));
-    fetch(url, options)
+    makeNetworkCalls({
+      url,
+      ...options,
+    })
       .then((res) => {
-        //console.log('test', res.status);
-        return res.json();
-      })
-      .then((res) => {
-        //console.log('test', res);
-        setResponse(res);
-        dispatch(accountAction.setAcceptedOrders({acceptedOrders: res.data}));
+        const {data} = res.data;
+        setResponse(data);
+        dispatch(accountAction.setAcceptedOrders({acceptedOrders: data}));
         if (currentIndex) {
           dispatch(
             deliveryAction.setCurrentPickupInfo({
-              currentEntry: res.data[currentIndex],
+              currentEntry: data[currentIndex],
             }),
           );
         }
       })
       .catch(setError)
-      .finally(() =>
-        dispatch(accountAction.setLoadingStatus({loading: false})),
-      );
+      .finally(() => {
+        dispatch(accountAction.setLoadingStatus({loading: false}));
+      });
   }, []);
   return {response, error};
 };

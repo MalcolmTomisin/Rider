@@ -144,7 +144,7 @@ const StartUp = () => {
   };
 
   useFetch(api.riderBasket, {
-    method: 'GET',
+    method: 'get',
     headers: {
       'x-auth-token': token,
     },
