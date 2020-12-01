@@ -1,5 +1,7 @@
 import {accountAction, deliveryAction} from '../store/actions';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import {axios} from 'axios';
+import {instance} from '../api';
 
 export const validateEmail = (email) => {
   const re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
@@ -42,26 +44,20 @@ export const formatMoney = (
 
 export const callBasket = async (url, token, dispatch, currentIndex) => {
   dispatch(accountAction.setLoadingStatus({loading: true}));
-  fetch(url, {
-    method: 'GET',
+  makeNetworkCalls({
+    url,
+    method: 'get',
     headers: {
       'x-auth-token': token,
     },
   })
-    .then((res) => {
-      if (res.status !== 200) {
-        throw new Error('unsuccessful');
-      }
-      return res.json();
-    })
     .then(async (res) => {
-      //console.log('test', res);
-
-      dispatch(accountAction.setAcceptedOrders({acceptedOrders: res.data}));
+      const {data, msg} = res.data;
+      dispatch(accountAction.setAcceptedOrders({acceptedOrders: data}));
       if (currentIndex) {
         dispatch(
           deliveryAction.setCurrentPickupInfo({
-            currentEntry: res.data[currentIndex],
+            currentEntry: data[currentIndex],
           }),
         );
       } else {
@@ -69,42 +65,16 @@ export const callBasket = async (url, token, dispatch, currentIndex) => {
         if (currentIndex) {
           dispatch(
             deliveryAction.setCurrentPickupInfo({
-              currentEntry: res.data[parseInt(currentIndex)],
+              currentEntry: data[parseInt(currentIndex)],
             }),
           );
         }
       }
     })
-    .catch((err) => {
-      //console.log(err, 'callback err');
-    })
+    .catch((err) => console.log(err))
     .finally(() => dispatch(accountAction.setLoadingStatus({loading: false})));
 };
 
-// export const initializeSocket = () => {
-//   socket = io('https://dev.api.logistics.churchesapp.com', {
-//     reconnectionDelayMax: 10000,
-//   });
-//   if (socket) {
-//     socket.on('connect', () => {
-//       console.log('connected');
-//     });
-//   }
-// };
-
-// export const disconnectSocket = () => {
-//   console.log('Disconnecting socket...');
-//   if (socket) {
-//     socket.disconnect();
-//   }
-// };
-
-// export const subscribeToEvent = (cb) => {
-//   if (!socket) {
-//     return true;
-//   }
-//   socket.on('NEW_ENTRY', (msg) => {
-//     console.log('Websocket event received!');
-//     return cb(null,msg);
-//   });
-// };
+export const makeNetworkCalls = async (requestConfig) => {
+  return await instance(requestConfig);
+};

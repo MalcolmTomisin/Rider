@@ -30,7 +30,7 @@ import {
 import {rejectOrder} from '../../components/Modal/components/CancelOrder';
 import constants from '../../utils/constants';
 import {ConfirmDialog} from '../../components/Modal';
-import {callBasket} from '../../utils';
+import {callBasket, makeNetworkCalls} from '../../utils';
 
 const {width, height} = Dimensions.get('window');
 
@@ -62,32 +62,28 @@ const Home = ({navigation: {navigate, push, pop}}) => {
   //alert user of arrival
   const alertUserOfArrival = () => {
     dispatch(accountAction.setLoadingStatus({loading: true}));
-    fetch(api.alertArrival, {
-      method: 'POST',
+    makeNetworkCalls({
+      url: api.alertArrival,
+      method: 'post',
       headers: {
         'x-auth-token': token,
         'Content-type': 'application/json',
       },
-      body: JSON.stringify({entry: currentEntry.entry._id}),
+      data: {entry: currentEntry.entry._id},
     })
-      .then((res) => {
-        if (res.status !== 200) {
-          //console.log('stat', res.status);
-          throw new Error('Unsuccessful');
-        }
-        return res.json();
-      })
       .then(async (res) => {
+        const {data, msg} = res.data;
         await callBasket(api.riderBasket, token, dispatch, currentIndex);
-        dispatch(
-          feedbackAction.launch({open: true, severity: 's', msg: res.msg}),
-        );
-        //navigate('ConfirmPickupCode');
+        dispatch(feedbackAction.launch({open: true, severity: 's', msg}));
         if (currentEntry.entry.paymentMethod !== 'cash') {
           navigate('ConfirmPickupCode');
         }
       })
-      .catch((err) => console.error(err))
+      .catch((err) =>
+        dispatch(
+          feedbackAction.launch({open: true, severity: 'w', msg: `${err}`}),
+        ),
+      )
       .finally(() => {
         dispatch(accountAction.setLoadingStatus({loading: false}));
       });
@@ -96,40 +92,34 @@ const Home = ({navigation: {navigate, push, pop}}) => {
   //accept entry order
   const accept = () => {
     const {data} = message;
-    //console.log('data', data._id);
     dispatch(accountAction.setLoadingStatus({loading: true}));
     setTimerIsRunning(false);
-    fetch(api.acceptEntry, {
-      method: 'POST',
+    makeNetworkCalls({
+      method: 'post',
       headers: {
         'x-auth-token': token,
         'Content-type': 'application/json',
       },
-      body: JSON.stringify({entry: data._id}),
+      data: {entry: data._id},
     })
-      .then((res) => {
-        if (res.status !== 200) {
-          throw new Error('unsuccessful');
-        }
-        return res.json();
-      })
       .then(async (res) => {
-        // console.log('res', res);
         message.accept = true;
+        //fetch basket for updated info about current entry
         await callBasket(api.riderBasket, token, dispatch, currentIndex);
         dispatch(
-          feedbackAction.launch({open: true, severity: 's', msg: res.msg}),
+          feedbackAction.launch({open: true, severity: 's', msg: res.data.msg}),
         );
         dispatch(accountAction.setOrder({message}));
-        push('OrderPool');
+        if (res.statusText === 'OK') {
+          push('OrderPool');
+        }
       })
       .catch((err) => {
-        //console.log('err', err);
         dispatch(
           feedbackAction.launch({
             open: true,
             severity: 'w',
-            msg: 'Unsuccessful',
+            msg: `${err}`,
           }),
         );
         setTimerIsRunning(true);
@@ -142,68 +132,57 @@ const Home = ({navigation: {navigate, push, pop}}) => {
   //notify api rider already enroute
   const goingEnroute = () => {
     dispatch(accountAction.setLoadingStatus({loading: true}));
-    fetch(api.enroute, {
-      method: 'POST',
+    makeNetworkCalls({
+      url: api.enroute,
+      method: 'post',
       headers: {
         'Content-type': 'application/json',
         'x-auth-token': token,
       },
-      body: JSON.stringify({entry: currentEntry.entry._id}),
+      data: {entry: currentEntry.entry._id},
     })
-      .then((res) => {
-        //console.log('stat', res);
-        // if (res.status !== 200) {
-        //   console.log('stat', res);
-        //   throw new Error('unsuccessful');
-        // }
-        return res.json();
-      })
       .then(async (res) => {
-        //console.log('json', res);
-        await callBasket(api.riderBasket, token, dispatch, currentIndex);
-        dispatch(
-          feedbackAction.launch({open: true, severity: 's', msg: res.msg}),
-        );
-        dispatch(deliveryAction.setEnrouteToPickUp({enroute: true}));
-        pop();
-        push('Dashboard');
+        const {data, msg} = res.data;
+        dispatch(feedbackAction.launch({open: true, severity: 's', msg}));
+        if (res.statusText === 'OK') {
+          dispatch(deliveryAction.setEnrouteToPickUp({enroute: true}));
+          await callBasket(api.riderBasket, token, dispatch, currentIndex);
+          pop();
+          push('Dashboard');
+        }
       })
       .catch((err) => {
-        //console.log('err', err);
         dispatch(
           feedbackAction.launch({open: true, severity: 'w', msg: `${err}`}),
         );
       })
-      .finally(() =>
-        dispatch(accountAction.setLoadingStatus({loading: false})),
-      );
+      .finally(() => {
+        dispatch(accountAction.setLoadingStatus({loading: false}));
+      });
   };
 
   //notify api delivery has started
   const startDelievery = () => {
     dispatch(accountAction.setLoadingStatus({loading: true}));
-    fetch(api.startDelivery, {
-      method: 'POST',
+    makeNetworkCalls({
+      url: api.startDelivery,
+      method: 'post',
       headers: {
         'x-auth-token': token,
         'Content-type': 'application/json',
       },
-      body: JSON.stringify({order: currentEntry._id}),
+      data: {order: currentEntry._id},
     })
-      .then((res) => {
-        //console.log('statres', res);
-        if (!res.ok) {
-          throw new Error('unsuccessful');
-        }
-        return res.json();
-      })
       .then(async (res) => {
+        const {msg} = res.data;
         await callBasket(api.riderBasket, token, dispatch, currentIndex);
+        dispatch(feedbackAction.launch({open: true, severity: 's', msg}));
+      })
+      .catch((err) => {
         dispatch(
-          feedbackAction.launch({open: true, severity: 's', msg: res.msg}),
+          feedbackAction.launch({open: true, severity: 'w', msg: `${err}`}),
         );
       })
-      .catch((err) => console.error(err))
       .finally(() => {
         dispatch(accountAction.setLoadingStatus({loading: false}));
       });
@@ -212,31 +191,31 @@ const Home = ({navigation: {navigate, push, pop}}) => {
   //notify api delivery has arrived
   const announceArrivalAtDelivery = () => {
     dispatch(accountAction.setLoadingStatus({loading: true}));
-    fetch(api.alertArrivalAtDelivery, {
-      method: 'POST',
+    makeNetworkCalls({
+      url: api.alertArrivalAtDelivery,
+      method: 'post',
       headers: {
         'x-auth-token': token,
         'Content-type': 'application/json',
       },
-      body: JSON.stringify({
-        order: currentEntry._id,
-      }),
+      data: {order: currentEntry._id},
     })
-      .then((res) => {
-        if (res.status !== 200) {
-          throw new Error('unsuccessful');
-        }
-        return res.json();
-      })
       .then(async (res) => {
-        await callBasket(api.riderBasket, token, dispatch, currentIndex);
+        const {msg} = res.data;
         dispatch(
           feedbackAction.launch({open: true, severity: 's', msg: res.msg}),
         );
-        pop();
-        navigate('ConfirmDeliveryCode');
+        if (res.statusText === 'OK') {
+          await callBasket(api.riderBasket, token, dispatch, currentIndex);
+          pop();
+          navigate('ConfirmDeliveryCode');
+        }
       })
-      .catch((err) => console.error(err))
+      .catch((err) => {
+        dispatch(
+          feedbackAction.launch({open: true, severity: 'w', msg: `${err}`}),
+        );
+      })
       .finally(() => {
         dispatch(accountAction.setLoadingStatus({loading: false}));
       });
@@ -282,22 +261,14 @@ const Home = ({navigation: {navigate, push, pop}}) => {
   };
 
   const handleGetUserLocation = async () => {
-    // dispatch(accountAction.setLoadingStatus({loading: true}));
     Geolocation.getCurrentPosition(
       (info) => {
-        //console.log('location', info.coords.latitude);
-        //console.log('location', info.coords.longitude);
         setCoordinates({
           latitude: info.coords.latitude,
           longitude: info.coords.longitude,
         });
-        //dispatch(accountAction.setLoadingStatus({loading: false}));
       },
-      (error) => {
-        //dispatch(accountAction.setLoadingStatus({loading: false}));
-        // See error code charts below.
-        // console.log(error.code, error.message);
-      },
+      (error) => {},
       {
         enableHighAccuracy: true,
         timeout: 15000,
@@ -323,8 +294,6 @@ const Home = ({navigation: {navigate, push, pop}}) => {
       setDestination(e.nativeEvent.coordinate);
     }
   };
-
-  //console.log('coordinates', coordinates);
 
   const mapStyle = dark ? DARK_MAP_THEME : [];
 
@@ -354,19 +323,11 @@ const Home = ({navigation: {navigate, push, pop}}) => {
                 strokeWidth={4}
                 strokeColor="red"
                 language="en"
-                // optimizeWaypoints={true}
-                // mode="BICYCLING"
                 precision="high"
                 timePrecision="now"
-                onStart={(params) => {
-                  // console.log(
-                  //   `Started routing between "${params.origin}" and "${params.destination}"`,
-                  // );
-                }}
+                onStart={(params) => {}}
                 onReady={onReady}
-                onError={(errorMessage) => {
-                  //console.log('GOT AN ERROR', errorMessage);
-                }}
+                onError={(errorMessage) => {}}
                 resetOnChange={false}
                 mode="DRIVING"
               />
@@ -397,19 +358,11 @@ const Home = ({navigation: {navigate, push, pop}}) => {
                 strokeWidth={4}
                 strokeColor="red"
                 language="en"
-                // optimizeWaypoints={true}
-                // mode="BICYCLING"
                 precision="high"
                 timePrecision="now"
-                onStart={(params) => {
-                  // console.log(
-                  //   `Started routing between "${params.origin}" and "${params.destination}"`,
-                  // );
-                }}
+                onStart={(params) => {}}
                 onReady={onReady}
-                onError={(errorMessage) => {
-                  //console.log('GOT AN ERROR', errorMessage);
-                }}
+                onError={(errorMessage) => {}}
                 resetOnChange={false}
                 mode="DRIVING"
               />
@@ -435,16 +388,6 @@ const Home = ({navigation: {navigate, push, pop}}) => {
         </>
       ) : null}
 
-      {/* {currentEntry ? (
-        currentEntry.entry.status === constants.PICK_UP ||
-        currentEntry.entry.status === 'arrivedAtPickup' ? null : (
-          <>
-            <EnroutePickup onPress={goingEnroute} />
-            <AddressBanner />
-          </>
-        )
-      ) : null} */}
-
       {currentEntry?.entry?.status === 'enrouteToPickup' ? (
         <>
           <ConfirmPickup confirmArrival={alertUserOfArrival} />
@@ -457,33 +400,6 @@ const Home = ({navigation: {navigate, push, pop}}) => {
       currentEntry?.transaction?.status !== 'approved' ? (
         <ConfirmPayment />
       ) : null}
-
-      {/* {cashPaid && (
-        <>
-          <ConfirmPickup confirmArrival={alertUserOfArrival} />
-          <AddressBanner />
-        </>
-      )} */}
-
-      {/* {currentEntry?.entry?.status === 'arrivedAtPickup' ?
-      //&& currentEntry?.entry.paymentMethod === 'card' ?
-      (
-        <>
-          <ConfirmPickup confirmArrival={alertUserOfArrival} />
-          <AddressBanner />
-        </>
-      ) : null} */}
-
-      {/* {currentEntry && currentEntry?.entry.status === constants.PICK_UP ? (
-        <>
-          <ConfirmPickup confirmArrival={alertUserOfArrival} />
-          <AddressBanner />
-        </>
-      ) : currentEntry &&
-        currentEntry?.entry.paymentMethod !== 'card' &&
-        enroute ? (
-        <ConfirmPayment />
-      ) : null} */}
 
       {currentEntry?.entry?.status === 'pickedup' ? (
         <>

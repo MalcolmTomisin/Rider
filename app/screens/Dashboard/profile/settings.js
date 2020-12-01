@@ -4,7 +4,7 @@ import {Subheading, Avatar, Switch} from 'react-native-paper';
 import {colors} from '../../../theme';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import {useSelector, useDispatch} from 'react-redux';
-import { themeAction } from "../../../store/actions"
+import {themeAction} from '../../../store/actions';
 import {setSignInToken} from '../../../store/actions/signUp';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -14,7 +14,10 @@ const Settings = ({navigation: {navigate}}) => {
   return (
     <View style={classes.root}>
       <List name="Bank details" onPress={() => navigate('BankAccount')} />
-      <List name="Change Password" onPress={() => navigate('Change Password')} />
+      <List
+        name="Change Password"
+        onPress={() => navigate('Change Password')}
+      />
       <List
         name="Dark Mode"
         // onPress={null}
@@ -29,11 +32,14 @@ const Settings = ({navigation: {navigate}}) => {
       <List name="Terms & Conditions" onPress={() => navigate('Rating')} />
       <List name="Privacy Policy" onPress={() => navigate('Settings')} />
       <List name="Help" onPress={() => navigate('Trips')} />
-      <List name="Logout" onPress={ () => {
-          AsyncStorage.clear();
+      <List
+        name="Logout"
+        onPress={async () => {
+          await AsyncStorage.clear();
           dispatch(setSignInToken({signedIn: false}));
           navigate('Onboarding');
-      }} />
+        }}
+      />
     </View>
   );
 };

@@ -1,10 +1,6 @@
 import React from 'react';
 import {View, StyleSheet, TouchableOpacity, ScrollView} from 'react-native';
-import {
-  Subheading,
-  Avatar,
-  Caption,
-} from 'react-native-paper';
+import {Subheading, Avatar, Caption} from 'react-native-paper';
 import {colors} from '../../../theme';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import {useSelector, useDispatch} from 'react-redux';
@@ -13,7 +9,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import {setSignInToken} from '../../../store/actions/signUp';
 
-const Profile = ({ navigation: { navigate } }) => {
+const Profile = ({navigation: {navigate}}) => {
   const {dark} = useSelector(({theme}) => theme);
   const dispatch = useDispatch();
 
@@ -33,16 +29,19 @@ const Profile = ({ navigation: { navigate } }) => {
         </View>
       </View>
       <ScrollView>
-      <List name="Trips" onPress={() => navigate('Trips')} />
-      <List name="Order Basket" onPress={() => navigate('OrderPool')} />
-      <List name="Ratings" onPress={() => navigate('Rating')} />
-      <List name="Settings" onPress={() => navigate('Settings')} />
-      <List name="Help" onPress={() => navigate('Trips')} />
-      <List name="Logout" onPress={() => {
-          AsyncStorage.clear();
-          dispatch(setSignInToken({signedIn: false}));
-          navigate('Onboarding');
-      }} />
+        <List name="Trips" onPress={() => navigate('Trips')} />
+        <List name="Order Basket" onPress={() => navigate('OrderPool')} />
+        <List name="Ratings" onPress={() => navigate('Rating')} />
+        <List name="Settings" onPress={() => navigate('Settings')} />
+        <List name="Help" onPress={() => navigate('Trips')} />
+        <List
+          name="Logout"
+          onPress={() => {
+            AsyncStorage.clear();
+            dispatch(setSignInToken({signedIn: false}));
+            navigate('Onboarding');
+          }}
+        />
       </ScrollView>
     </View>
   );
@@ -50,16 +49,19 @@ const Profile = ({ navigation: { navigate } }) => {
 
 export default Profile;
 
-const List = ({ name,  onPress}) => {
+const List = ({name, onPress}) => {
   return (
     <TouchableOpacity onPress={() => onPress()} style={classes.listRoot}>
-      <Subheading style={classes.listTitle}>
-        {name}
-      </Subheading>
-      <Icon name="chevron-right" size={30} color={colors.grey.main} style={{ fontWeight: "100" }} />
+      <Subheading style={classes.listTitle}>{name}</Subheading>
+      <Icon
+        name="chevron-right"
+        size={30}
+        color={colors.grey.main}
+        style={{fontWeight: '100'}}
+      />
     </TouchableOpacity>
   );
-}
+};
 
 const classes = StyleSheet.create({
   root: {
@@ -70,20 +72,20 @@ const classes = StyleSheet.create({
     borderBottomColor: colors.hr.light,
     borderBottomWidth: 1,
     paddingHorizontal: 20,
-    justifyContent: "flex-start",
-    flexDirection: "row",
-    alignItems: "center"
+    justifyContent: 'flex-start',
+    flexDirection: 'row',
+    alignItems: 'center',
   },
   headerContent: {
-    marginLeft: 20
+    marginLeft: 20,
   },
   headerLocation: {
-    alignItems: "center",
-    flexDirection: "row"
+    alignItems: 'center',
+    flexDirection: 'row',
   },
   headerLocationTitle: {
     fontSize: 14,
-    fontWeight: "300"
+    fontWeight: '300',
   },
   listRoot: {
     // flex: 5,
