@@ -16,7 +16,7 @@ const App = () => {
 };
 
 store.subscribe(() => {
-  console.log('Store Changed, ', store.getState());
+  //console.log('Store Changed, ', store.getState());
 });
 
 export default App;

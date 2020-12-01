@@ -21,6 +21,7 @@ export const CURRENT_PICK_UP = 'CURRENT_PICK_UP';
 export const ENROUTE = 'ENROUTE';
 export const PAYMENT_RECIEVED = 'PAYMENT_RECIEVED';
 export const INDEX_OF_ENTRY = 'INDEX_OF_ENTRY';
+export const ICON_LOADING = 'ICON_LOADING';
 // feedback
 export const LAUNCH_FEEDBACK = 'LAUNCH_FEEDBACK';
 export const DISMISS_FEEDBACK = 'DISMISS_FEEDBACK';

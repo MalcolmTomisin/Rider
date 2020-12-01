@@ -1,14 +1,21 @@
 import React from 'react';
-import {View, StyleSheet, TouchableHighlight, Animated, Pressable, TouchableOpacity} from 'react-native';
+import {
+  View,
+  StyleSheet,
+  TouchableHighlight,
+  Animated,
+  Pressable,
+  TouchableOpacity,
+} from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import {colors} from '../../theme';
 
 const mode = new Animated.Value(0);
 const buttonSize = new Animated.Value(1);
 
-const NavButton = ({ onPress }) => {
-  console.log('onPress', onPress);
-  
+const NavButton = ({onPress}) => {
+  //console.log('onPress', onPress);
+
   return (
     <TouchableOpacity
       // underlayColor="#7F58FF"
@@ -21,7 +28,7 @@ const NavButton = ({ onPress }) => {
       </Animated.View>
     </TouchableOpacity>
   );
-}
+};
 export default NavButton;
 
 const styles = StyleSheet.create({

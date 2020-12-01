@@ -11,9 +11,11 @@ import {
   feedbackAction,
 } from '../../../store/actions';
 
-const ConfirmDialog = () => {
+const ConfirmDialog = ({navigation}) => {
   const dispatch = useDispatch();
-  const {recievedPayment} = useSelector(({delivery}) => delivery);
+  const {recievedPayment, currentEntry, currentIndex} = useSelector(
+    ({delivery}) => delivery,
+  );
   const {loading, token} = useSelector(({account}) => account);
   const {dark} = useSelector(({theme}) => theme);
   const handlePayment = () => {
@@ -26,17 +28,22 @@ const ConfirmDialog = () => {
       },
       body: JSON.stringify({
         status: recievedPayment === 1 ? 'approved' : 'declined',
+        entry: currentEntry?.entry?._id,
       }),
     })
       .then((res) => {
-        if (res.status !== 200) {
-          throw new Error('unsucessful');
-        }
+        //console.log('stat', res);
         return res.json();
       })
       .then((res) => {
-        if (recievedPayment !== 0) {
+        if (recievedPayment === 0) {
           dispatch(accountAction.setOrder({message: null}));
+          dispatch(
+            deliveryAction.setCurrentPickupInfo({
+              currentEntry: null,
+              currentIndex: null,
+            }),
+          );
         }
         dispatch(
           deliveryAction.setPaymentRecieved({
@@ -54,13 +61,17 @@ const ConfirmDialog = () => {
           .then((response) => response.json())
           .then((response) => {
             dispatch(
-              accountAction.setAcceptedOrders({acceptedOrders: response.data}),
+              accountAction.setAcceptedOrders({
+                acceptedOrders: response.data,
+                currentEntry: response.data[currentEntry],
+              }),
             );
           })
           .catch((err) => console.error(err))
           .finally(() => {
             dispatch(accountAction.setLoadingStatus({loading: false}));
           });
+        navigation('ConfirmPickupCode');
       })
       .catch((err) => {
         console.error(err);

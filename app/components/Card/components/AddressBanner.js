@@ -18,7 +18,14 @@ const AddressBanner = ({}) => {
         style={{margin: 5}}
         color="#707070"
       />
-      <Text style={styles.text}>{`${currentEntry?.pickupAddress}`}</Text>
+      <Text style={styles.text}>
+        {currentEntry?.entry?.status !== 'pickedup' &&
+        currentEntry?.entry?.status !== 'enrouteToDelivery' &&
+        currentEntry?.entry?.status !== 'arrivedAtDelivery' &&
+        currentEntry?.entry?.status !== 'delivered'
+          ? `${currentEntry?.pickupAddress}`
+          : `${currentEntry?.deliveryAddress}`}
+      </Text>
     </View>
   );
 };

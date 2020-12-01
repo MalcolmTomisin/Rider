@@ -29,7 +29,7 @@ async function requestUserPermission() {
     authStatus === messaging.AuthorizationStatus.PROVISIONAL;
 
   if (enabled) {
-    console.log('Authorization status:', authStatus);
+    //console.log('Authorization status:', authStatus);
   }
 }
 
@@ -52,7 +52,7 @@ const StartUp = () => {
         );
       })
       .catch((err) => {
-        console.log(err, 'err');
+        //console.log(err, 'err');
       });
   };
 
@@ -60,7 +60,7 @@ const StartUp = () => {
     messaging()
       .getToken()
       .then((token) => {
-        console.log('ftoken', token);
+        //console.log('ftoken', token);
       });
     const unsubscribe = messaging().onMessage(async (remoteMessage) => {
       Alert.alert('A new FCM message arrived!', JSON.stringify(remoteMessage));
@@ -92,7 +92,7 @@ const StartUp = () => {
         );
 
         s.on('connect', () => {
-          console.log('socket connected');
+          //console.log('socket connected');
           // s.on('assignEntry', message => {
           //   console.log('entry', message);
           //     dispatch(accountAction.setOrder({message}));
@@ -100,13 +100,13 @@ const StartUp = () => {
         });
 
         s.on('assignEntry', (message) => {
-          console.log('entry', message);
+          //console.log('entry', message);
           dispatch(accountAction.setOrder({message}));
         });
 
         setSocket(s);
       } catch (error) {
-        console.log('error', error);
+        //console.log('error', error);
       }
     })();
   }, []);
@@ -131,13 +131,13 @@ const StartUp = () => {
   const handleLocation = async () => {
     Geolocation.getCurrentPosition(
       (position) => {
-        console.log('position', position);
+        //console.log('position', position);
         dispatch(accountAction.setLocation(position));
         getAddressFromCoordinates();
       },
       (error) => {
         // See error code charts below.
-        console.log(error.code, error.message);
+        //console.log(error.code, error.message);
       },
       {enableHighAccuracy: true, timeout: 15000, maximumAge: 10000},
     );

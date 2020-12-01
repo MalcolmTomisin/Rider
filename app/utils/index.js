@@ -1,6 +1,5 @@
-
 import {accountAction, deliveryAction} from '../store/actions';
-import { setSignInToken } from '../store/actions/signUp';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export const validateEmail = (email) => {
   const re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
@@ -37,7 +36,7 @@ export const formatMoney = (
         : '')
     );
   } catch (e) {
-    console.log(e);
+    //console.log(e);
   }
 };
 
@@ -50,13 +49,13 @@ export const callBasket = async (url, token, dispatch, currentIndex) => {
     },
   })
     .then((res) => {
-      if (res.status !== 200){
+      if (res.status !== 200) {
         throw new Error('unsuccessful');
       }
       return res.json();
     })
-    .then((res) => {
-      console.log('test', res);
+    .then(async (res) => {
+      //console.log('test', res);
 
       dispatch(accountAction.setAcceptedOrders({acceptedOrders: res.data}));
       if (currentIndex) {
@@ -65,10 +64,19 @@ export const callBasket = async (url, token, dispatch, currentIndex) => {
             currentEntry: res.data[currentIndex],
           }),
         );
+      } else {
+        currentIndex = await AsyncStorage.getItem('currentEntry');
+        if (currentIndex) {
+          dispatch(
+            deliveryAction.setCurrentPickupInfo({
+              currentEntry: res.data[parseInt(currentIndex)],
+            }),
+          );
+        }
       }
     })
     .catch((err) => {
-      console.error(err);
+      //console.log(err, 'callback err');
     })
     .finally(() => dispatch(accountAction.setLoadingStatus({loading: false})));
 };

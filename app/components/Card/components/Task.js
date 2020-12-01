@@ -1,5 +1,10 @@
 import React from 'react';
-import {View, StyleSheet, TouchableOpacity} from 'react-native';
+import {
+  View,
+  StyleSheet,
+  TouchableOpacity,
+  ActivityIndicator,
+} from 'react-native';
 import {Surface, Subheading, Caption, Paragraph} from 'react-native-paper';
 import {colors} from '../../../theme';
 import Icon from 'react-native-vector-icons/Feather';
@@ -14,6 +19,7 @@ const Task = ({
   status,
 }) => {
   const {dark} = useSelector(({theme}) => theme);
+  const {buttonIconLoading} = useSelector(({account}) => account);
   const hr = {borderBottomColor: dark ? colors.hr.dark : colors.hr.light};
 
   // const renderOrders = orders => {
@@ -63,23 +69,27 @@ const Task = ({
             classes.buttonRoot,
             {
               backgroundColor:
-                status !== 'pickedup' ||
-                status !== 'enrouteToDelivery' ||
-                status !== 'arrivedAtDelivery' ||
+                status !== 'pickedup' &&
+                status !== 'enrouteToDelivery' &&
+                status !== 'arrivedAtDelivery' &&
                 status !== 'delivered'
                   ? colors.blue.main
                   : colors.red.main,
             },
           ]}
           onPress={pickUpAction}>
-          <Caption style={classes.buttonText}>{`${
-            status !== 'pickedup' ||
-            status !== 'enrouteToDelivery' ||
-            status !== 'arrivedAtDelivery' ||
-            status !== 'delivered'
-              ? 'Proceed Pickup'
-              : 'Start Delivery'
-          }`}</Caption>
+          {buttonIconLoading ? (
+            <ActivityIndicator size="small" color="white" />
+          ) : (
+            <Caption style={classes.buttonText}>{`${
+              status !== 'pickedup' &&
+              status !== 'enrouteToDelivery' &&
+              status !== 'arrivedAtDelivery' &&
+              status !== 'delivered'
+                ? 'Proceed Pickup'
+                : 'Start Delivery'
+            }`}</Caption>
+          )}
           <Icon name="arrow-right" size={10} color={colors.white} />
         </TouchableOpacity>
       </View>

@@ -7,6 +7,7 @@ import {
   ADDRESS,
   LOADING,
   ACCEPTED_ORDERS,
+  ICON_LOADING,
 } from '../types';
 
 // user data action
@@ -51,9 +52,16 @@ const setLoadingStatus = (payload) => ({
   type: LOADING,
 });
 
+//gets data from the basket api and hydrates this data structure
 const setAcceptedOrders = (payload) => ({
   payload,
   type: ACCEPTED_ORDERS,
+});
+
+//sets loading icon in button on long running activities when button pressed
+const setIconLoading = (payload) => ({
+  payload,
+  type: ICON_LOADING,
 });
 
 export default {
@@ -65,4 +73,5 @@ export default {
   setAddress,
   setLoadingStatus,
   setAcceptedOrders,
+  setIconLoading,
 };

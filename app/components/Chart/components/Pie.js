@@ -10,9 +10,8 @@ import {
 } from 'victory-native';
 import {colors} from '../../../theme';
 import {useSelector} from 'react-redux';
-import Svg from "react-native-svg";
+import Svg from 'react-native-svg';
 const {width} = Dimensions.get('screen');
-
 
 const Pie = () => {
   const {dark} = useSelector(({theme}) => theme);
@@ -27,25 +26,26 @@ const Pie = () => {
     // return () => {
     //   clearInterval(interval);
     // }
-  }, [])
-    
+  }, []);
+
   const increasePercentage = () => {
     let percent = 25;
     interval = setInterval(() => {
-      percent += (Math.random() * 25);
-      percent = (percent > 100) ? 0 : percent;
+      percent += Math.random() * 25;
+      percent = percent > 100 ? 0 : percent;
       setPercent(percent);
-      setData(getData(percent))
+      setData(getData(percent));
     }, 2000);
-  }
-
+  };
 
   const getData = (percent) => {
-    return [{ x: 1, y: percent }, { x: 2, y: 100 - percent }];
-  }
+    return [
+      {x: 1, y: percent},
+      {x: 2, y: 100 - percent},
+    ];
+  };
 
-  console.log("data", data);
-  
+  //console.log("data", data);
 
   return (
     <View stxle={styles.container}>

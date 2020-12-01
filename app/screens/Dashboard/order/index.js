@@ -41,7 +41,15 @@ const OrderPool = ({navigation: {navigate, push}}) => {
         return res.json();
       })
       .then((res) => {
+        console.log('details', res.data[1]);
         dispatch(accountAction.setAcceptedOrders({acceptedOrders: res.data}));
+        if (currentIndex !== null) {
+          dispatch(
+            deliveryAction.setCurrentPickupInfo({
+              currentEntry: res.data[currentIndex],
+            }),
+          );
+        }
       })
       .catch((err) => {
         dispatch(
@@ -53,7 +61,8 @@ const OrderPool = ({navigation: {navigate, push}}) => {
       });
   };
 
-  const pickUp = (item, index) => {
+  const pickUp = async (item, index) => {
+    dispatch(accountAction.setIconLoading({buttonIconLoading: true}));
     dispatch(
       deliveryAction.setDeliveryNavigation({
         pickUp: {
@@ -62,19 +71,26 @@ const OrderPool = ({navigation: {navigate, push}}) => {
         },
       }),
     );
-    AsyncStorage.setItem('currentEntry', `${index}`);
+    await AsyncStorage.setItem('currentEntry', `${index}`);
     dispatch(deliveryAction.setCurrentPickupInfo({currentEntry: item}));
     dispatch(deliveryAction.setIndexOfEntry({currentIndex: index}));
-    if (item.entry.status === 'arrivedAtPickup') {
-      navigate('ConfirmPickupCode');
-    } else if (item.entry.status === 'arrivedAtDelivery') {
+
+    if (
+      item.entry.status === 'arrivedAtPickup' &&
+      item.transaction.status === 'pending'
+    ) {
+      push('Dashboard');
+    } else if (item.entry.status === 'arrivedAtPickup') {
+      push('ConfirmPickupCode');
+    } else if (item.status === 'arrivedAtDelivery') {
       navigate('ConfirmDeliveryCode');
     } else {
       push('Dashboard');
     }
+    dispatch(accountAction.setIconLoading({buttonIconLoading: false}));
   };
 
-  console.log('resposne', response);
+  //console.log('resposne', response);
   const renderTasks = () => {
     if (!acceptedOrders || acceptedOrders.length < 1) {
       return null;
@@ -87,7 +103,7 @@ const OrderPool = ({navigation: {navigate, push}}) => {
         deliveryAddress={v?.deliveryAddress}
         estimatedCost={v?.estimatedCost}
         id={v?.orderId}
-        pickUpAction={() => pickUp(v)}
+        pickUpAction={() => pickUp(v, i)}
         status={v?.entry?.status}
       />
     ));
