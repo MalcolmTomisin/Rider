@@ -62,6 +62,7 @@ const OrderPool = ({navigation: {navigate, push}}) => {
   };
 
   const pickUp = async (item, index) => {
+    dispatch(accountAction.setIconLoading({buttonIconLoading: true}));
     dispatch(
       deliveryAction.setDeliveryNavigation({
         pickUp: {
@@ -73,6 +74,7 @@ const OrderPool = ({navigation: {navigate, push}}) => {
     await AsyncStorage.setItem('currentEntry', `${index}`);
     dispatch(deliveryAction.setCurrentPickupInfo({currentEntry: item}));
     dispatch(deliveryAction.setIndexOfEntry({currentIndex: index}));
+
     if (
       item.entry.status === 'arrivedAtPickup' &&
       item.transaction.status === 'pending'
@@ -85,6 +87,7 @@ const OrderPool = ({navigation: {navigate, push}}) => {
     } else {
       push('Dashboard');
     }
+    dispatch(accountAction.setIconLoading({buttonIconLoading: false}));
   };
 
   //console.log('resposne', response);

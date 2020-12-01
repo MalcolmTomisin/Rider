@@ -7,6 +7,7 @@ import {
   ADDRESS,
   LOADING,
   ACCEPTED_ORDERS,
+  ICON_LOADING,
 } from '../types';
 
 const initialstate = {
@@ -38,6 +39,7 @@ const initialstate = {
   address: '',
   loading: false,
   acceptedOrders: [],
+  buttonIconLoading: false,
 };
 
 export default (state = initialstate, action) => {
@@ -59,6 +61,8 @@ export default (state = initialstate, action) => {
     case LOADING:
       return {...state, ...action.payload};
     case ACCEPTED_ORDERS:
+      return {...state, ...action.payload};
+    case ICON_LOADING:
       return {...state, ...action.payload};
     default:
       return state;

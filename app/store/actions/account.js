@@ -7,6 +7,7 @@ import {
   ADDRESS,
   LOADING,
   ACCEPTED_ORDERS,
+  ICON_LOADING,
 } from '../types';
 
 // user data action
@@ -56,6 +57,11 @@ const setAcceptedOrders = (payload) => ({
   type: ACCEPTED_ORDERS,
 });
 
+const setIconLoading = (payload) => ({
+  payload,
+  type: ICON_LOADING,
+});
+
 export default {
   setUserData,
   setToken,
@@ -65,4 +71,5 @@ export default {
   setAddress,
   setLoadingStatus,
   setAcceptedOrders,
+  setIconLoading,
 };
