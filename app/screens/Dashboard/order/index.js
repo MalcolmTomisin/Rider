@@ -40,7 +40,7 @@ const OrderPool = ({navigation: {navigate, push, isFocused}}) => {
       },
     })
       .then((res) => {
-        //console.log('res', res);
+        console.log('res', res.data);
         const {data, msg} = res.data;
         dispatch(accountAction.setAcceptedOrders({acceptedOrders: data}));
         if (currentIndex !== null) {

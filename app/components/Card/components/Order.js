@@ -9,6 +9,9 @@ import {Button} from '../../Button';
 import {deliveryAction, accountAction} from '../../../store/actions';
 import {useNavigation} from '@react-navigation/native';
 import CountDown from 'react-native-countdown-component';
+import NotificationSounds, {
+  playSampleSound,
+} from 'react-native-notification-sounds';
 
 const Order = ({onAccept, onCountDownFinish, timerIsRunning}) => {
   const dispatch = useDispatch();
@@ -29,6 +32,7 @@ const Order = ({onAccept, onCountDownFinish, timerIsRunning}) => {
                 : `${data.name.charAt(0)}`
             }`}
             size={45}
+            style={{marginLeft: 20}}
           />
           <View style={classes.orderContentRoot}>
             <Subheading>{data?.name}</Subheading>
@@ -145,7 +149,6 @@ const TimeDistance = ({data, onFinish, running}) => {
           {color: dark ? colors.black : colors.white},
         ]}>{`${Math.ceil(data?.TED)} km`}</Caption>
       <CountDown
-        sizze={5}
         until={120}
         timeToShow={['M', 'S']}
         onFinish={onFinish}
@@ -156,6 +159,13 @@ const TimeDistance = ({data, onFinish, running}) => {
         showSeparator
         separatorStyle={{color: colors.red.main}}
         running={running}
+        onChange={() => {
+          NotificationSounds.getNotifications('notification').then(
+            (soundsList) => {
+              playSampleSound(soundsList[1]);
+            },
+          );
+        }}
       />
     </View>
   );

@@ -146,13 +146,6 @@ const StartUp = () => {
     );
   };
 
-  useFetch(api.riderBasket, {
-    method: 'get',
-    headers: {
-      'x-auth-token': token,
-    },
-  });
-
   const RNPTheme = {
     dark: theme.dark,
     colors: {

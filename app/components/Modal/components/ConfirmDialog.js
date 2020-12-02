@@ -52,12 +52,14 @@ const ConfirmDialog = ({navigation}) => {
           }),
         );
         dispatch(feedbackAction.launch({open: true, severity: 's', msg}));
-        navigation('OrderPool');
+        if (recievedPayment !== 0) {
+          navigation('ConfirmPickupCode');
+        }
       })
       .catch((err) => {
         console.error(err);
         dispatch(
-          feedbackAction.launch({open: true, severity: 'w', msg: err.message}),
+          feedbackAction.launch({open: true, severity: 'w', msg: `${err}`}),
         );
       })
       .finally(() => {

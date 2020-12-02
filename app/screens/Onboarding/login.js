@@ -64,16 +64,6 @@ const Login = ({navigation: {goBack, navigate}}) => {
           'Content-type': 'application/json',
         },
         data: {email: mobileNumber.trim(), password: password.trim()},
-      });
-      fetch(api.login, {
-        method: 'POST',
-        headers: {
-          'Content-type': 'application/json',
-        },
-        body: JSON.stringify({
-          email: mobileNumber.trim(),
-          password: password.trim(),
-        }),
       })
         .then(async (res) => {
           const {msg, data} = res.data;
@@ -147,8 +137,13 @@ const Login = ({navigation: {goBack, navigate}}) => {
         <View style={{flexGrow: 1}} />
         <View style={classes.signupRoot}>
           <Subheading style={classes.signupLeft}>
-            Don't Have An Account Yet? style={classes.signupRight}
-            onPress={() => navigate('Register')} Sign Up.
+            Don't Have An Account Yet?
+            <Subheading
+              style={classes.signupRight}
+              onPress={() => navigate('Register')}>
+              {' '}
+              Sign Up.
+            </Subheading>
           </Subheading>
         </View>
       </View>

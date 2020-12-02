@@ -21,19 +21,18 @@ import io from 'socket.io-client';
 import WSContext from '../../components/Socket/context';
 import {Loading} from '../../components/Loading';
 import {api} from '../../api';
-import {FeedBack} from '../../components/Feedback';
 import {
   accountAction,
   deliveryAction,
   feedbackAction,
 } from '../../store/actions';
 import {rejectOrder} from '../../components/Modal/components/CancelOrder';
-import constants from '../../utils/constants';
 import {ConfirmDialog} from '../../components/Modal';
 import {callBasket, makeNetworkCalls} from '../../utils';
 import NotificationSounds, {
   playSampleSound,
 } from 'react-native-notification-sounds';
+import {useFetch} from '../../utils/fetchHook';
 
 const {width, height} = Dimensions.get('window');
 
@@ -61,6 +60,8 @@ const Home = ({navigation: {navigate, push, pop}}) => {
     latitude: 6.605284535830513,
     longitude: 3.3171244316839394,
   });
+
+  useFetch();
 
   //alert user of arrival
   const alertUserOfArrival = () => {

@@ -28,14 +28,38 @@ const Task = ({
   //   ))
   // }
   return (
-    <Surface style={classes.root}>
+    <Surface
+      style={[classes.root, {height: status !== 'completed' ? 300 : 200}]}>
       <View style={[classes.headerRoot, hr]}>
         <View>
-          <Subheading>Ready to Deliver</Subheading>
+          <Subheading>{`${
+            status !== 'completed' && status !== 'cancelled'
+              ? 'Ready to Deliver'
+              : status === 'cancelled'
+              ? 'Cancelled'
+              : 'Delivered'
+          }`}</Subheading>
           <Caption style={classes.content}>{id}</Caption>
         </View>
-        <View style={classes.headerIconRoot}>
-          <Icon name="arrow-up-right" size={15} color={colors.white} />
+        <View
+          style={[
+            classes.headerIconRoot,
+            {
+              backgroundColor:
+                status === 'cancelled' ? 'grey' : colors.red.main,
+            },
+          ]}>
+          <Icon
+            name={`${
+              status !== 'completed' && status !== 'cancelled'
+                ? 'arrow-up-right'
+                : status === 'cancelled'
+                ? 'alert-triangle'
+                : 'shopping-bag'
+            }`}
+            size={15}
+            color={colors.white}
+          />
         </View>
       </View>
       <View style={[classes.bodyRoot, hr]}>
@@ -54,45 +78,59 @@ const Task = ({
           <Caption style={classes.content}>{deliveryAddress}</Caption>
         </View>
       </View>
+      {status !== 'completed' && (
+        <View style={classes.footerRoot}>
+          <View>
+            <Subheading style={classes.bodyHeaderText}>Payment</Subheading>
+            <Paragraph style={classes.bodyHeaderText1}>{`${Math.ceil(
+              estimatedCost,
+            )}`}</Paragraph>
+            <Caption style={classes.content}>Payment on Delivery</Caption>
+          </View>
 
-      <View style={classes.footerRoot}>
-        <View>
-          <Subheading style={classes.bodyHeaderText}>Payment</Subheading>
-          <Paragraph style={classes.bodyHeaderText1}>{`${Math.ceil(
-            estimatedCost,
-          )}`}</Paragraph>
-          <Caption style={classes.content}>Payment on Delivery</Caption>
-        </View>
-
-        <TouchableOpacity
-          style={[
-            classes.buttonRoot,
-            {
-              backgroundColor:
+          <TouchableOpacity
+            style={[
+              classes.buttonRoot,
+              {
+                backgroundColor:
+                  status !== 'pickedup' &&
+                  status !== 'enrouteToDelivery' &&
+                  status !== 'arrivedAtDelivery' &&
+                  status !== 'delivered' &&
+                  status !== 'cancelled'
+                    ? colors.blue.main
+                    : status === 'cancelled'
+                    ? 'grey'
+                    : colors.red.main,
+              },
+            ]}
+            disabled={status === 'cancelled'}
+            onPress={pickUpAction}>
+            {buttonIconLoading ? (
+              <ActivityIndicator size="small" color="white" />
+            ) : (
+              <Caption style={classes.buttonText}>{`${
                 status !== 'pickedup' &&
                 status !== 'enrouteToDelivery' &&
                 status !== 'arrivedAtDelivery' &&
-                status !== 'delivered'
-                  ? colors.blue.main
-                  : colors.red.main,
-            },
-          ]}
-          onPress={pickUpAction}>
-          {buttonIconLoading ? (
-            <ActivityIndicator size="small" color="white" />
-          ) : (
-            <Caption style={classes.buttonText}>{`${
-              status !== 'pickedup' &&
-              status !== 'enrouteToDelivery' &&
-              status !== 'arrivedAtDelivery' &&
-              status !== 'delivered'
-                ? 'Proceed Pickup'
-                : 'Start Delivery'
-            }`}</Caption>
-          )}
-          <Icon name="arrow-right" size={10} color={colors.white} />
-        </TouchableOpacity>
-      </View>
+                status !== 'delivered' &&
+                status !== 'cancelled'
+                  ? 'Proceed Pickup'
+                  : status === 'cancelled'
+                  ? 'Cancelled'
+                  : 'Start Delivery'
+              }`}</Caption>
+            )}
+            <Icon
+              name={`${
+                status === 'cancelled' ? 'alert-triangle' : 'arrow-right'
+              }`}
+              size={10}
+              color={colors.white}
+            />
+          </TouchableOpacity>
+        </View>
+      )}
     </Surface>
   );
 };
@@ -102,9 +140,8 @@ export default Task;
 const classes = StyleSheet.create({
   root: {
     // flex: 1,
-    height: 300,
+    //height: 300,
     elevation: 2,
-
     marginVertical: 10,
   },
   headerRoot: {
@@ -121,7 +158,6 @@ const classes = StyleSheet.create({
     borderRadius: 30,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: colors.red.main,
   },
   content: {
     fontSize: 13,

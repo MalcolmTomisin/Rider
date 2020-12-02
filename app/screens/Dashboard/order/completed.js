@@ -25,6 +25,7 @@ const CompletedOrder = ({navigation: {isFocused}}) => {
       })
       .then((res) => {
         const {msg, data} = res.data;
+        console.log('dat5a', data);
         setCompletedOrders(data);
         if (isFocused()) {
           dispatch(
@@ -55,7 +56,16 @@ const CompletedOrder = ({navigation: {isFocused}}) => {
       return null;
     }
 
-    return completedOrders.map((v, i) => <Task />);
+    return completedOrders.map((v, i) => (
+      <Task
+        key={i}
+        pickUpAddress={v?.pickupAddress}
+        deliveryAddress={v?.deliveryAddress}
+        estimatedCost={v?.estimatedCost}
+        id={v?.orderId}
+        status={v?.entry?.status}
+      />
+    ));
   };
 
   return (
@@ -64,9 +74,7 @@ const CompletedOrder = ({navigation: {isFocused}}) => {
         refreshControl={
           <RefreshControl refreshing={refresh} onRefresh={refreshBasket} />
         }>
-        {/* {
-        !data && !message.accept ? null : renderTasks(data?.orders)
-      } */}
+        {renderTasks()}
       </ScrollView>
     </View>
   );

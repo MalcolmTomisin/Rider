@@ -37,9 +37,12 @@ const Dashboard = () => {
             <TouchableOpacity
               style={{justifyContent: 'center', alignItems: 'center'}}
               onPress={() => navigate('OrderPool')}>
-              {isOnline && acceptedOrders?.length > 0 ? (
-                <Badge
-                  style={classes.badge}>{`${acceptedOrders.length}`}</Badge>
+              {isOnline &&
+              acceptedOrders?.filter((v) => v.status !== 'cancelled').length >
+                0 ? (
+                <Badge style={classes.badge}>{`${
+                  acceptedOrders.filter((v) => v.status !== 'cancelled').length
+                }`}</Badge>
               ) : null}
               <Icon size={35} name="basket" />
             </TouchableOpacity>
