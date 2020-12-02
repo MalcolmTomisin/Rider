@@ -16,6 +16,7 @@ import {
   feedbackAction,
 } from '../../../store/actions';
 import {api} from '../../../api';
+import {makeNetworkCalls} from '../../../utils';
 const {width, height} = Dimensions.get('screen');
 
 const CancelOrder = () => {
@@ -65,25 +66,24 @@ export default CancelOrder;
 export const rejectOrder = (message, dispatch, token) => {
   const {data} = message;
   dispatch(accountAction.setLoadingStatus({loading: true}));
-  fetch(api.rejectEntry, {
-    method: 'POST',
+  makeNetworkCalls({
+    url: api.rejectEntry,
+    method: 'post',
     headers: {
       'Content-type': 'application/json',
       'x-auth-token': token,
     },
-    body: JSON.stringify({entry: data._id}),
+    data: {entry: data._id},
   })
-    .then((res) => res.json())
     .then((res) => {
+      const {msg} = res.data;
       message = null;
-      dispatch(
-        feedbackAction.launch({open: true, severity: 's', msg: res.msg}),
-      );
+      dispatch(feedbackAction.launch({open: true, severity: 's', msg}));
       dispatch(accountAction.setOrder({message}));
     })
     .catch((err) => {
       dispatch(
-        feedbackAction.launch({open: true, severity: 'w', msg: 'unsuccessful'}),
+        feedbackAction.launch({open: true, severity: 'w', msg: `${err}`}),
       );
     })
     .finally(() => {

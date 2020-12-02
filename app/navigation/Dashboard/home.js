@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import {createStackNavigator} from '@react-navigation/stack';
 import {View, TouchableOpacity, Image, StyleSheet} from 'react-native';
 import Home from '../../screens/Dashboard';
@@ -11,7 +11,7 @@ import {useSelector} from 'react-redux';
 const Stack = createStackNavigator();
 
 const Dashboard = () => {
-  const {isOnline, acceptedOrders} = useSelector(({account}) => account);
+  const {isOnline, acceptedOrders, user} = useSelector(({account}) => account);
 
   return (
     <Stack.Navigator initialRouteName="Home" headerMode="screen">
@@ -20,7 +20,17 @@ const Dashboard = () => {
         options={({navigation: {navigate}}) => ({
           headerLeft: () => (
             <View style={classes.left}>
-              <Avatar.Text size={35} label="XD" color={colors.red.main} />
+              <Avatar.Text
+                size={35}
+                label={`${
+                  user?.name.indexOf(' ') !== -1
+                    ? `${user?.name.charAt(0)}${user?.name.charAt(
+                        user?.name.indexOf(' ') + 1,
+                      )}`
+                    : `${user?.name.charAt(0)}`
+                }`}
+                color={colors.red.main}
+              />
             </View>
           ),
           headerTitle: () => (

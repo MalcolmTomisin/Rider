@@ -20,7 +20,16 @@ const Order = ({onAccept, onCountDownFinish, timerIsRunning}) => {
     <View style={classes.root}>
       <Surface style={classes.container}>
         <View style={classes.orderRoot}>
-          <Avatar.Text label="RT" size={45} />
+          <Avatar.Text
+            label={`${
+              data.name.indexOf(' ') !== -1
+                ? `${data.name.charAt(0)}${data.name.charAt(
+                    data.name.indexOf(' ') + 1,
+                  )}`
+                : `${data.name.charAt(0)}`
+            }`}
+            size={45}
+          />
           <View style={classes.orderContentRoot}>
             <Subheading>{data?.name}</Subheading>
             <View style={classes.orderContentAddress}>
@@ -71,11 +80,15 @@ const Order = ({onAccept, onCountDownFinish, timerIsRunning}) => {
             </View>
             <View style={classes.imgRoot}>
               <Card.Cover
-                source={{uri: 'https://picsum.photos/200'}}
+                source={{
+                  uri: `https://d367c9pgq4rf5n.cloudfront.net/${data.img[0]}`,
+                }}
                 style={classes.img}
               />
               <Card.Cover
-                source={{uri: 'https://picsum.photos/200'}}
+                source={{
+                  uri: `https://d367c9pgq4rf5n.cloudfront.net/${data.img[0]}`,
+                }}
                 style={classes.img}
               />
             </View>
@@ -88,22 +101,6 @@ const Order = ({onAccept, onCountDownFinish, timerIsRunning}) => {
         />
 
         <View style={classes.actionRoot}>
-          {/* <TouchableOpacity style={classes.actionButtonRoot}>
-            <FeaterIcon
-              name="phone-call"
-              size={30}
-              color={dark ? colors.grey.light : colors.grey.dark}
-            />
-            <Caption style={classes.actionButtonText}>Call</Caption>
-          </TouchableOpacity>
-          <TouchableOpacity style={classes.actionButtonRoot}>
-            <FeaterIcon
-              name="message-square"
-              size={30}
-              color={dark ? colors.grey.light : colors.grey.dark}
-            />
-            <Caption style={classes.actionButtonText}>Message</Caption>
-          </TouchableOpacity> */}
           <TouchableOpacity
             style={classes.actionButtonRoot}
             onPress={() => {
@@ -240,6 +237,7 @@ const classes = StyleSheet.create({
     justifyContent: 'space-evenly',
     alignItems: 'center',
     width: '100%',
+    marginVertical: -10,
   },
   actionButtonRoot: {
     justifyContent: 'center',
@@ -248,5 +246,6 @@ const classes = StyleSheet.create({
   actionButtonText: {
     fontSize: 9,
     fontWeight: '400',
+    marginTop: -5,
   },
 });

@@ -1,10 +1,5 @@
 import React, {useState} from 'react';
-import {
-  View,
-  StyleSheet,
-  TouchableOpacity,
-  Text
-} from 'react-native';
+import {View, StyleSheet, TouchableOpacity, Text} from 'react-native';
 import {Title, Subheading} from 'react-native-paper';
 import {Button} from '../../components/Button';
 import img from '../../image';
@@ -19,9 +14,10 @@ import feedbackAction from '../../store/actions/feedback';
 import {FeedBack} from '../../components/Feedback';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {Loading} from '../../components/Loading';
-import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
+import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import constants from '../../utils/constants';
 import {accountAction} from '../../store/actions';
+import {makeNetworkCalls} from '../../utils';
 
 const Login = ({navigation: {goBack, navigate}}) => {
   const dispatch = useDispatch();
@@ -30,8 +26,6 @@ const Login = ({navigation: {goBack, navigate}}) => {
   const [mobileNumber, setMobileNumber] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState({mobileNumber: '', password: ''});
-  const [isLoading, setIsLoading] = useState(false);
-
 
   const handleInput = (type, input) => {
     if (type === 1) {
@@ -63,40 +57,51 @@ const Login = ({navigation: {goBack, navigate}}) => {
   const submit = () => {
     if (!error.mobileNumber && !error.password) {
       dispatch(accountAction.setLoadingStatus({loading: true}));
+      makeNetworkCalls({
+        url: api.login,
+        method: 'post',
+        headers: {
+          'Content-type': 'application/json',
+        },
+        data: {email: mobileNumber.trim(), password: password.trim()},
+      });
       fetch(api.login, {
         method: 'POST',
         headers: {
           'Content-type': 'application/json',
         },
-        body: JSON.stringify({email: mobileNumber.trim(), password: password.trim()}),
+        body: JSON.stringify({
+          email: mobileNumber.trim(),
+          password: password.trim(),
+        }),
       })
         .then(async (res) => {
-          if (res.status === 200) {
-           const authToken = res.headers.map["x-auth-token"];
-           await AsyncStorage.setItem("x-auth-token", authToken);
-            return res.json();
-          }
-          throw new Error('Unsuccessful');
-        })
-        .then(async (res) => {
-          dispatch(
-            feedbackAction.launch({open: true, severity: 's', msg: res.msg}),
-          );
-          await AsyncStorage.setItem(api.userAuthKey, JSON.stringify(true));
+          const {msg, data} = res.data;
+          await AsyncStorage.multiSet([
+            ['x-auth-token', res.headers['x-auth-token']],
+            [api.userAuthKey, JSON.stringify(true)],
+            ['userDetails', JSON.stringify(data)],
+          ]);
           dispatch(setSignInToken({signedIn: true}));
+          dispatch(feedbackAction.launch({open: true, severity: 's', msg}));
+          dispatch(accountAction.setUserData({user: data}));
           navigate('Dashboard', {screen: 'Home'});
         })
         .catch((err) => {
           dispatch(
-            feedbackAction.launch({open: true, severity: 'w', msg: 'Error'}),
+            feedbackAction.launch({open: true, severity: 'w', msg: `${err}`}),
           );
         })
-        .finally(() => dispatch(accountAction.setLoadingStatus({loading: false})));
+        .finally(() => {
+          dispatch(accountAction.setLoadingStatus({loading: false}));
+        });
     }
   };
 
   return (
-    <KeyboardAwareScrollView style={classes.root} contentContainerStyle={{ marginTop: constants.DEVICE_HEIGHT * 0.1}}>
+    <KeyboardAwareScrollView
+      style={classes.root}
+      contentContainerStyle={{marginTop: constants.DEVICE_HEIGHT * 0.1}}>
       <View style={classes.headerRoot}>
         <BackButton goBack={() => goBack()} />
       </View>
@@ -112,19 +117,19 @@ const Login = ({navigation: {goBack, navigate}}) => {
           }}
         />
         <View>
-        <TextField
-          label="Password"
-          value={password}
-          secureTextEntry
-          placeholder="Enter password"
-          placeholderTextColor="grey"
-          onChangeText={(input) => {
-            handleInput(2, input);
-          }}
-          password
-          rootStyle={{marginBottom: 10}}
-        />
-        <Text
+          <TextField
+            label="Password"
+            value={password}
+            secureTextEntry
+            placeholder="Enter password"
+            placeholderTextColor="grey"
+            onChangeText={(input) => {
+              handleInput(2, input);
+            }}
+            password
+            rootStyle={{marginBottom: 10}}
+          />
+          <Text
             style={{
               position: 'absolute',
               top: 8,
@@ -135,20 +140,15 @@ const Login = ({navigation: {goBack, navigate}}) => {
             Forgot Password?
           </Text>
         </View>
-        
-        <Button
-          label="Sign In"
-          onPress={submit}
-        />
+
+        <Button label="Sign In" onPress={submit} />
       </View>
       <View style={classes.footerRoot}>
         <View style={{flexGrow: 1}} />
         <View style={classes.signupRoot}>
           <Subheading style={classes.signupLeft}>
-            Don't Have An Account Yet?
-            
-              <Subheading style={classes.signupRight} onPress={() => navigate('Register')}> Sign Up.</Subheading>
-            
+            Don't Have An Account Yet? style={classes.signupRight}
+            onPress={() => navigate('Register')} Sign Up.
           </Subheading>
         </View>
       </View>

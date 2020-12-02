@@ -71,16 +71,24 @@ const StartUp = () => {
 
   React.useEffect(() => {
     (async () => {
-      let token, entryIndex;
-      token = await AsyncStorage.getItem('x-auth-token');
-      entryIndex = await AsyncStorage.getItem('currentEntry');
-      if (entryIndex) {
-        dispatch(
-          deliveryAction.setIndexOfEntry({currentIndex: parseInt(entryIndex)}),
-        );
+      let token, entryIndex, user;
+      try {
+        token = await AsyncStorage.getItem('x-auth-token');
+        entryIndex = await AsyncStorage.getItem('currentEntry');
+        user = await AsyncStorage.getItem('userDetails');
+        if (entryIndex) {
+          dispatch(
+            deliveryAction.setIndexOfEntry({
+              currentIndex: parseInt(entryIndex),
+            }),
+          );
+        }
+        dispatch(accountAction.setToken({token}));
+        dispatch(accountAction.setUserData({user: JSON.parse(user)}));
+        await requestLocationPermission();
+      } catch (e) {
+        console.error(e);
       }
-      dispatch(accountAction.setToken({token}));
-      await requestLocationPermission();
       try {
         console.log(token, 'token');
         const s = io(
@@ -92,15 +100,10 @@ const StartUp = () => {
         );
 
         s.on('connect', () => {
-          //console.log('socket connected');
-          // s.on('assignEntry', message => {
-          //   console.log('entry', message);
-          //     dispatch(accountAction.setOrder({message}));
-          // });
+          console.log('socket connected');
         });
 
         s.on('assignEntry', (message) => {
-          //console.log('entry', message);
           dispatch(accountAction.setOrder({message}));
         });
 

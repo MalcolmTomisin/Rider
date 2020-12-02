@@ -31,6 +31,9 @@ import {rejectOrder} from '../../components/Modal/components/CancelOrder';
 import constants from '../../utils/constants';
 import {ConfirmDialog} from '../../components/Modal';
 import {callBasket, makeNetworkCalls} from '../../utils';
+import NotificationSounds, {
+  playSampleSound,
+} from 'react-native-notification-sounds';
 
 const {width, height} = Dimensions.get('window');
 
@@ -244,8 +247,13 @@ const Home = ({navigation: {navigate, push, pop}}) => {
   useEffect(() => {
     if (socket) {
       socket.on('assignEntry', (message) => {
-        //console.log('entry', message);
+        console.log('entry', message);
         dispatch(accountAction.setOrder({message}));
+        NotificationSounds.getNotifications('notification').then(
+          (soundsList) => {
+            playSampleSound(soundsList[1]);
+          },
+        );
       });
     }
   }, [socket]);
