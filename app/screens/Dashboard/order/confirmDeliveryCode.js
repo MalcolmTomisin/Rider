@@ -44,6 +44,9 @@ const ConfirmDeliveryCode = ({navigation: {goBack, navigate, push, pop}}) => {
       .then((res) => {
         const {msg} = res.data;
         dispatch(feedbackAction.launch({open: true, severity: 's', msg}));
+        dispatch(
+          deliveryAction.setRatingDetails({ratingDetails: currentEntry}),
+        );
         dispatch(deliveryAction.setCurrentPickupInfo({currentEntry: null}));
         pop();
         push('OrderPool');

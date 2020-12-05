@@ -5,6 +5,7 @@ import {
   ENROUTE,
   PAYMENT_RECIEVED,
   INDEX_OF_ENTRY,
+  RATE_USER,
 } from '../types';
 
 const initialstate = {
@@ -17,6 +18,7 @@ const initialstate = {
   recievedPayment: null,
   cashPaid: false,
   currentIndex: null,
+  ratingDetails: null,
 };
 
 export default (state = initialstate, action) => {
@@ -34,6 +36,8 @@ export default (state = initialstate, action) => {
     case PAYMENT_RECIEVED:
       return {...state, ...action.payload};
     case INDEX_OF_ENTRY:
+      return {...state, ...action.payload};
+    case RATE_USER:
       return {...state, ...action.payload};
     default:
       return state;

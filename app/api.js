@@ -27,4 +27,6 @@ export const api = {
   startDelivery: 'order/enroute-delivery',
   alertArrivalAtDelivery: 'order/arrived-delivery',
   confirmDelivery: 'order/confirm-delivery',
+  weeklyOverview: 'order/weekly-overview',
+  rateUser: 'rating/rate-user',
 };

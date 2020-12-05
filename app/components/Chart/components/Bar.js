@@ -1,9 +1,14 @@
 import React from 'react';
 import {StyleSheet, View, Dimensions} from 'react-native';
-import {VictoryBar, VictoryChart, VictoryTheme, VictoryAxis} from 'victory-native';
-import { colors } from '../../../theme';
-import { useSelector } from "react-redux";
-const {width} = Dimensions.get("screen");
+import {
+  VictoryBar,
+  VictoryChart,
+  VictoryTheme,
+  VictoryAxis,
+} from 'victory-native';
+import {colors} from '../../../theme';
+import {useSelector} from 'react-redux';
+const {width} = Dimensions.get('screen');
 
 const data = [
   {x: 'MON', y: 1300},
@@ -16,7 +21,7 @@ const data = [
 ];
 
 const Bar = () => {
-  const { dark } = useSelector(({ theme }) => theme)
+  const {dark} = useSelector(({theme}) => theme);
   return (
     <View stxle={styles.container}>
       <VictoryChart height={200} width={width / 1.1}>
@@ -58,9 +63,9 @@ const Bar = () => {
       </VictoryChart>
     </View>
   );
-}
+};
 
-export default Bar
+export default Bar;
 
 const styles = StyleSheet.create({
   container: {

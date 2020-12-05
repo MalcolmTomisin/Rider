@@ -28,3 +28,4 @@ export const DISMISS_FEEDBACK = 'DISMISS_FEEDBACK';
 
 // popular
 export const DELIVERY_DATA = 'DELIVERY_DATA';
+export const RATE_USER = 'RATE_USER';

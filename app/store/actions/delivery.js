@@ -5,6 +5,7 @@ import {
   ENROUTE,
   PAYMENT_RECIEVED,
   INDEX_OF_ENTRY,
+  RATE_USER,
 } from '../types';
 
 const setDeliveryData = (payload) => ({
@@ -37,6 +38,12 @@ const setIndexOfEntry = (payload) => ({
   payload,
 });
 
+//set details of rating before current entry is set to null
+const setRatingDetails = (payload) => ({
+  type: RATE_USER,
+  payload,
+});
+
 export default {
   setDeliveryData,
   setDeliveryNavigation,
@@ -44,4 +51,5 @@ export default {
   setEnrouteToPickUp,
   setPaymentRecieved,
   setIndexOfEntry,
+  setRatingDetails,
 };

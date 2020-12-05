@@ -1,14 +1,114 @@
-import React from 'react'
-import {View, StyleSheet, Platform, ScrollView, FlatList} from 'react-native';
-import { Caption, Headline, Surface, Title, Subheading } from 'react-native-paper';
-import { Button } from "../../components/Button";
-import { colors } from '../../theme';
-import Icon from "react-native-vector-icons/MaterialCommunityIcons"
-import { Bar } from '../../components/Chart';
-import { useSelector } from "react-redux";
+import React, {useEffect, useState} from 'react';
+import {
+  View,
+  StyleSheet,
+  Platform,
+  ScrollView,
+  FlatList,
+  Text,
+} from 'react-native';
+import {
+  Caption,
+  Headline,
+  Surface,
+  Title,
+  Subheading,
+} from 'react-native-paper';
+import {Button} from '../../components/Button';
+import {colors} from '../../theme';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import {Bar} from '../../components/Chart';
+import {useSelector, useDispatch} from 'react-redux';
+import {getMapOfWeeks, makeNetworkCalls} from '../../utils';
+import {api} from '../../api';
+import {Loading} from '../../components/Loading';
+import {accountAction, feedbackAction} from '../../store/actions';
+import Carousel from 'react-native-snap-carousel';
+import constants from '../../utils/constants';
+
+const {DEVICE_WIDTH} = constants;
 
 const Earnings = () => {
-  const { dark } = useSelector(({ theme }) => theme);
+  const {dark} = useSelector(({theme}) => theme);
+  const {token, loading} = useSelector(({account}) => account);
+  const [summary, setSummary] = useState([]);
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(accountAction.setLoadingStatus({loading: true}));
+    makeNetworkCalls({
+      url: api.weeklyOverview,
+      headers: {
+        'x-auth-token': token,
+      },
+      method: 'get',
+    })
+      .then((res) => {
+        const {msg, data} = res.data;
+        setSummary(data);
+        dispatch(feedbackAction.launch({open: true, severity: 's', msg}));
+      })
+      .catch((err) =>
+        dispatch(
+          feedbackAction.launch({open: true, severity: 'w', msg: `${err}`}),
+        ),
+      )
+      .finally(() =>
+        dispatch(accountAction.setLoadingStatus({loading: false})),
+      );
+  }, []);
+
+  const _renderItem = ({item, index}) => {
+    return (
+      <View style={classes.chartRoot}>
+        <Surface style={classes.surface}>
+          <View style={classes.chartHeaderRoot}>
+            <Icon name="chevron-left" size={30} color={colors.red.main} />
+            <View style={classes.chartHeaderTitleRoot}>
+              <Caption style={classes.chartHeaderTitle}>
+                {`${new Date(
+                  item?._id?.year,
+                  item?._id?.month,
+                  item?._id?.day,
+                ).toDateString()}`}
+              </Caption>
+              <View style={classes.chartHeaderAmountRoot}>
+                <Caption style={classes.signChart}>₦</Caption>
+                <Subheading style={classes.chartHeaderAmount}>
+                  {`${item.totalIncome}`}
+                </Subheading>
+              </View>
+            </View>
+            <Icon name="chevron-right" size={30} color={colors.red.main} />
+          </View>
+
+          <View style={classes.chartBodyRoot}>
+            <Bar />
+          </View>
+          <View style={classes.chartFooterRoot}>
+            <View style={classes.chartFootContainer}>
+              <Subheading
+                style={
+                  classes.chartFootTitle
+                }>{`${item.totalOrders}`}</Subheading>
+              <Caption>Orders</Caption>
+            </View>
+            <View style={classes.chartFootContainer}>
+              <Subheading style={classes.chartFootTitle}>42:11</Subheading>
+              <Caption>Online hours</Caption>
+            </View>
+            <View style={classes.chartFootContainer}>
+              <Subheading
+                style={
+                  classes.chartFootTitle
+                }>{`${item.totalDistance}`}</Subheading>
+              <Caption>Total Distance</Caption>
+            </View>
+          </View>
+        </Surface>
+      </View>
+    );
+  };
 
   return (
     <View style={classes.root}>
@@ -19,50 +119,14 @@ const Earnings = () => {
             <Caption style={classes.sign}>₦</Caption>
             <Headline style={classes.headerAmount}>7,350.00</Headline>
           </View>
-          {/* <Button
-            label="Withdraw"
-            rootStyle={classes.buttonRoot}
-            labelStyle={classes.button}
-          /> */}
         </View>
 
-        <View style={classes.chartRoot}>
-          <Surface style={classes.surface}>
-            <View style={classes.chartHeaderRoot}>
-              <Icon name="chevron-left" size={30} color={colors.red.main} />
-              <View style={classes.chartHeaderTitleRoot}>
-                <Caption style={classes.chartHeaderTitle}>
-                  Tue, 29th Sept ‘20
-                </Caption>
-                <View style={classes.chartHeaderAmountRoot}>
-                  <Caption style={classes.signChart}>₦</Caption>
-                  <Subheading style={classes.chartHeaderAmount}>
-                    7,350.00
-                  </Subheading>
-                </View>
-              </View>
-              <Icon name="chevron-right" size={30} color={colors.red.main} />
-            </View>
-
-            <View style={classes.chartBodyRoot}>
-              <Bar />
-            </View>
-            <View style={classes.chartFooterRoot}>
-              <View style={classes.chartFootContainer}>
-                <Subheading style={classes.chartFootTitle}>45</Subheading>
-                <Caption>Orders</Caption>
-              </View>
-              <View style={classes.chartFootContainer}>
-                <Subheading style={classes.chartFootTitle}>42:11</Subheading>
-                <Caption>Online hours</Caption>
-              </View>
-              <View style={classes.chartFootContainer}>
-                <Subheading style={classes.chartFootTitle}>114</Subheading>
-                <Caption>Total Distance</Caption>
-              </View>
-            </View>
-          </Surface>
-        </View>
+        <Carousel
+          data={summary}
+          renderItem={_renderItem}
+          sliderWidth={DEVICE_WIDTH * 0.92}
+          itemWidth={DEVICE_WIDTH * 0.92}
+        />
 
         <View style={classes.historyRoot}>
           <View
@@ -98,9 +162,9 @@ const Earnings = () => {
       </ScrollView>
     </View>
   );
-}
+};
 
-export default Earnings
+export default Earnings;
 
 const classes = StyleSheet.create({
   root: {

@@ -75,6 +75,19 @@ export const callBasket = async (url, token, dispatch, currentIndex) => {
     .finally(() => dispatch(accountAction.setLoadingStatus({loading: false})));
 };
 
+export const getMapOfWeeks = () => {
+  const daysOfWeek = new Map();
+  daysOfWeek.set('1', 'Sun');
+  daysOfWeek.set('2', 'Mon');
+  daysOfWeek.set('3', 'Tue');
+  daysOfWeek.set('4', 'Wed');
+  daysOfWeek.set('5', 'Thu');
+  daysOfWeek.set('6', 'Fri');
+  daysOfWeek.set('7', 'Sat');
+
+  return daysOfWeek;
+}
+
 export const makeNetworkCalls = async (requestConfig) => {
   return await instance(requestConfig);
 };
