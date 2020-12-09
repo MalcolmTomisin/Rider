@@ -5,8 +5,11 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import FeaterIcon from 'react-native-vector-icons/Feather';
 import {useSelector, useDispatch} from 'react-redux';
 import {colors} from '../../../theme';
-import {Button} from '../../Button';
+import {Button, OutlineButton} from '../../Button';
 import {deliveryAction} from '../../../store/actions';
+import constants from '../../../utils/constants';
+
+const {DEVICE_HEIGHT, DEVICE_WIDTH} = constants;
 
 const ConfirmPayment = () => {
   const dispatch = useDispatch();
@@ -15,35 +18,69 @@ const ConfirmPayment = () => {
 
   return (
     <View style={classes.root}>
-      <Surface style={classes.container}>
+      <Surface
+        style={[
+          classes.container,
+          {backgroundColor: dark ? 'black' : 'white'},
+        ]}>
         <View style={classes.actionRoot}>
-          <View style={classes.item}>
-            <Icon
-              name="chevron-down"
-              size={20}
-              color={dark ? colors.grey.light : colors.grey.dark}
-            />
-            <TimeDistance entryInfo={currentEntry?.entry} />
-          </View>
+          <Caption
+            style={{
+              color: dark ? 'white' : 'black',
+              textAlign: 'center',
+              fontSize: 14,
+              marginBottom: 10,
+            }}>
+            Confirm payment
+          </Caption>
+          <View
+            style={{
+              height: 0.3,
+              width: DEVICE_WIDTH * 0.75,
+              backgroundColor: dark ? 'white' : '#131313',
+            }}
+          />
         </View>
 
-        <Button
-          label="Confirm Payment Recieved"
-          rootStyle={classes.ButtonRoot}
-          labelStyle={classes.Button}
-          onPress={() => {
-            dispatch(deliveryAction.setPaymentRecieved({recievedPayment: 1}));
-          }}
-        />
+        <View
+          style={{
+            flexDirection: 'row',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            marginHorizontal: 10,
+            marginVertical: 5
+          }}>
+          <Caption style={{color: dark ? 'white' : 'black', fontSize: 10}}>
+            Amount to receive
+          </Caption>
+          <Caption
+            style={{
+              fontSize: 18,
+              color: colors.red.main,
+            }}>{`₦${currentEntry?.transaction?.amount}`}</Caption>
+        </View>
 
-        <Button
-          label="Payment Not Recieved"
-          rootStyle={classes.productRoot}
-          labelStyle={classes.Button}
-          onPress={() => {
-            dispatch(deliveryAction.setPaymentRecieved({recievedPayment: 0}));
-          }}
-        />
+        <View
+          style={{
+            flexDirection: 'row',
+            marginVertical: 20,
+            justifyContent: 'space-evenly',
+          }}>
+          <Button
+            rootStyle={{
+              backgroundColor: colors.green.main,
+              width: 136,
+              height: 40,
+            }}
+            label="Payment received"
+            labelStyle={{fontSize: 10}}
+          />
+          <OutlineButton
+            text="Payment not received"
+            textStyle={{fontSize: 10, textAlign: 'center', color: dark ? 'white' : colors.red.main}}
+            outlineStyle={{borderColor: dark ? 'white' : colors.red.main, width: 136, height: 40}}
+          />
+        </View>
       </Surface>
     </View>
   );
@@ -51,7 +88,7 @@ const ConfirmPayment = () => {
 
 export default ConfirmPayment;
 
-const TimeDistance = () => {
+const TimeDistance = ({priceInfo}) => {
   const {dark} = useSelector(({theme}) => theme);
   return (
     <View
@@ -64,7 +101,7 @@ const TimeDistance = () => {
           classes.timeDistanceText,
           {color: dark ? colors.white : colors.white},
         ]}>
-        Confirm Recieved Payment?
+        {`Confirm ₦${priceInfo?.amount} Payment Recieved?`}
       </Caption>
     </View>
   );
@@ -74,7 +111,7 @@ const classes = StyleSheet.create({
   root: {position: 'absolute', bottom: 0, paddingHorizontal: 20, width: '100%'},
   container: {
     paddingVertical: 16,
-    alignItems: 'center',
+    //alignItems: 'center',
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
     elevation: 1,
@@ -109,10 +146,10 @@ const classes = StyleSheet.create({
     marginVertical: 20,
   },
   actionRoot: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    //justifyContent: 'space-between',
+    //alignItems: 'center',
     width: '100%',
+    padding: 10,
   },
   actionButtonRoot: {
     justifyContent: 'center',

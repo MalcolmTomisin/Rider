@@ -228,14 +228,15 @@ const Home = ({navigation: {navigate, push, pop}}) => {
       Geolocation.watchPosition(
         ({coords: {longitude, latitude}}) => {
           console.log('it has happened');
-          fetch(api.location, {
-            method: 'PATCH',
+          makeNetworkCalls({
+            url: api.location,
             headers: {
               'Content-type': 'application/json',
               'x-auth-token': token,
             },
-            body: JSON.stringify({latitude, longitude}),
-          });
+            method: 'patch',
+            data: {latitude, longitude},
+          }).catch((err) => console.error(err));
         },
         (error) => {
           console.error(error);
@@ -246,18 +247,18 @@ const Home = ({navigation: {navigate, push, pop}}) => {
   }, [enroute]);
 
   useEffect(() => {
-    if (socket) {
-      socket.on('assignEntry', (message) => {
-        console.log('entry', message);
-        dispatch(accountAction.setOrder({message}));
-        NotificationSounds.getNotifications('notification').then(
-          (soundsList) => {
-            playSampleSound(soundsList[1]);
-          },
-        );
-      });
-    }
-  }, [socket]);
+    // if (socket) {
+    //   socket.on('assignEntry', (message) => {
+    //     console.log('entry', message);
+    //     dispatch(accountAction.setOrder({message}));
+    //     NotificationSounds.getNotifications('notification').then(
+    //       (soundsList) => {
+    //         playSampleSound(soundsList[1]);
+    //       },
+    //     );
+    //   });
+    // }
+  }, []);
   const onCountDownFinish = () => {
     rejectOrder(message, dispatch, token);
   };
@@ -312,6 +313,7 @@ const Home = ({navigation: {navigate, push, pop}}) => {
           pickUp &&
           currentEntry?.entry?.status !== 'enrouteToDelivery' &&
           currentEntry?.entry?.status !== 'arrivedAtDelivery' &&
+          currentEntry?.entry?.status !== 'cancelled' &&
           currentEntry?.entry?.status !== 'delivered' && (
             <>
               <MapView.Marker coordinate={coordinates} />

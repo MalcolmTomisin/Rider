@@ -1,121 +1,282 @@
-import React from 'react';
-import {StyleSheet, View, TouchableOpacity} from 'react-native';
+import React, {useState} from 'react';
+import {
+  StyleSheet,
+  View,
+  TouchableOpacity,
+  ScrollView,
+  Linking,
+} from 'react-native';
 import {Surface, Subheading, Avatar, Caption, Card} from 'react-native-paper';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import FeaterIcon from 'react-native-vector-icons/Feather';
+import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome';
+import Ionicon from 'react-native-vector-icons/Ionicons';
 import {useSelector, useDispatch} from 'react-redux';
 import {colors} from '../../../theme';
-import {Button} from '../../Button';
+import {Button, OutlineButton} from '../../Button';
 import {deliveryAction, accountAction} from '../../../store/actions';
 import {useNavigation} from '@react-navigation/native';
 import CountDown from 'react-native-countdown-component';
 import NotificationSounds, {
   playSampleSound,
 } from 'react-native-notification-sounds';
+import constants from '../../../utils/constants';
+
+const {DEVICE_HEIGHT, DEVICE_WIDTH} = constants;
 
 const Order = ({onAccept, onCountDownFinish, timerIsRunning}) => {
   const dispatch = useDispatch();
   const {dark} = useSelector(({theme}) => theme);
   const {message, address} = useSelector(({account}) => account);
   const {data} = message;
+  const [images, setImages] = useState(false);
   const {navigate} = useNavigation();
+
+  const showImages = () => {
+    setImages(!images);
+  };
   return (
     <View style={classes.root}>
       <Surface style={classes.container}>
-        <View style={classes.orderRoot}>
-          <Avatar.Text
-            label={`${
-              data.name.indexOf(' ') !== -1
-                ? `${data.name.charAt(0)}${data.name.charAt(
-                    data.name.indexOf(' ') + 1,
-                  )}`
-                : `${data.name.charAt(0)}`
-            }`}
-            size={45}
-            style={{marginLeft: 20}}
+        <View
+          style={{
+            justifyContent: 'center',
+            alignItems: 'center',
+            marginVertical: 10,
+          }}>
+          <Ionicon
+            name="md-stopwatch"
+            size={12}
+            color={dark ? 'white' : 'black'}
           />
-          <View style={classes.orderContentRoot}>
-            <Subheading>{data?.name}</Subheading>
-            <View style={classes.orderContentAddress}>
-              <FeaterIcon
-                name="navigation"
-                size={8}
-                color={dark ? colors.grey.light : colors.grey.dark}
-              />
-              <Caption style={classes.orderContentAddressText}>
-                {data?.pickupAddress}
-              </Caption>
+          <CountDown
+            until={120}
+            timeToShow={['M', 'S']}
+            //onFinish={onCountDownFinish}
+            digitStyle={{backgroundColor: 'transparent'}}
+            style={{
+              alignItems: 'center',
+              justifyContent: 'center',
+              marginTop: -10,
+            }}
+            timeLabels={{m: '', s: ''}}
+            digitTxtStyle={{color: colors.red.main, fontSize: 18}}
+            showSeparator
+            separatorStyle={{color: colors.red.main}}
+            running={timerIsRunning}
+            onChange={() => {
+              NotificationSounds.getNotifications('notification').then(
+                (soundsList) => {
+                  playSampleSound(soundsList[1]);
+                },
+              );
+            }}
+          />
+        </View>
+
+        <ScrollView>
+          {data?.orders.map((v, i) => (
+            <View key={i}>
+              <View style={{justifyContent: 'center', alignItems: 'center'}}>
+                <View
+                  style={{
+                    width: DEVICE_WIDTH * 0.76,
+                    height: DEVICE_HEIGHT * 0.12,
+                    borderRadius: 10,
+                    backgroundColor: dark ? '#474545' : '#072D8F',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                  }}>
+                  <View>
+                    <View
+                      style={{
+                        justifyContent: 'space-between',
+                        flexDirection: 'row',
+                        alignItems: 'center',
+                        paddingHorizontal: 20,
+                      }}>
+                      <FeaterIcon
+                        name="navigation"
+                        size={8}
+                        color={dark ? colors.grey.light : colors.grey.dark}
+                      />
+                      <Caption style={classes.orderContentAddressText}>
+                        {data?.pickupAddress}
+                      </Caption>
+                    </View>
+                    <View style={classes.dash} />
+                    <View style={classes.dash} />
+                    <View style={classes.dash} />
+                    <View
+                      style={{
+                        justifyContent: 'space-between',
+                        flexDirection: 'row',
+                        alignItems: 'center',
+                        paddingHorizontal: 20,
+                      }}>
+                      <FeaterIcon
+                        name="navigation"
+                        size={8}
+                        color={dark ? colors.grey.light : colors.grey.dark}
+                      />
+                      <Caption style={classes.orderContentAddressText}>
+                        {v?.deliveryAddress}
+                      </Caption>
+                    </View>
+                  </View>
+                </View>
+              </View>
+              <View
+                style={{
+                  flexDirection: 'row',
+                  justifyContent: 'space-between',
+                  marginHorizontal: 8,
+                }}>
+                {data?.paymentMethod !== 'card' && (
+                  <View style={{marginVertical: 10}}>
+                    <Caption
+                      style={{
+                        fontSize: 18,
+                        color: colors.red.main,
+                        marginBottom: -5,
+                      }}>
+                      {`₦${v?.estimatedCost}`}
+                    </Caption>
+                    <Caption
+                      style={{fontSize: 8, color: dark ? 'white' : 'black'}}>
+                      Cash on Pickup
+                    </Caption>
+                  </View>
+                )}
+                <View style={{marginVertical: 10}}>
+                  <Caption
+                    style={{
+                      fontSize: 18,
+                      color: dark ? 'white' : 'black',
+                      textAlign: 'right',
+                      marginBottom: -5,
+                    }}>
+                    {`${Math.ceil(v?.estimatedDistance)} km`}
+                  </Caption>
+                  <Caption
+                    style={{fontSize: 8, color: dark ? 'white' : 'black'}}>
+                    Estimated Delivery time:{' '}
+                    <Caption
+                      style={{
+                        fontSize: 8,
+                        color: colors.green.main,
+                      }}>{`${Math.ceil(
+                      v?.estimatedTravelduration,
+                    )} min`}</Caption>
+                  </Caption>
+                </View>
+              </View>
+              <View
+                style={{
+                  flexDirection: 'row',
+                  justifyContent: 'space-between',
+                  marginHorizontal: 8,
+                }}>
+                <Caption style={{fontSize: 10, color: dark ? 'white' : 'black'}}>
+                  Picking up order{' '}
+                  <Caption style={{color: colors.red.main, fontSize: 10}}>
+                    {`${v?.orderId}`}
+                  </Caption>
+                </Caption>
+                <Caption onPress={showImages} style={{fontSize: 8}}>
+                  Show images
+                </Caption>
+                {images && (
+                  <View
+                    style={{
+                      flexDirection: 'row',
+                      justifyContent: 'space-evenly',
+                      marginVertical: 10,
+                      marginHorizontal: 8,
+                    }}>
+                    {images &&
+                      data?.img.map((v, i) => (
+                        <Card.Cover
+                          source={{
+                            uri: `https://d367c9pgq4rf5n.cloudfront.net/${v}`,
+                          }}
+                          style={classes.img}
+                        />
+                      ))}
+                  </View>
+                )}
+              </View>
             </View>
-            <View style={classes.dash} />
-            <View style={classes.dash} />
-            <View style={classes.dash} />
-            <View style={classes.orderContentAddress}>
-              <FeaterIcon
-                name="navigation"
-                size={8}
-                color={dark ? colors.grey.light : colors.grey.dark}
-              />
-              <Caption style={classes.orderContentAddressText}>
-                {`${
-                  data?.orders.length > 1
-                    ? `${data?.orders[0].deliveryAddress} and ${
-                        data?.orders.length - 1
-                      } other locations`
-                    : data?.orders[0].deliveryAddress
-                }`}
-              </Caption>
-            </View>
-            <TimeDistance
-              data={data}
-              onFinish={onCountDownFinish}
-              running={timerIsRunning}
+          ))}
+        </ScrollView>
+        <View
+          style={{
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            marginVertical: 15,
+            marginHorizontal: 8,
+          }}>
+          <View
+            style={{
+              flexDirection: 'row',
+              justifyContent: 'space-between',
+            }}>
+            <Avatar.Text
+              label={`${
+                data.name.indexOf(' ') !== -1
+                  ? `${data.name.charAt(0)}${data.name.charAt(
+                      data.name.indexOf(' ') + 1,
+                    )}`
+                  : `${data.name.charAt(0)}`
+              }`}
+              size={45}
+              style={{}}
             />
-            <View style={classes.productRoot}>
-              <Caption>Picking up </Caption>
-              <TouchableOpacity>
-                <Caption style={classes.productId}>{`${
-                  data?.orders.length > 1
-                    ? `${data?.orders[0].orderId} and ${
-                        data?.orders.length - 1
-                      } other IDs`
-                    : `${data?.orders[0].orderId}`
-                }`}</Caption>
-              </TouchableOpacity>
-            </View>
-            <View style={classes.imgRoot}>
-              <Card.Cover
-                source={{
-                  uri: `https://d367c9pgq4rf5n.cloudfront.net/${data.img[0]}`,
-                }}
-                style={classes.img}
-              />
-              <Card.Cover
-                source={{
-                  uri: `https://d367c9pgq4rf5n.cloudfront.net/${data.img[0]}`,
-                }}
-                style={classes.img}
-              />
+            <View style={{padding: 5}}>
+              <Caption
+                style={{
+                  fontSize: 18,
+                  marginBottom: -5,
+                  color: dark ? 'white' : 'black',
+                }}>{`${data.name}`}</Caption>
+              <Caption
+                style={{
+                  fontSize: 10,
+                  color: dark ? 'white' : 'black',
+                }}>{`${data.email}`}</Caption>
             </View>
           </View>
-        </View>
-        <Button
-          label="Accept"
-          rootStyle={classes.ButtonRoot}
-          onPress={onAccept}
-        />
-
-        <View style={classes.actionRoot}>
           <TouchableOpacity
-            style={classes.actionButtonRoot}
             onPress={() => {
-              dispatch(deliveryAction.setDeliveryData({cancel: true}));
+              Linking.openURL(`tel:${data.phoneNumber}`);
             }}>
-            <FeaterIcon name="x" size={30} color={colors.red.main} />
-            <Caption
-              style={[classes.actionButtonText, {color: colors.red.main}]}>
-              Cancel order
-            </Caption>
+            <FontAwesomeIcon
+              name="phone"
+              size={26}
+              color={dark ? 'white' : 'black'}
+            />
           </TouchableOpacity>
+        </View>
+        <View
+          style={{
+            flexDirection: 'row',
+            justifyContent: 'space-evenly',
+            marginVertical: 10,
+          }}>
+          <Button
+            rootStyle={{backgroundColor: colors.green.main, width: 136}}
+            label="Accept"
+            labelStyle={{fontSize: 10}}
+            onPress={onAccept}
+          />
+          <OutlineButton
+            outlineStyle={{width: 136}}
+            text="Cancel Order"
+            textStyle={{fontSize: 10, textAlign: 'center', color: dark ? 'white' : colors.red.main}}
+            onPress={onCountDownFinish}
+            outlineStyle={{borderColor: dark ? 'white' : colors.red.main}}
+          />
         </View>
       </Surface>
     </View>
@@ -148,7 +309,7 @@ const TimeDistance = ({data, onFinish, running}) => {
           classes.timeDistanceText,
           {color: dark ? colors.black : colors.white},
         ]}>{`${Math.ceil(data?.TED)} km`}</Caption>
-      <CountDown
+      {/* <CountDown
         until={120}
         timeToShow={['M', 'S']}
         onFinish={onFinish}
@@ -166,16 +327,22 @@ const TimeDistance = ({data, onFinish, running}) => {
             },
           );
         }}
-      />
+      /> */}
     </View>
   );
 };
 
 const classes = StyleSheet.create({
-  root: {position: 'absolute', bottom: 0, paddingHorizontal: 20, width: '100%'},
+  root: {
+    position: 'absolute',
+    bottom: 100,
+    paddingHorizontal: 20,
+    width: '100%',
+    height: DEVICE_HEIGHT * 0.53,
+  },
   container: {
-    paddingVertical: 16,
-    alignItems: 'center',
+    paddingVertical: 10,
+    //alignItems: 'center',
     // flexDirection: 'row',
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
@@ -195,9 +362,10 @@ const classes = StyleSheet.create({
     flexDirection: 'row',
   },
   orderContentAddressText: {
-    marginLeft: 10,
-    fontSize: 13,
-    fontWeight: '300',
+    //marginLeft: 10,
+    fontSize: 10,
+    fontWeight: '400',
+    color: 'white',
   },
   dash: {
     height: 2,
@@ -205,6 +373,7 @@ const classes = StyleSheet.create({
     borderRightWidth: 1,
     borderRightColor: colors.grey.main,
     marginVertical: 1.5,
+    marginLeft: 20,
   },
   timeDistanceRoot: {
     height: 35,

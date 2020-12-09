@@ -104,6 +104,7 @@ const StartUp = () => {
         });
 
         s.on('assignEntry', (message) => {
+          console.log('mess', message?.data.orders);
           dispatch(accountAction.setOrder({message}));
         });
 

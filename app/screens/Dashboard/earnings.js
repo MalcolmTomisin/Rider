@@ -53,9 +53,9 @@ const Earnings = () => {
           feedbackAction.launch({open: true, severity: 'w', msg: `${err}`}),
         ),
       )
-      .finally(() =>
-        dispatch(accountAction.setLoadingStatus({loading: false})),
-      );
+      .finally(() => {
+        dispatch(accountAction.setLoadingStatus({loading: false}));
+      });
   }, []);
 
   const _renderItem = ({item, index}) => {
@@ -75,7 +75,7 @@ const Earnings = () => {
               <View style={classes.chartHeaderAmountRoot}>
                 <Caption style={classes.signChart}>₦</Caption>
                 <Subheading style={classes.chartHeaderAmount}>
-                  {`${item.totalIncome}`}
+                  {`${item?.totalIncome}`}
                 </Subheading>
               </View>
             </View>
@@ -90,7 +90,7 @@ const Earnings = () => {
               <Subheading
                 style={
                   classes.chartFootTitle
-                }>{`${item.totalOrders}`}</Subheading>
+                }>{`${item?.totalOrders}`}</Subheading>
               <Caption>Orders</Caption>
             </View>
             <View style={classes.chartFootContainer}>
@@ -101,7 +101,7 @@ const Earnings = () => {
               <Subheading
                 style={
                   classes.chartFootTitle
-                }>{`${item.totalDistance}`}</Subheading>
+                }>{`${item?.totalDistance}`}</Subheading>
               <Caption>Total Distance</Caption>
             </View>
           </View>
@@ -120,13 +120,14 @@ const Earnings = () => {
             <Headline style={classes.headerAmount}>7,350.00</Headline>
           </View>
         </View>
-
-        <Carousel
-          data={summary}
-          renderItem={_renderItem}
-          sliderWidth={DEVICE_WIDTH * 0.92}
-          itemWidth={DEVICE_WIDTH * 0.92}
-        />
+        <View style={{justifyContent: 'center', alignItems: 'center'}}>
+          <Carousel
+            data={summary}
+            renderItem={_renderItem}
+            sliderWidth={DEVICE_WIDTH * 0.92}
+            itemWidth={DEVICE_WIDTH * 0.92}
+          />
+        </View>
 
         <View style={classes.historyRoot}>
           <View

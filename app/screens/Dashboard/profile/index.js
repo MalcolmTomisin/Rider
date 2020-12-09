@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import {View, StyleSheet, TouchableOpacity, ScrollView} from 'react-native';
 import {Subheading, Avatar, Caption} from 'react-native-paper';
 import {colors} from '../../../theme';
@@ -12,20 +12,30 @@ import {setSignInToken} from '../../../store/actions/signUp';
 const Profile = ({navigation: {navigate}}) => {
   const {dark} = useSelector(({theme}) => theme);
   const dispatch = useDispatch();
+  const [userDetails, setUserDetails] = useState(null);
 
+  useEffect(() => {
+    (async () => {
+      let stringifiedUserDetails = await AsyncStorage.getItem('userDetails');
+      if (stringifiedUserDetails) {
+        setUserDetails(JSON.parse(stringifiedUserDetails));
+      }
+    })();
+  }, []);
   return (
     <View style={classes.root}>
       <View style={classes.headerRoot}>
         <Avatar.Image source={img.securityImg} size={90} />
         <View style={classes.headerContent}>
-          <Subheading style={classes.listTitle}>Adeniran Opeyemi</Subheading>
+          <Subheading
+            style={classes.listTitle}>{`${userDetails?.name}`}</Subheading>
 
-          <View style={classes.headerLocation}>
+          {/* <View style={classes.headerLocation}>
             <Icon name="map-marker" size={15} color={colors.red.main} />
             <Caption style={classes.headerLocationTitle}>
               7 Hughes avenue, Lawal Road
             </Caption>
-          </View>
+          </View> */}
         </View>
       </View>
       <ScrollView>
