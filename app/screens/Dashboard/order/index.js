@@ -67,7 +67,7 @@ const OrderPool = ({navigation: {navigate, push, isFocused}}) => {
   };
 
   const pickUp = async (item, index) => {
-    dispatch(accountAction.setIconLoading({buttonIconLoading: true}));
+    dispatch(accountAction.setIconLoading({buttonIconLoading: index}));
     dispatch(
       deliveryAction.setDeliveryNavigation({
         pickUp: {
@@ -110,6 +110,7 @@ const OrderPool = ({navigation: {navigate, push, isFocused}}) => {
         id={v?.orderId}
         pickUpAction={() => pickUp(v, i)}
         status={v?.entry?.status}
+        serial={i}
       />
     ));
   };

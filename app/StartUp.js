@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {NavigationContainer, DefaultTheme} from '@react-navigation/native';
 import Navigation from './navigation';
 import Icon from 'react-native-vector-icons/MaterialIcons';
@@ -11,7 +11,7 @@ import {useSelector, useDispatch} from 'react-redux';
 import {colors} from './theme';
 import {FeedBack} from './components/Feedback';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {accountAction, deliveryAction} from './store/actions';
+import {accountAction, deliveryAction, feedbackAction} from './store/actions';
 import {Platform, PermissionsAndroid, Alert} from 'react-native';
 import Geolocation from 'react-native-geolocation-service';
 import {CancelOrder, Reason} from './components/Modal';
@@ -21,6 +21,9 @@ import {api} from './api';
 import constants from './utils/constants';
 import messaging from '@react-native-firebase/messaging';
 import {useFetch} from './utils/fetchHook';
+import {Order, Offline} from './components/Card';
+import {makeNetworkCalls, callBasket} from './utils';
+import {rejectOrder} from './components/Modal/components/CancelOrder';
 
 async function requestUserPermission() {
   const authStatus = await messaging().requestPermission();
@@ -35,9 +38,14 @@ async function requestUserPermission() {
 
 const StartUp = () => {
   const [socket, setSocket] = React.useState(null);
+  const [running, setTimerIsRunning] = useState(true);
   const dispatch = useDispatch();
   const theme = useSelector(({theme}) => theme);
-  const {location, token} = useSelector(({account}) => account);
+  const {location, token, isOnline, message} = useSelector(
+    ({account}) => account,
+  );
+
+  const {currentIndex} = useSelector(({delivery}) => delivery);
 
   //reverse geocode coordinates of rider
   const getAddressFromCoordinates = () => {
@@ -56,6 +64,10 @@ const StartUp = () => {
       });
   };
 
+  const onCountDownFinish = () => {
+    rejectOrder(message, dispatch, token);
+  };
+
   React.useEffect(() => {
     messaging()
       .getToken()
@@ -70,50 +82,53 @@ const StartUp = () => {
   }, []);
 
   React.useEffect(() => {
-    (async () => {
-      let token, entryIndex, user;
-      try {
-        token = await AsyncStorage.getItem('x-auth-token');
-        entryIndex = await AsyncStorage.getItem('currentEntry');
-        user = await AsyncStorage.getItem('userDetails');
-        if (entryIndex) {
-          dispatch(
-            deliveryAction.setIndexOfEntry({
-              currentIndex: parseInt(entryIndex),
-            }),
-          );
-        }
-        dispatch(accountAction.setToken({token}));
-        dispatch(accountAction.setUserData({user: JSON.parse(user)}));
-        await requestLocationPermission();
-      } catch (e) {
-        console.error(e);
-      }
-      try {
-        console.log(token, 'token');
-        const s = io(
-          `https://dev.api.logistics.churchesapp.com?token=${token}`,
-          {
-            path: '/sio',
-            transports: ['websocket'],
-          },
+    setPreliminaries();
+    socketEvents();
+  }, [token]);
+
+  const socketEvents = () => {
+    try {
+      console.log(token, 'token');
+      const s = io(`https://dev.api.logistics.churchesapp.com?token=${token}`, {
+        path: '/sio',
+        transports: ['websocket'],
+      });
+
+      s.on('connect', () => {
+        console.log('socket connected');
+      });
+
+      s.on('assignEntry', (message) => {
+        console.log('mess', message);
+        dispatch(accountAction.setOrder({message}));
+      });
+
+      setSocket(s);
+    } catch (error) {
+      //console.log('error', error);
+    }
+  };
+
+  const setPreliminaries = async () => {
+    let token, entryIndex, user;
+    try {
+      token = await AsyncStorage.getItem('x-auth-token');
+      entryIndex = await AsyncStorage.getItem('currentEntry');
+      user = await AsyncStorage.getItem('userDetails');
+      if (entryIndex) {
+        dispatch(
+          deliveryAction.setIndexOfEntry({
+            currentIndex: parseInt(entryIndex),
+          }),
         );
-
-        s.on('connect', () => {
-          console.log('socket connected');
-        });
-
-        s.on('assignEntry', (message) => {
-          console.log('mess', message?.data.orders);
-          dispatch(accountAction.setOrder({message}));
-        });
-
-        setSocket(s);
-      } catch (error) {
-        //console.log('error', error);
       }
-    })();
-  }, []);
+      dispatch(accountAction.setToken({token}));
+      dispatch(accountAction.setUserData({user: JSON.parse(user)}));
+      await requestLocationPermission();
+    } catch (e) {
+      console.error(e);
+    }
+  };
 
   const requestLocationPermission = async () => {
     if (Platform.OS === 'ios') {
@@ -177,11 +192,58 @@ const StartUp = () => {
     },
   };
 
+  const accept = () => {
+    const {data} = message;
+    dispatch(accountAction.setLoadingStatus({loading: true}));
+    setTimerIsRunning(false);
+    makeNetworkCalls({
+      url: api.acceptEntry,
+      method: 'post',
+      headers: {
+        'x-auth-token': token,
+        'Content-type': 'application/json',
+      },
+      data: {entry: data._id},
+    })
+      .then(async (res) => {
+        message.accept = true;
+        //fetch basket for updated info about current entry
+        await callBasket(api.riderBasket, token, dispatch, currentIndex);
+        dispatch(
+          feedbackAction.launch({open: true, severity: 's', msg: res.data.msg}),
+        );
+        dispatch(accountAction.setOrder({message}));
+        push('OrderPool');
+      })
+      .catch((err) => {
+        dispatch(
+          feedbackAction.launch({
+            open: true,
+            severity: 'w',
+            msg: `${err}`,
+          }),
+        );
+        setTimerIsRunning(true);
+      })
+      .finally(() => {
+        dispatch(accountAction.setLoadingStatus({loading: false}));
+      });
+  };
+
   return (
     <WebSocket.Provider value={socket}>
       <PaperProvider theme={RNPTheme}>
         <NavigationContainer theme={RNTheme}>
           <Navigation />
+          {!isOnline ? (
+            <Offline />
+          ) : !message?.data ? null : message?.accept ? null : (
+            <Order
+              onAccept={accept}
+              onCountDownFinish={onCountDownFinish}
+              timerIsRunning={running}
+            />
+          )}
         </NavigationContainer>
         <FeedBack />
         <CancelOrder />

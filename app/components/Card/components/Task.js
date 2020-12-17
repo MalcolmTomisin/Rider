@@ -17,6 +17,7 @@ const Task = ({
   id,
   pickUpAction,
   status,
+  serial,
 }) => {
   const {dark} = useSelector(({theme}) => theme);
   const {buttonIconLoading} = useSelector(({account}) => account);
@@ -106,7 +107,7 @@ const Task = ({
             ]}
             disabled={status === 'cancelled'}
             onPress={pickUpAction}>
-            {buttonIconLoading ? (
+            {buttonIconLoading === serial ? (
               <ActivityIndicator size="small" color="white" />
             ) : (
               <Caption style={classes.buttonText}>{`${

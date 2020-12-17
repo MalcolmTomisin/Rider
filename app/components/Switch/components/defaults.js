@@ -12,7 +12,7 @@ import {Caption} from 'react-native-paper';
 import {useDispatch, useSelector} from 'react-redux';
 import accountAction from '../../../store/actions/account';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {api} from '../../../api';
+import {api, baseURL} from '../../../api';
 import WSContext from '../../Socket/context';
 
 const Switch = () => {
@@ -21,7 +21,7 @@ const Switch = () => {
   const socket = useContext(WSContext);
 
   const toggleOnlineStatus = (socket) => {
-    fetch(api.online, {
+    fetch(`${baseURL}${api.online}`, {
       method: 'PATCH',
       headers: {
         'x-auth-token': token,

@@ -48,7 +48,7 @@ const ConfirmPayment = () => {
             alignItems: 'center',
             justifyContent: 'space-between',
             marginHorizontal: 10,
-            marginVertical: 5
+            marginVertical: 5,
           }}>
           <Caption style={{color: dark ? 'white' : 'black', fontSize: 10}}>
             Amount to receive
@@ -74,11 +74,25 @@ const ConfirmPayment = () => {
             }}
             label="Payment received"
             labelStyle={{fontSize: 10}}
+            onPress={() => {
+              dispatch(deliveryAction.setPaymentRecieved({recievedPayment: 1}));
+            }}
           />
           <OutlineButton
             text="Payment not received"
-            textStyle={{fontSize: 10, textAlign: 'center', color: dark ? 'white' : colors.red.main}}
-            outlineStyle={{borderColor: dark ? 'white' : colors.red.main, width: 136, height: 40}}
+            textStyle={{
+              fontSize: 10,
+              textAlign: 'center',
+              color: dark ? 'white' : colors.red.main,
+            }}
+            outlineStyle={{
+              borderColor: dark ? 'white' : colors.red.main,
+              width: 136,
+              height: 40,
+            }}
+            onPress={() => {
+              dispatch(deliveryAction.setPaymentRecieved({recievedPayment: 0}));
+            }}
           />
         </View>
       </Surface>
@@ -87,25 +101,6 @@ const ConfirmPayment = () => {
 };
 
 export default ConfirmPayment;
-
-const TimeDistance = ({priceInfo}) => {
-  const {dark} = useSelector(({theme}) => theme);
-  return (
-    <View
-      style={[
-        classes.timeDistanceRoot,
-        {backgroundColor: dark ? colors.black : colors.white},
-      ]}>
-      <Caption
-        style={[
-          classes.timeDistanceText,
-          {color: dark ? colors.white : colors.white},
-        ]}>
-        {`Confirm ₦${priceInfo?.amount} Payment Recieved?`}
-      </Caption>
-    </View>
-  );
-};
 
 const classes = StyleSheet.create({
   root: {position: 'absolute', bottom: 0, paddingHorizontal: 20, width: '100%'},

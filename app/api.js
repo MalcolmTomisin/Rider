@@ -1,7 +1,6 @@
 import axios from 'axios';
 
 export const baseURL = 'https://dev.api.logistics.churchesapp.com/api/v1/';
-import {} from 'react-redux';
 
 export const instance = axios.create({
   baseURL,

@@ -28,9 +28,8 @@ const Order = ({onAccept, onCountDownFinish, timerIsRunning}) => {
   const dispatch = useDispatch();
   const {dark} = useSelector(({theme}) => theme);
   const {message, address} = useSelector(({account}) => account);
-  const {data} = message;
+  //const {data} = message;
   const [images, setImages] = useState(false);
-  const {navigate} = useNavigation();
 
   const showImages = () => {
     setImages(!images);
@@ -52,7 +51,7 @@ const Order = ({onAccept, onCountDownFinish, timerIsRunning}) => {
           <CountDown
             until={120}
             timeToShow={['M', 'S']}
-            //onFinish={onCountDownFinish}
+            onFinish={onCountDownFinish}
             digitStyle={{backgroundColor: 'transparent'}}
             style={{
               alignItems: 'center',
@@ -75,7 +74,7 @@ const Order = ({onAccept, onCountDownFinish, timerIsRunning}) => {
         </View>
 
         <ScrollView>
-          {data?.orders.map((v, i) => (
+          {message?.data?.orders?.map((v, i) => (
             <View key={i}>
               <View style={{justifyContent: 'center', alignItems: 'center'}}>
                 <View
@@ -101,7 +100,7 @@ const Order = ({onAccept, onCountDownFinish, timerIsRunning}) => {
                         color={dark ? colors.grey.light : colors.grey.dark}
                       />
                       <Caption style={classes.orderContentAddressText}>
-                        {data?.pickupAddress}
+                        {message?.data?.pickupAddress}
                       </Caption>
                     </View>
                     <View style={classes.dash} />
@@ -132,7 +131,7 @@ const Order = ({onAccept, onCountDownFinish, timerIsRunning}) => {
                   justifyContent: 'space-between',
                   marginHorizontal: 8,
                 }}>
-                {data?.paymentMethod !== 'card' && (
+                {message?.data?.paymentMethod !== 'card' && (
                   <View style={{marginVertical: 10}}>
                     <Caption
                       style={{
@@ -177,7 +176,8 @@ const Order = ({onAccept, onCountDownFinish, timerIsRunning}) => {
                   justifyContent: 'space-between',
                   marginHorizontal: 8,
                 }}>
-                <Caption style={{fontSize: 10, color: dark ? 'white' : 'black'}}>
+                <Caption
+                  style={{fontSize: 10, color: dark ? 'white' : 'black'}}>
                   Picking up order{' '}
                   <Caption style={{color: colors.red.main, fontSize: 10}}>
                     {`${v?.orderId}`}
@@ -195,7 +195,7 @@ const Order = ({onAccept, onCountDownFinish, timerIsRunning}) => {
                       marginHorizontal: 8,
                     }}>
                     {images &&
-                      data?.img.map((v, i) => (
+                      message?.data?.img?.map((v, i) => (
                         <Card.Cover
                           source={{
                             uri: `https://d367c9pgq4rf5n.cloudfront.net/${v}`,
@@ -224,11 +224,11 @@ const Order = ({onAccept, onCountDownFinish, timerIsRunning}) => {
             }}>
             <Avatar.Text
               label={`${
-                data.name.indexOf(' ') !== -1
-                  ? `${data.name.charAt(0)}${data.name.charAt(
-                      data.name.indexOf(' ') + 1,
+                message?.data.name.indexOf(' ') !== -1
+                  ? `${message?.data.name.charAt(0)}${message?.data.name.charAt(
+                      message?.data.name.indexOf(' ') + 1,
                     )}`
-                  : `${data.name.charAt(0)}`
+                  : `${message?.data.name.charAt(0)}`
               }`}
               size={45}
               style={{}}
@@ -239,17 +239,17 @@ const Order = ({onAccept, onCountDownFinish, timerIsRunning}) => {
                   fontSize: 18,
                   marginBottom: -5,
                   color: dark ? 'white' : 'black',
-                }}>{`${data.name}`}</Caption>
+                }}>{`${message?.data.name}`}</Caption>
               <Caption
                 style={{
                   fontSize: 10,
                   color: dark ? 'white' : 'black',
-                }}>{`${data.email}`}</Caption>
+                }}>{`${message?.data.email}`}</Caption>
             </View>
           </View>
           <TouchableOpacity
             onPress={() => {
-              Linking.openURL(`tel:${data.phoneNumber}`);
+              Linking.openURL(`tel:${message?.data.phoneNumber}`);
             }}>
             <FontAwesomeIcon
               name="phone"
@@ -271,11 +271,18 @@ const Order = ({onAccept, onCountDownFinish, timerIsRunning}) => {
             onPress={onAccept}
           />
           <OutlineButton
-            outlineStyle={{width: 136}}
+            outlineStyle={{
+              width: 136,
+              height: 52,
+              borderColor: dark ? 'white' : colors.red.main,
+            }}
             text="Cancel Order"
-            textStyle={{fontSize: 10, textAlign: 'center', color: dark ? 'white' : colors.red.main}}
+            textStyle={{
+              fontSize: 10,
+              textAlign: 'center',
+              color: dark ? 'white' : colors.red.main,
+            }}
             onPress={onCountDownFinish}
-            outlineStyle={{borderColor: dark ? 'white' : colors.red.main}}
           />
         </View>
       </Surface>
@@ -366,6 +373,7 @@ const classes = StyleSheet.create({
     fontSize: 10,
     fontWeight: '400',
     color: 'white',
+    textAlign: 'right',
   },
   dash: {
     height: 2,

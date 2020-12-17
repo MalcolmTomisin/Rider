@@ -376,7 +376,7 @@ const Home = ({navigation: {navigate, push, pop}}) => {
           )}
       </MapView>
 
-      {!isOnline ? (
+      {/* {!isOnline ? (
         <Offline />
       ) : !message?.data ? null : message?.accept ? null : (
         <Order
@@ -384,7 +384,7 @@ const Home = ({navigation: {navigate, push, pop}}) => {
           onCountDownFinish={onCountDownFinish}
           timerIsRunning={running}
         />
-      )}
+      )} */}
       <Loading visible={loading} size="large" />
 
       {currentEntry?.entry?.status === 'driverAccepted' ? (
