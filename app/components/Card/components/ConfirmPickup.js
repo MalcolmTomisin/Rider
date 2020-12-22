@@ -96,7 +96,7 @@ const TimeDistance = ({entryInfo}) => {
 };
 
 const classes = StyleSheet.create({
-  root: {position: 'absolute', bottom: 0, paddingHorizontal: 20, width: '100%'},
+  root: {position: 'absolute', bottom: 60, paddingHorizontal: 20, width: '100%'},
   container: {
     paddingVertical: 16,
     alignItems: 'center',

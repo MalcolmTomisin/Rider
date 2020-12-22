@@ -1,4 +1,4 @@
-import React, {useContext} from 'react';
+import React, {useContext, useEffect} from 'react';
 import {
   TouchableOpacity,
   StyleSheet,
@@ -14,26 +14,47 @@ import accountAction from '../../../store/actions/account';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {api, baseURL} from '../../../api';
 import WSContext from '../../Socket/context';
+import {makeNetworkCalls} from '../../../utils';
+import axios from 'axios';
 
 const Switch = () => {
   const {isOnline, token} = useSelector(({account}) => account);
   const dispatch = useDispatch();
   const socket = useContext(WSContext);
 
-  const toggleOnlineStatus = (socket) => {
-    fetch(`${baseURL}${api.online}`, {
-      method: 'PATCH',
+  useEffect(() => {
+    makeNetworkCalls({
+      url: api.riderDetails,
       headers: {
         'x-auth-token': token,
       },
+      method: 'get',
     })
       .then((res) => {
-        if (res.status === 200) {
-          return res.json();
-        }
-        throw new Error('Unsuccessful');
+        const {data, msg} = res.data;
+        dispatch(accountAction.setOnline({isOnline: data.onlineStatus}));
       })
+      .catch((err) => {
+        if (err.response) {
+          const {msg} = err.response.data;
+          console.log('err', msg);
+          return;
+        }
+        console.error(err);
+      });
+  }, []);
+
+  const toggleOnlineStatus = (socket) => {
+    makeNetworkCalls({
+      url: api.online,
+      headers: {
+        'x-auth-token': token,
+      },
+      method: 'post',
+      data: {},
+    })
       .then((res) => {
+        // const {data, msg} = res.data;
         if (isOnline) {
           socket.disconnect();
           socket.on('disconnect', () => {
@@ -43,10 +64,14 @@ const Switch = () => {
           socket.connect();
         }
         dispatch(accountAction.setOnline({isOnline: !isOnline}));
-        AsyncStorage.setItem('@isOnline', JSON.stringify(!isOnline));
       })
       .catch((err) => {
-        //console.log(err);
+        if (err.response) {
+          const {msg} = err.response.data;
+          console.log('err', msg);
+          return;
+        }
+        console.error(err);
       });
   };
 

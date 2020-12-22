@@ -34,7 +34,7 @@ const initialstate = {
       longitude: 3.3488896,
     },
   },
-  isOnline: true,
+  isOnline: false,
   message: null,
   address: '',
   loading: false,

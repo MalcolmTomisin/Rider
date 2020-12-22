@@ -24,6 +24,8 @@ import {useFetch} from './utils/fetchHook';
 import {Order, Offline} from './components/Card';
 import {makeNetworkCalls, callBasket} from './utils';
 import {rejectOrder} from './components/Modal/components/CancelOrder';
+import {navigationRef} from './RootNavigation';
+import * as RootNavigation from './RootNavigation';
 
 async function requestUserPermission() {
   const authStatus = await messaging().requestPermission();
@@ -107,6 +109,25 @@ const StartUp = () => {
     } catch (error) {
       //console.log('error', error);
     }
+    makeNetworkCalls({
+      url: api.riderDetails,
+      headers: {
+        'x-auth-token': token,
+      },
+      method: 'get',
+    })
+      .then((res) => {
+        const {data, msg} = res.data;
+        dispatch(accountAction.setOnline({isOnline: data.onlineStatus}));
+      })
+      .catch((err) => {
+        if (err.response) {
+          const {msg} = err.response.data;
+          console.log('err', msg);
+          return;
+        }
+        console.error(err);
+      });
   };
 
   const setPreliminaries = async () => {
@@ -213,17 +234,22 @@ const StartUp = () => {
           feedbackAction.launch({open: true, severity: 's', msg: res.data.msg}),
         );
         dispatch(accountAction.setOrder({message}));
-        push('OrderPool');
+        RootNavigation.navigate('OrderPool');
       })
       .catch((err) => {
-        dispatch(
-          feedbackAction.launch({
-            open: true,
-            severity: 'w',
-            msg: `${err}`,
-          }),
-        );
-        setTimerIsRunning(true);
+        if (err.response) {
+          const {msg} = err.response.data;
+          console.log('err', msg);
+          dispatch(
+            feedbackAction.launch({
+              open: true,
+              severity: 'w',
+              msg,
+            }),
+          );
+          setTimerIsRunning(true);
+          return;
+        }
       })
       .finally(() => {
         dispatch(accountAction.setLoadingStatus({loading: false}));
@@ -233,11 +259,9 @@ const StartUp = () => {
   return (
     <WebSocket.Provider value={socket}>
       <PaperProvider theme={RNPTheme}>
-        <NavigationContainer theme={RNTheme}>
+        <NavigationContainer theme={RNTheme} ref={navigationRef}>
           <Navigation />
-          {!isOnline ? (
-            <Offline />
-          ) : !message?.data ? null : message?.accept ? null : (
+          {!isOnline ? null : !message?.data ? null : message?.accept ? null : (
             <Order
               onAccept={accept}
               onCountDownFinish={onCountDownFinish}

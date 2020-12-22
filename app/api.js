@@ -28,4 +28,6 @@ export const api = {
   confirmDelivery: 'order/confirm-delivery',
   weeklyOverview: 'order/weekly-overview',
   rateUser: 'rating/rate-user',
+  riderDetails: 'rider/me',
+
 };

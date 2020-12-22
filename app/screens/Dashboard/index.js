@@ -385,6 +385,8 @@ const Home = ({navigation: {navigate, push, pop}}) => {
           timerIsRunning={running}
         />
       )} */}
+
+      {!isOnline && <Offline />}
       <Loading visible={loading} size="large" />
 
       {currentEntry?.entry?.status === 'driverAccepted' ? (

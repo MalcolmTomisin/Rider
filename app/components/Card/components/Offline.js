@@ -17,7 +17,7 @@ const Offline = () => {
 export default Offline;
 
 const classes = StyleSheet.create({
-  root: {position: 'absolute', bottom: 0, paddingHorizontal: 20, width: '100%'},
+  root: {position: 'absolute', bottom: 60, paddingHorizontal: 20, width: '100%'},
   container: {
     justifyContent: 'center',
     paddingVertical: 16,
