@@ -73,19 +73,32 @@ const StartUp = () => {
   React.useEffect(() => {
     messaging()
       .getToken()
-      .then((token) => {
+      .then((fcmToken) => {
         //console.log('ftoken', token);
+        makeNetworkCalls({
+          url: api.fcmToken,
+          method: 'patch',
+          headers: {
+            'x-auth-token': token,
+            'Content-type': 'application/json',
+          },
+          data: {
+            FCMToken: fcmToken,
+          },
+        });
       });
     const unsubscribe = messaging().onMessage(async (remoteMessage) => {
       Alert.alert('A new FCM message arrived!', JSON.stringify(remoteMessage));
     });
 
     return unsubscribe;
-  }, []);
+  }, [token]);
 
   React.useEffect(() => {
     setPreliminaries();
-    socketEvents();
+    if (token) {
+      socketEvents();
+    }
   }, [token]);
 
   const socketEvents = () => {
@@ -104,30 +117,32 @@ const StartUp = () => {
         console.log('mess', message);
         dispatch(accountAction.setOrder({message}));
       });
+      if (token) {
+        makeNetworkCalls({
+          url: api.riderDetails,
+          headers: {
+            'x-auth-token': token,
+          },
+          method: 'get',
+        })
+          .then((res) => {
+            const {data, msg} = res.data;
+            dispatch(accountAction.setOnline({isOnline: data.onlineStatus}));
+          })
+          .catch((err) => {
+            if (err.response) {
+              const {msg} = err.response.data;
+              console.log('rider details err', msg);
+              return;
+            }
+            console.error(err);
+          });
+      }
 
       setSocket(s);
     } catch (error) {
       //console.log('error', error);
     }
-    makeNetworkCalls({
-      url: api.riderDetails,
-      headers: {
-        'x-auth-token': token,
-      },
-      method: 'get',
-    })
-      .then((res) => {
-        const {data, msg} = res.data;
-        dispatch(accountAction.setOnline({isOnline: data.onlineStatus}));
-      })
-      .catch((err) => {
-        if (err.response) {
-          const {msg} = err.response.data;
-          console.log('err', msg);
-          return;
-        }
-        console.error(err);
-      });
   };
 
   const setPreliminaries = async () => {

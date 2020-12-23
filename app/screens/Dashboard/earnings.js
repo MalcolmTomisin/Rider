@@ -45,6 +45,7 @@ const Earnings = () => {
     })
       .then((res) => {
         const {msg, data} = res.data;
+        console.log('rear', data);
         setSummary(data);
         dispatch(feedbackAction.launch({open: true, severity: 's', msg}));
       })
@@ -137,30 +138,24 @@ const Earnings = () => {
             ]}>
             <Subheading>September, 2020</Subheading>
           </View>
-
-          <View>
-            <FlatList
-              data={[0, 1, 2, 3, 4, 5, 6]}
-              keyExtractor={(item, index) => index.toString()}
-              renderItem={({item}) => (
-                <View style={classes.historyListRoot}>
-                  <View style={classes.historyListLeft}>
-                    <Subheading style={classes.historyListAmount}>
-                      Withdrawal from wallet
-                    </Subheading>
-                    <Caption style={classes.historyListDate}>
-                      23 Sept, 2020
-                    </Caption>
-                  </View>
-                  <Subheading style={classes.historyListAmount}>
-                    ₦1,500
-                  </Subheading>
-                </View>
-              )}
-            />
-          </View>
         </View>
       </ScrollView>
+
+      {/* <FlatList
+        data={[0, 1, 2, 3, 4, 5, 6]}
+        keyExtractor={(item, index) => index.toString()}
+        renderItem={({item}) => (
+          <View style={classes.historyListRoot}>
+            <View style={classes.historyListLeft}>
+              <Subheading style={classes.historyListAmount}>
+                Withdrawal from wallet
+              </Subheading>
+              <Caption style={classes.historyListDate}>23 Sept, 2020</Caption>
+            </View>
+            <Subheading style={classes.historyListAmount}>₦1,500</Subheading>
+          </View>
+        )}
+      /> */}
     </View>
   );
 };

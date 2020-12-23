@@ -75,9 +75,15 @@ const Login = ({navigation: {goBack, navigate}}) => {
           dispatch(setSignInToken({signedIn: true}));
           dispatch(feedbackAction.launch({open: true, severity: 's', msg}));
           dispatch(accountAction.setUserData({user: data}));
+          dispatch(accountAction.setOnline({isOnline: data.onlineStatus}));
           navigate('Dashboard', {screen: 'Home'});
         })
         .catch((err) => {
+          if (err.response) {
+            const {msg} = err.response.data;
+            dispatch(feedbackAction.launch({open: true, severity: 'w', msg}));
+            return;
+          }
           dispatch(
             feedbackAction.launch({open: true, severity: 'w', msg: `${err}`}),
           );

@@ -34,7 +34,7 @@ const Task = ({
       <View style={[classes.headerRoot, hr]}>
         <View>
           <Subheading>{`${
-            status !== 'completed' && status !== 'cancelled'
+            status !== 'delivered' && status !== 'cancelled'
               ? 'Ready to Deliver'
               : status === 'cancelled'
               ? 'Cancelled'
@@ -105,7 +105,7 @@ const Task = ({
                     : colors.red.main,
               },
             ]}
-            disabled={status === 'cancelled'}
+            disabled={status === 'cancelled' || status === 'delivered'}
             onPress={pickUpAction}>
             {buttonIconLoading === serial ? (
               <ActivityIndicator size="small" color="white" />
@@ -119,12 +119,18 @@ const Task = ({
                   ? 'Proceed Pickup'
                   : status === 'cancelled'
                   ? 'Cancelled'
+                  : status === 'delivered'
+                  ? 'Delivered'
                   : 'Start Delivery'
               }`}</Caption>
             )}
             <Icon
               name={`${
-                status === 'cancelled' ? 'alert-triangle' : 'arrow-right'
+                status === 'cancelled'
+                  ? 'alert-triangle'
+                  : status === 'delivered'
+                  ? 'package'
+                  : 'arrow-right'
               }`}
               size={10}
               color={colors.white}

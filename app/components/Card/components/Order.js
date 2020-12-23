@@ -343,7 +343,7 @@ const TimeDistance = ({data, onFinish, running}) => {
 const classes = StyleSheet.create({
   root: {
     position: 'absolute',
-    bottom: 100,
+    bottom: 250,
     paddingHorizontal: 20,
     width: '100%',
     height: DEVICE_HEIGHT * 0.53,

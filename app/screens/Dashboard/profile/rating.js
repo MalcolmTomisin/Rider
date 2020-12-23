@@ -10,14 +10,41 @@ import {
 import {Button} from '../../../components/Button';
 import {colors} from '../../../theme';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import { Pie} from '../../../components/Chart';
-import {useSelector} from 'react-redux';
+import {Pie} from '../../../components/Chart';
+import {useSelector, useDispatch} from 'react-redux';
 import {Rating} from 'react-native-rating-element';
-
+import {makeNetworkCalls} from '../../../utils';
+import {api} from '../../../api';
+import {feedbackAction} from '../../../store/actions';
 
 const RatingScreen = () => {
   const {dark} = useSelector(({theme}) => theme);
+  const {token} = useSelector(({account}) => account);
+  const [page, setpage] = React.useState(1);
 
+  const dispatch = useDispatch();
+  React.useEffect(() => {
+    makeNetworkCalls({
+      url: `${api.ratingSummary}?pageNumber=${page}&nPerPage=10`,
+      headers: {
+        'x-auth-token': token,
+      },
+    })
+      .then((res) => {
+        const {msg, data} = res.data;
+        dispatch(feedbackAction.launch({open: true, severity: 's', msg}));
+      })
+      .catch((err) => {
+        if (err.response) {
+          const {msg} = err.response.data;
+          dispatch(feedbackAction.launch({open: true, severity: 'w', msg}));
+          return;
+        }
+        dispatch(
+          feedbackAction.launch({open: true, severity: 'w', msg: `${err}`}),
+        );
+      });
+  }, [token]);
   return (
     <View style={classes.root}>
       <ScrollView>
@@ -96,18 +123,18 @@ const classes = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: 20,
     margin: 20,
-    height: 200
+    height: 200,
   },
   ratingNumber: {
-    fontWeight: "800",
-    fontSize: 30
+    fontWeight: '800',
+    fontSize: 30,
   },
   user: {
-    flexDirection: "row",
-    marginVertical: 10
+    flexDirection: 'row',
+    marginVertical: 10,
   },
   infoRoot: {
-    justifyContent: "flex-start"
+    justifyContent: 'flex-start',
   },
   historyHeaderTab: {
     paddingVertical: 10,

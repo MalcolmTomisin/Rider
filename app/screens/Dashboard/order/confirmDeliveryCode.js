@@ -52,6 +52,17 @@ const ConfirmDeliveryCode = ({navigation: {goBack, navigate, push, pop}}) => {
         push('OrderPool');
       })
       .catch((err) => {
+        if (err.response) {
+          const {msg} = err.response.data;
+          dispatch(
+            feedbackAction.launch({
+              open: true,
+              severity: 'w',
+              msg,
+            }),
+          );
+          return;
+        }
         console.error(err);
         dispatch(
           feedbackAction.launch({

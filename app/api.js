@@ -11,7 +11,7 @@ export const pspk = 'pk_test_fef4b69ccc575dec3a8babc10d9371505943faa8';
 export const api = {
   login: 'auth/rider',
   register: 'user',
-  verify: '/api/auth/verify',
+  verify: 'api/auth/verify',
   online: 'rider/online',
   acceptEntry: 'entry/rider-accept',
   userAuthKey: '@user',
@@ -29,5 +29,7 @@ export const api = {
   weeklyOverview: 'order/weekly-overview',
   rateUser: 'rating/rate-user',
   riderDetails: 'rider/me',
-
+  fcmToken: 'rider/fcmtoken',
+  ratingSummary: 'rating/rider-ratings',
+  validateEmail: 'auth/validate-email',
 };

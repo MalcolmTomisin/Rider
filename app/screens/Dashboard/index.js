@@ -409,7 +409,7 @@ const Home = ({navigation: {navigate, push, pop}}) => {
         <ConfirmPayment />
       ) : null}
 
-      {currentEntry?.entry?.status === 'pickedup' ? (
+      {currentEntry?.status === 'pickedup' ? (
         <>
           <AddressBanner />
           <EnrouteDelivery onPress={startDelievery} />

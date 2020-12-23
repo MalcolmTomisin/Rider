@@ -56,16 +56,21 @@ const CompletedOrder = ({navigation: {isFocused}}) => {
       return null;
     }
 
-    return completedOrders.map((v, i) => (
-      <Task
-        key={i}
-        pickUpAddress={v?.pickupAddress}
-        deliveryAddress={v?.deliveryAddress}
-        estimatedCost={v?.estimatedCost}
-        id={v?.orderId}
-        status={v?.entry?.status}
-      />
-    ));
+    return completedOrders.map((v, i) => {
+      console.log('item deli', v);
+      return (
+        <Task
+          key={i}
+          pickUpAddress={v?.pickupAddress}
+          deliveryAddress={v?.deliveryAddress}
+          estimatedCost={v?.estimatedCost}
+          id={v?.orderId}
+          //pickUpAction={() => pickUp(v, i)}
+          status={v?.entry?.status}
+          serial={i}
+        />
+      );
+    });
   };
 
   return (

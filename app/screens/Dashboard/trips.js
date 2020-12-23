@@ -1,14 +1,20 @@
-import React from 'react'
+import React from 'react';
 import {View, StyleSheet, Platform, ScrollView, FlatList} from 'react-native';
-import { Caption, Headline, Surface, Title, Subheading } from 'react-native-paper';
-import { Button } from "../../components/Button";
-import { colors } from '../../theme';
-import Icon from "react-native-vector-icons/MaterialCommunityIcons"
-import { Bar } from '../../components/Chart';
-import { useSelector } from "react-redux";
+import {
+  Caption,
+  Headline,
+  Surface,
+  Title,
+  Subheading,
+} from 'react-native-paper';
+import {Button} from '../../components/Button';
+import {colors} from '../../theme';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import {Bar} from '../../components/Chart';
+import {useSelector} from 'react-redux';
 
 const Trips = () => {
-  const { dark } = useSelector(({ theme }) => theme);
+  const {dark} = useSelector(({theme}) => theme);
 
   return (
     <View style={classes.root}>
@@ -29,9 +35,9 @@ const Trips = () => {
       />
     </View>
   );
-}
+};
 
-export default Trips
+export default Trips;
 
 const classes = StyleSheet.create({
   root: {
@@ -43,16 +49,16 @@ const classes = StyleSheet.create({
     paddingHorizontal: 20,
   },
   historyListAmount: {
-    fontWeight: "600",
-    fontSize: 15
+    fontWeight: '600',
+    fontSize: 15,
   },
   historyListRoot: {
     marginHorizontal: 20,
-    justifyContent: "space-between",
-    alignItems: "flex-start",
-    flexDirection: "row",
+    justifyContent: 'space-between',
+    alignItems: 'flex-start',
+    flexDirection: 'row',
     borderBottomColor: colors.hr.light,
     borderBottomWidth: 1,
-    paddingVertical: 5
-  }
+    paddingVertical: 5,
+  },
 });

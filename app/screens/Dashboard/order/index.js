@@ -101,18 +101,21 @@ const OrderPool = ({navigation: {navigate, push, isFocused}}) => {
       return null;
     }
 
-    return acceptedOrders.map((v, i) => (
-      <Task
-        key={i}
-        pickUpAddress={v?.pickupAddress}
-        deliveryAddress={v?.deliveryAddress}
-        estimatedCost={v?.estimatedCost}
-        id={v?.orderId}
-        pickUpAction={() => pickUp(v, i)}
-        status={v?.entry?.status}
-        serial={i}
-      />
-    ));
+    return acceptedOrders.map((v, i) => {
+      console.log('item', v);
+      return (
+        <Task
+          key={i}
+          pickUpAddress={v?.pickupAddress}
+          deliveryAddress={v?.deliveryAddress}
+          estimatedCost={v?.estimatedCost}
+          id={v?.orderId}
+          pickUpAction={() => pickUp(v, i)}
+          status={v?.status}
+          serial={i}
+        />
+      );
+    });
   };
 
   return (

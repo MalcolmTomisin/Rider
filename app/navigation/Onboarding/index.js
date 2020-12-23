@@ -7,8 +7,9 @@ import Register from '../../screens/Onboarding/register';
 import CompleteRegister from '../../screens/Onboarding/completeRegister';
 import Verification from '../../screens/Onboarding/verification';
 import VerificationCompleted from '../../screens/Onboarding/verificationCompleted';
-const Stack = createStackNavigator();
+import ForgotPassword from '../../screens/Onboarding/ForgotPassword';
 
+const Stack = createStackNavigator();
 
 const Onboarding = () => {
   return (
@@ -42,6 +43,11 @@ const Onboarding = () => {
         name="VerificationCompleted"
         options={{headerShown: false}}
         component={VerificationCompleted}
+      />
+      <Stack.Screen
+        name="ForgotPassword"
+        options={{headerShown: false}}
+        component={ForgotPassword}
       />
     </Stack.Navigator>
   );
