@@ -8,6 +8,8 @@ import CompleteRegister from '../../screens/Onboarding/completeRegister';
 import Verification from '../../screens/Onboarding/verification';
 import VerificationCompleted from '../../screens/Onboarding/verificationCompleted';
 import ForgotPassword from '../../screens/Onboarding/ForgotPassword';
+import OTPVerification from '../../screens/Onboarding/ForgotPassword/OTPVerification';
+import ResetPassword from '../../screens/Onboarding/ForgotPassword/resetPassword';
 
 const Stack = createStackNavigator();
 
@@ -48,6 +50,16 @@ const Onboarding = () => {
         name="ForgotPassword"
         options={{headerShown: false}}
         component={ForgotPassword}
+      />
+      <Stack.Screen
+        name="OTP"
+        options={{headerShown: false}}
+        component={OTPVerification}
+      />
+      <Stack.Screen
+        name="Reset"
+        options={{headerShown: false}}
+        component={ResetPassword}
       />
     </Stack.Navigator>
   );

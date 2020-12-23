@@ -33,4 +33,5 @@ export const api = {
   ratingSummary: 'rating/rider-ratings',
   validateEmail: 'auth/validate-email',
   validateOTP: 'auth/validate-otp',
+  resetPassword: 'auth/reset-password',
 };

@@ -11,6 +11,7 @@ import {feedbackAction} from '../../../store/actions';
 import {Loading} from '../../../components/Loading';
 import constants from '../../../utils/constants';
 import {colors} from '../../../theme';
+import {FeedBack} from '../../../components/Feedback';
 const {DEVICE_HEIGHT} = constants;
 
 const ForgotPassword = ({navigation: {navigate}}) => {
@@ -42,7 +43,7 @@ const ForgotPassword = ({navigation: {navigate}}) => {
       .then((res) => {
         const {msg} = res.data;
         dispatch(feedbackAction.launch({open: true, severity: 's', msg}));
-        navigate("OTPVerification", {email});
+        navigate("OTP", {email});
       })
       .catch((err) => {
         if (err.response) {
@@ -84,6 +85,7 @@ const ForgotPassword = ({navigation: {navigate}}) => {
       </View>
 
       <Loading visible={loading} size="large" />
+      <FeedBack />
     </View>
   );
 };

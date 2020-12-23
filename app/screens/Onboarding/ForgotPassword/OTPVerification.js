@@ -12,6 +12,7 @@ import constants from '../../../utils/constants';
 import {colors} from '../../../theme';
 import OTPTextInput from 'react-native-otp-textinput';
 import CountDown from 'react-native-countdown-component';
+import {FeedBack} from '../../../components/Feedback';
 
 const OTPVerification = ({
   navigation: {navigate, goBack},
@@ -26,8 +27,9 @@ const OTPVerification = ({
   const [running, setRunning] = React.useState(false);
   const dispatch = useDispatch();
 
-  const handleTextChange = (value) => {
-    setValue(value);
+  const handleTextChange = (val) => {
+      console.log('val', val);
+    setValue(val);
   };
 
   const sendForOTP = () => {
@@ -87,7 +89,7 @@ const OTPVerification = ({
       .then((res) => {
         const {msg} = res.data;
         dispatch(feedbackAction.launch({open: true, severity: 's', msg}));
-        navigate('reset');
+        navigate('Reset', {email});
       })
       .catch((err) => {
         if (err.response) {
@@ -128,7 +130,7 @@ const OTPVerification = ({
           tintColor={colors.red.main}
           textInputStyle={classes.textStyle}
           containerStyle={classes.containerStyle}
-          value={value}
+          inputCount={4}
         />
         <View>
           <Button label="Submit" onPress={submit} />
@@ -156,7 +158,6 @@ const OTPVerification = ({
                 showSeparator
                 separatorStyle={{color: colors.red.main}}
                 running={running}
-                //running={timerIsRunning}
               />
             </TouchableOpacity>
           </View>
@@ -223,6 +224,7 @@ const classes = StyleSheet.create({
     width: 70,
     height: 90,
     fontWeight: '500',
+    color: colors.white,
   },
   containerStyle: {},
   resendRoot: {
