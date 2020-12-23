@@ -45,6 +45,7 @@ const Verification = ({navigation: {goBack, navigate}}) => {
           tintColor={colors.red.main}
           textInputStyle={classes.textStyle}
           containerStyle={classes.containerStyle}
+          value={value}
         />
         <View>
           <Button

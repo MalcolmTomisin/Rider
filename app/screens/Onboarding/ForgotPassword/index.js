@@ -1,6 +1,6 @@
 import React from 'react';
 import {TextField} from '../../../components/TextField';
-import {View, StyleSheet} from 'react-native';
+import {View, StyleSheet, Text} from 'react-native';
 import {Caption} from 'react-native-paper';
 import {useSelector, useDispatch} from 'react-redux';
 import {Button} from '../../../components/Button';
@@ -9,6 +9,9 @@ import {makeNetworkCalls, validateEmail} from '../../../utils';
 import {api} from '../../../api';
 import {feedbackAction} from '../../../store/actions';
 import {Loading} from '../../../components/Loading';
+import constants from '../../../utils/constants';
+import {colors} from '../../../theme';
+const {DEVICE_HEIGHT} = constants;
 
 const ForgotPassword = ({navigation: {navigate}}) => {
   const [email, setEmail] = React.useState('');
@@ -39,6 +42,7 @@ const ForgotPassword = ({navigation: {navigate}}) => {
       .then((res) => {
         const {msg} = res.data;
         dispatch(feedbackAction.launch({open: true, severity: 's', msg}));
+        navigate("OTPVerification", {email});
       })
       .catch((err) => {
         if (err.response) {
@@ -54,11 +58,11 @@ const ForgotPassword = ({navigation: {navigate}}) => {
   };
   return (
     <View style={styles.container}>
-      <View>
+      <View style={styles.backbutton}>
         <BackButton />
       </View>
-      <View>
-        <Caption>Forgot Password?</Caption>
+      <View style={styles.body}>
+        <Caption style={styles.header}>Forgot Password?</Caption>
 
         <TextField
           label="Enter Email Address"
@@ -69,9 +73,16 @@ const ForgotPassword = ({navigation: {navigate}}) => {
           onChangeText={(input) => {
             setEmail(input);
           }}
+          rootStyle={{marginHorizontal: 20}}
+          TextFieldStyle={{
+            height: 54,
+          }}
         />
       </View>
-      <Button label="Recover Account" onPress={submit} />
+      <View style={{marginHorizontal: 20}}>
+        <Button label="Recover Account" onPress={submit} />
+      </View>
+
       <Loading visible={loading} size="large" />
     </View>
   );
@@ -82,5 +93,20 @@ export default ForgotPassword;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    padding: 5,
+  },
+  header: {
+    fontSize: 26,
+    lineHeight: 35,
+    color: colors.white,
+    marginLeft: 20,
+  },
+  body: {
+    justifyContent: 'space-evenly',
+    height: DEVICE_HEIGHT * 0.4,
+  },
+  backbutton: {
+    marginLeft: -10,
+    marginTop: 20,
   },
 });

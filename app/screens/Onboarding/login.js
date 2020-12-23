@@ -126,6 +126,9 @@ const Login = ({navigation: {goBack, navigate}}) => {
             rootStyle={{marginBottom: 10}}
           />
           <Text
+          onPress={() => {
+            navigate("ForgotPassword")
+          }}
             style={{
               position: 'absolute',
               top: 8,

@@ -32,4 +32,5 @@ export const api = {
   fcmToken: 'rider/fcmtoken',
   ratingSummary: 'rating/rider-ratings',
   validateEmail: 'auth/validate-email',
+  validateOTP: 'auth/validate-otp',
 };
