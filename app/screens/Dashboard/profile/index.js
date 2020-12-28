@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {View, StyleSheet, TouchableOpacity, ScrollView} from 'react-native';
+import {View, StyleSheet, TouchableOpacity, ScrollView, Linking} from 'react-native';
 import {Subheading, Avatar, Caption} from 'react-native-paper';
 import {colors} from '../../../theme';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -20,12 +20,20 @@ const Profile = ({navigation: {navigate}}) => {
       if (stringifiedUserDetails) {
         setUserDetails(JSON.parse(stringifiedUserDetails));
       }
+      console.log('user', stringifiedUserDetails );
     })();
   }, []);
   return (
     <View style={classes.root}>
       <View style={classes.headerRoot}>
-        <Avatar.Image source={img.securityImg} size={90} />
+        <Avatar.Image
+          source={
+            userDetails?.img
+              ? {uri: `https://df7sglzvhxylw.cloudfront.net/${userDetails.img}`}
+              : img.securityImg
+          }
+          size={90}
+        />
         <View style={classes.headerContent}>
           <Subheading
             style={classes.listTitle}>{`${userDetails?.name}`}</Subheading>
@@ -43,7 +51,7 @@ const Profile = ({navigation: {navigate}}) => {
         <List name="Order Basket" onPress={() => navigate('OrderPool')} />
         <List name="Ratings" onPress={() => navigate('Rating')} />
         <List name="Settings" onPress={() => navigate('Settings')} />
-        <List name="Help" onPress={() => navigate('Trips')} />
+        <List name="Help" onPress={() => Linking.openURL('mailto:support@exaltapp.com?subject=SendMail&body=Description')} />
         <List
           name="Logout"
           onPress={() => {

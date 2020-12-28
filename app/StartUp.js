@@ -75,17 +75,28 @@ const StartUp = () => {
       .getToken()
       .then((fcmToken) => {
         //console.log('ftoken', token);
-        makeNetworkCalls({
-          url: api.fcmToken,
-          method: 'patch',
-          headers: {
-            'x-auth-token': token,
-            'Content-type': 'application/json',
-          },
-          data: {
-            FCMToken: fcmToken,
-          },
-        });
+        if (token) {
+          makeNetworkCalls({
+            url: api.fcmToken,
+            method: 'patch',
+            headers: {
+              'x-auth-token': token,
+              'Content-type': 'application/json',
+            },
+            data: {
+              FCMToken: fcmToken,
+            },
+          })
+            .then((res) => {})
+            .catch((err) => {
+              if (err.response) {
+                const {msg} = err.response.data;
+                console.log('msg', msg);
+                return;
+              }
+              console.log('2', `${err}`);
+            });
+        }
       });
     const unsubscribe = messaging().onMessage(async (remoteMessage) => {
       Alert.alert('A new FCM message arrived!', JSON.stringify(remoteMessage));
@@ -141,7 +152,7 @@ const StartUp = () => {
 
       setSocket(s);
     } catch (error) {
-      //console.log('error', error);
+      console.log('socket error', error);
     }
   };
 

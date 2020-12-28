@@ -156,7 +156,6 @@ const Login = ({navigation: {goBack, navigate}}) => {
           </Subheading>
         </View>
       </View>
-      <FeedBack />
       <Loading visible={loading} size="large" />
     </KeyboardAwareScrollView>
   );

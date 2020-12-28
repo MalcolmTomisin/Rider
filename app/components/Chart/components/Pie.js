@@ -13,20 +13,21 @@ import {useSelector} from 'react-redux';
 import Svg from 'react-native-svg';
 const {width} = Dimensions.get('screen');
 
-const Pie = () => {
+const Pie = ({count}) => {
   const {dark} = useSelector(({theme}) => theme);
   const [percent, setPercent] = React.useState(25);
   const [data, setData] = React.useState(0);
   let interval = null;
 
   React.useEffect(() => {
-    setData(getData(10));
+    let newNum = count === 0 ? 0 : (count / 25) * 100;
+    setData(getData(newNum));
     // increasePercentage();
 
     // return () => {
     //   clearInterval(interval);
     // }
-  }, []);
+  }, [count]);
 
   const increasePercentage = () => {
     let percent = 25;
@@ -48,7 +49,7 @@ const Pie = () => {
   //console.log("data", data);
 
   return (
-    <View stxle={styles.container}>
+    <View style={styles.container}>
       <Svg width={270} height={270}>
         <VictoryLabel
           textAnchor="middle"
@@ -59,7 +60,7 @@ const Pie = () => {
           }}
           x={135}
           y={125}
-          text="1421"
+          text={`${count}`}
         />
         <VictoryLabel
           textAnchor="middle"

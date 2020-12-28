@@ -34,4 +34,5 @@ export const api = {
   validateEmail: 'auth/validate-email',
   validateOTP: 'auth/validate-otp',
   resetPassword: 'auth/reset-password',
+  tripsCurrentMonth: 'rider/trips',
 };

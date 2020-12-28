@@ -1,5 +1,5 @@
 import React from 'react';
-import {View, StyleSheet, TouchableOpacity} from 'react-native';
+import {View, StyleSheet, TouchableOpacity, Linking} from 'react-native';
 import {Subheading, Avatar, Switch} from 'react-native-paper';
 import {colors} from '../../../theme';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -31,7 +31,14 @@ const Settings = ({navigation: {navigate}}) => {
       />
       <List name="Terms & Conditions" onPress={() => navigate('Rating')} />
       <List name="Privacy Policy" onPress={() => navigate('Settings')} />
-      <List name="Help" onPress={() => navigate('Trips')} />
+      <List
+        name="Help"
+        onPress={() =>
+          Linking.openURL(
+            'mailto:support@exaltapp.com?subject=SendMail&body=Description',
+          )
+        }
+      />
       <List
         name="Logout"
         onPress={async () => {

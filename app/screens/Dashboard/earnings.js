@@ -32,6 +32,7 @@ const Earnings = () => {
   const {dark} = useSelector(({theme}) => theme);
   const {token, loading} = useSelector(({account}) => account);
   const [summary, setSummary] = useState([]);
+  const [trips, setTrips] = useState([]);
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -45,15 +46,31 @@ const Earnings = () => {
     })
       .then((res) => {
         const {msg, data} = res.data;
-        console.log('rear', data);
+        console.log('rear', data, token);
         setSummary(data);
         dispatch(feedbackAction.launch({open: true, severity: 's', msg}));
+        return makeNetworkCalls({
+          url: api.tripsCurrentMonth,
+          headers: {
+            'x-auth-token': token,
+          },
+          method: 'get',
+        });
       })
-      .catch((err) =>
+      .then((res) => {
+        const {msg, data} = res.data;
+        setTrips(data);
+      })
+      .catch((err) => {
+        if (err.response) {
+          const {msg} = err.response.data;
+          dispatch(feedbackAction.launch({open: true, severity: 'w', msg}));
+          return;
+        }
         dispatch(
           feedbackAction.launch({open: true, severity: 'w', msg: `${err}`}),
-        ),
-      )
+        );
+      })
       .finally(() => {
         dispatch(accountAction.setLoadingStatus({loading: false}));
       });
@@ -76,7 +93,7 @@ const Earnings = () => {
               <View style={classes.chartHeaderAmountRoot}>
                 <Caption style={classes.signChart}>₦</Caption>
                 <Subheading style={classes.chartHeaderAmount}>
-                  {`${item?.totalIncome}`}
+                  {`${Math.round(item?.estimatedCost)}`}
                 </Subheading>
               </View>
             </View>
@@ -91,18 +108,17 @@ const Earnings = () => {
               <Subheading
                 style={
                   classes.chartFootTitle
-                }>{`${item?.totalOrders}`}</Subheading>
+                }>{`${item?.data.length}`}</Subheading>
               <Caption>Orders</Caption>
             </View>
             <View style={classes.chartFootContainer}>
-              <Subheading style={classes.chartFootTitle}>42:11</Subheading>
+              <Subheading style={classes.chartFootTitle}>N/A</Subheading>
               <Caption>Online hours</Caption>
             </View>
             <View style={classes.chartFootContainer}>
-              <Subheading
-                style={
-                  classes.chartFootTitle
-                }>{`${item?.totalDistance}`}</Subheading>
+              <Subheading style={classes.chartFootTitle}>{`${Math.round(
+                item?.estimatedDistance,
+              )}`}</Subheading>
               <Caption>Total Distance</Caption>
             </View>
           </View>
@@ -118,7 +134,9 @@ const Earnings = () => {
           <Caption style={classes.headerTitle}>Total Balance</Caption>
           <View style={classes.headerAmountRoot}>
             <Caption style={classes.sign}>₦</Caption>
-            <Headline style={classes.headerAmount}>7,350.00</Headline>
+            <Headline style={classes.headerAmount}>{`${
+              summary.length > 0 ? Math.round(summary[0].totalIncome) : 0
+            }`}</Headline>
           </View>
         </View>
         <View style={{justifyContent: 'center', alignItems: 'center'}}>
@@ -136,26 +154,32 @@ const Earnings = () => {
               classes.historyHeaderTab,
               {backgroundColor: dark ? colors.grey.dark : colors.grey.light},
             ]}>
-            <Subheading>September, 2020</Subheading>
+            <Subheading>
+              {`${constants.month[new Date().getMonth()]}, 2020`}
+            </Subheading>
           </View>
         </View>
       </ScrollView>
 
-      {/* <FlatList
-        data={[0, 1, 2, 3, 4, 5, 6]}
+      <FlatList
+        data={trips}
         keyExtractor={(item, index) => index.toString()}
         renderItem={({item}) => (
           <View style={classes.historyListRoot}>
             <View style={classes.historyListLeft}>
               <Subheading style={classes.historyListAmount}>
-                Withdrawal from wallet
+                {`${item.status}`}
               </Subheading>
-              <Caption style={classes.historyListDate}>23 Sept, 2020</Caption>
+              <Caption style={classes.historyListDate}>{`${new Date(
+                item.createdAt,
+              ).toDateString()}`}</Caption>
             </View>
-            <Subheading style={classes.historyListAmount}>₦1,500</Subheading>
+            <Subheading style={classes.historyListAmount}>{`₦ ${Math.round(
+              item.estimatedCost,
+            )}`}</Subheading>
           </View>
         )}
-      /> */}
+      />
     </View>
   );
 };

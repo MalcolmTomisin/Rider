@@ -11,13 +11,13 @@ import {useSelector} from 'react-redux';
 const {width} = Dimensions.get('screen');
 
 const data = [
-  {x: 'MON', y: 1300},
-  {x: 'TUES', y: 1600},
-  {x: 'WEDS', y: 1250},
-  {x: 'THURS', y: 1900},
-  {x: 'FRI', y: 190},
-  {x: 'SAT', y: 1400},
-  {x: 'SUN', y: 1900},
+  {x: 'MON', y: 0},
+  {x: 'TUES', y: 0},
+  {x: 'WEDS', y: 0},
+  {x: 'THURS', y: 0},
+  {x: 'FRI', y: 0},
+  {x: 'SAT', y: 0},
+  {x: 'SUN', y: 0},
 ];
 
 const Bar = () => {

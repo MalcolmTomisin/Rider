@@ -30,7 +30,7 @@ const Task = ({
   // }
   return (
     <Surface
-      style={[classes.root, {height: status !== 'completed' ? 300 : 200}]}>
+      style={[classes.root, {height: status !== 'completed' ? 300 : 250}]}>
       <View style={[classes.headerRoot, hr]}>
         <View>
           <Subheading>{`${
@@ -105,7 +105,7 @@ const Task = ({
                     : colors.red.main,
               },
             ]}
-            disabled={status === 'cancelled' || status === 'delivered'}
+            disabled={status === 'cancelled'}
             onPress={pickUpAction}>
             {buttonIconLoading === serial ? (
               <ActivityIndicator size="small" color="white" />

@@ -31,10 +31,14 @@ const Rate = ({navigation: {navigate}}) => {
         dispatch(feedbackAction.launch({open: true, severity: 's', msg}));
       })
       .catch((err) => {
+        if (err.response) {
+          const {msg} = err.response.data;
+          dispatch(feedbackAction.launch({open: true, severity: 'w', msg}));
+          return;
+        }
         dispatch(
           feedbackAction.launch({open: true, severity: 'w', msg: `${err}`}),
         );
-        navigate('OrderPool');
       })
       .finally(() => {
         dispatch(accountAction.setLoadingStatus({loading: false}));
@@ -43,7 +47,7 @@ const Rate = ({navigation: {navigate}}) => {
 
   return (
     <View style={classes.root}>
-      <Title style={classes.text}>Leonard Elizabeth</Title>
+      <Title style={classes.text} />
       <Rating
         rated={0}
         totalCount={10}

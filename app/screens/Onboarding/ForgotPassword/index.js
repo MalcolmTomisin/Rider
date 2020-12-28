@@ -47,7 +47,7 @@ const ForgotPassword = ({navigation: {navigate}}) => {
       })
       .catch((err) => {
         if (err.response) {
-          const {msg} = err.response;
+          const {msg} = err.response.data;
           dispatch(feedbackAction.launch({open: true, severity: 'w', msg}));
           return;
         }

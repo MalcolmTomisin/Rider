@@ -22,7 +22,6 @@ import NotificationSounds, {
 } from 'react-native-notification-sounds';
 import constants from '../../../utils/constants';
 
-
 const {DEVICE_HEIGHT, DEVICE_WIDTH} = constants;
 
 const Order = ({onAccept, onCountDownFinish, timerIsRunning}) => {
