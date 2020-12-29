@@ -35,4 +35,7 @@ export const api = {
   validateOTP: 'auth/validate-otp',
   resetPassword: 'auth/reset-password',
   tripsCurrentMonth: 'rider/trips',
+  listBank: 'bank/list',
+  validateBank: 'bank/confirm?',
+  addbank: 'bank',
 };

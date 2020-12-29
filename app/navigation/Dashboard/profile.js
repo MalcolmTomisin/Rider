@@ -1,8 +1,8 @@
 import React from 'react';
 import {createStackNavigator} from '@react-navigation/stack';
 import {View, TouchableOpacity, Image, StyleSheet} from 'react-native';
-import { colors } from "../../theme";
-import TitleButton from "../custom/TitleButton";
+import {colors} from '../../theme';
+import TitleButton from '../custom/TitleButton';
 import Profile from '../../screens/Dashboard/profile';
 const Stack = createStackNavigator();
 

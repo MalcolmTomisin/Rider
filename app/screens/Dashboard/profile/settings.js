@@ -14,10 +14,10 @@ const Settings = ({navigation: {navigate}}) => {
   return (
     <View style={classes.root}>
       <List name="Bank details" onPress={() => navigate('BankAccount')} />
-      <List
+      {/* <List
         name="Change Password"
         onPress={() => navigate('Change Password')}
-      />
+      /> */}
       <List
         name="Dark Mode"
         // onPress={null}
@@ -29,8 +29,8 @@ const Settings = ({navigation: {navigate}}) => {
           />
         }
       />
-      <List name="Terms & Conditions" onPress={() => navigate('Rating')} />
-      <List name="Privacy Policy" onPress={() => navigate('Settings')} />
+      <List name="Terms & Conditions" onPress={() => navigate('Terms')} />
+      <List name="Privacy Policy" onPress={() => navigate('Terms')} />
       <List
         name="Help"
         onPress={() =>

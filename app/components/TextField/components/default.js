@@ -5,6 +5,7 @@ import {
   View,
   Text,
   TouchableOpacity,
+  ActivityIndicator
 } from 'react-native';
 import {Caption, Subheading} from 'react-native-paper';
 import {useSelector} from 'react-redux';
@@ -27,6 +28,7 @@ const TextField = (props) => {
         ]}>
         <Subheading style={classes.label}>{props.label}</Subheading>
       </View>
+      {props.loading ? <ActivityIndicator size="small" color={colors.red.main} /> :  
       <View
         style={[
           classes.container,
@@ -51,7 +53,8 @@ const TextField = (props) => {
             </TouchableOpacity>
           )
         ) : null}
-      </View>
+      </View>}
+      
       {props.error ? (
         <Text style={classes.errorMessage}>{`${props.error}`}</Text>
       ) : null}

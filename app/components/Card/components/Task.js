@@ -30,7 +30,7 @@ const Task = ({
   // }
   return (
     <Surface
-      style={[classes.root, {height: status !== 'completed' ? 300 : 250}]}>
+      style={[classes.root, {height: status !== 'completed' ? 350 : 250}]}>
       <View style={[classes.headerRoot, hr]}>
         <View>
           <Subheading>{`${
@@ -180,7 +180,7 @@ const classes = StyleSheet.create({
     color: colors.red.main,
   },
   footerRoot: {
-    paddingHorizontal: 20,
+    paddingHorizontal: 25,
     paddingVertical: 10,
     alignItems: 'flex-end',
     flexDirection: 'row',
