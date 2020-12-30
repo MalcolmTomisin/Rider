@@ -10,7 +10,7 @@ import {colors} from '../../../theme';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import {Caption} from 'react-native-paper';
 import {useDispatch, useSelector} from 'react-redux';
-import accountAction from '../../../store/actions/account';
+import {accountAction, feedbackAction} from '../../../store/actions';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {api, baseURL} from '../../../api';
 import WSContext from '../../Socket/context';
@@ -18,40 +18,53 @@ import {makeNetworkCalls} from '../../../utils';
 import axios from 'axios';
 
 const Switch = () => {
-  const {isOnline, token} = useSelector(({account}) => account);
+  const {
+    isOnline,
+    token,
+    location: {
+      coords: {latitude, longitude},
+    },
+  } = useSelector(({account}) => account);
   const dispatch = useDispatch();
   const socket = useContext(WSContext);
 
   useEffect(() => {
-    makeNetworkCalls({
-      url: api.riderDetails,
-      headers: {
-        'x-auth-token': token,
-      },
-      method: 'get',
-    })
-      .then((res) => {
-        const {data, msg} = res.data;
-        dispatch(accountAction.setOnline({isOnline: data.onlineStatus}));
+    if (token) {
+      makeNetworkCalls({
+        url: api.riderDetails,
+        headers: {
+          'x-auth-token': token,
+        },
+        method: 'get',
       })
-      .catch((err) => {
-        if (err.response) {
-          const {msg} = err.response.data;
-          console.log('err', msg);
-          return;
-        }
-        console.error(err);
-      });
-  }, []);
+        .then((res) => {
+          const {data, msg} = res.data;
+          dispatch(accountAction.setOnline({isOnline: data.onlineStatus}));
+        })
+        .catch((err) => {
+          if (err.response) {
+            const {msg} = err.response.data;
+            console.log('err', msg);
+            return;
+          }
+          console.error(err);
+        });
+    }
+  }, [token]);
 
   const toggleOnlineStatus = (socket) => {
+    console.log('latlon', token);
     makeNetworkCalls({
       url: api.online,
       headers: {
         'x-auth-token': token,
+        'Content-type': 'application/json',
       },
       method: 'post',
-      data: {},
+      data: {
+        latitude,
+        longitude,
+      },
     })
       .then((res) => {
         // const {data, msg} = res.data;
@@ -68,7 +81,8 @@ const Switch = () => {
       .catch((err) => {
         if (err.response) {
           const {msg} = err.response.data;
-          console.log('err', msg);
+          dispatch(feedbackAction.launch({open: true, severity: 'w', msg}));
+          console.log('err', err);
           return;
         }
         console.error(err);

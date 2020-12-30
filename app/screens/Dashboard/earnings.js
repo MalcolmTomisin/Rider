@@ -33,10 +33,10 @@ const Earnings = () => {
   const {token, loading} = useSelector(({account}) => account);
   const [summary, setSummary] = useState([]);
   const [trips, setTrips] = useState([]);
+  const [refreshing, setRefreshing] = useState(false);
   const dispatch = useDispatch();
 
-  useEffect(() => {
-    dispatch(accountAction.setLoadingStatus({loading: true}));
+  const getEarningsAndTrips = () => {
     makeNetworkCalls({
       url: api.weeklyOverview,
       headers: {
@@ -46,7 +46,7 @@ const Earnings = () => {
     })
       .then((res) => {
         const {msg, data} = res.data;
-        console.log('rear', data, token);
+        console.log('rear', data);
         setSummary(data);
         dispatch(feedbackAction.launch({open: true, severity: 's', msg}));
         return makeNetworkCalls({
@@ -73,7 +73,13 @@ const Earnings = () => {
       })
       .finally(() => {
         dispatch(accountAction.setLoadingStatus({loading: false}));
+        setRefreshing(false);
       });
+  };
+
+  useEffect(() => {
+    dispatch(accountAction.setLoadingStatus({loading: true}));
+    getEarningsAndTrips();
   }, []);
 
   const _renderItem = ({item, index}) => {
@@ -164,11 +170,18 @@ const Earnings = () => {
       <FlatList
         data={trips}
         keyExtractor={(item, index) => index.toString()}
+        refreshing={refreshing}
+        onRefresh={() => {
+          setRefreshing(true);
+          getEarningsAndTrips();
+        }}
         renderItem={({item}) => (
           <View style={classes.historyListRoot}>
             <View style={classes.historyListLeft}>
               <Subheading style={classes.historyListAmount}>
-                {`${item.status}`}
+                {`${
+                  item?.status.charAt(0).toUpperCase() + item?.status.slice(1)
+                }`}
               </Subheading>
               <Caption style={classes.historyListDate}>{`${new Date(
                 item.createdAt,
@@ -283,6 +296,7 @@ const classes = StyleSheet.create({
   historyListAmount: {
     fontWeight: '600',
     fontSize: 15,
+    color: colors.green.main,
   },
   historyListRoot: {
     marginHorizontal: 20,

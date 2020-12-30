@@ -83,11 +83,10 @@ const Home = ({navigation: {navigate, push, pop}}) => {
           navigate('ConfirmPickupCode');
         }
       })
-      .catch((err) =>
-        dispatch(
-          feedbackAction.launch({open: true, severity: 'w', msg: `${err}`}),
-        ),
-      )
+      .catch((err) => {
+        const {msg} = err?.response?.data;
+        dispatch(feedbackAction.launch({open: true, severity: 'w', msg}));
+      })
       .finally(() => {
         dispatch(accountAction.setLoadingStatus({loading: false}));
       });
@@ -118,13 +117,8 @@ const Home = ({navigation: {navigate, push, pop}}) => {
         push('OrderPool');
       })
       .catch((err) => {
-        dispatch(
-          feedbackAction.launch({
-            open: true,
-            severity: 'w',
-            msg: `${err}`,
-          }),
-        );
+        const {msg} = err?.response?.data;
+        dispatch(feedbackAction.launch({open: true, severity: 'w', msg}));
         setTimerIsRunning(true);
       })
       .finally(() => {
@@ -153,9 +147,8 @@ const Home = ({navigation: {navigate, push, pop}}) => {
         push('Dashboard');
       })
       .catch((err) => {
-        dispatch(
-          feedbackAction.launch({open: true, severity: 'w', msg: `${err}`}),
-        );
+        const {msg} = err?.response?.data;
+        dispatch(feedbackAction.launch({open: true, severity: 'w', msg}));
       })
       .finally(() => {
         dispatch(accountAction.setLoadingStatus({loading: false}));
@@ -180,9 +173,8 @@ const Home = ({navigation: {navigate, push, pop}}) => {
         dispatch(feedbackAction.launch({open: true, severity: 's', msg}));
       })
       .catch((err) => {
-        dispatch(
-          feedbackAction.launch({open: true, severity: 'w', msg: `${err}`}),
-        );
+        const {msg} = err?.response?.data;
+        dispatch(feedbackAction.launch({open: true, severity: 'w', msg}));
       })
       .finally(() => {
         dispatch(accountAction.setLoadingStatus({loading: false}));
@@ -209,9 +201,8 @@ const Home = ({navigation: {navigate, push, pop}}) => {
         navigate('ConfirmDeliveryCode');
       })
       .catch((err) => {
-        dispatch(
-          feedbackAction.launch({open: true, severity: 'w', msg: `${err}`}),
-        );
+        const {msg} = err?.response?.data;
+        dispatch(feedbackAction.launch({open: true, severity: 'w', msg}));
       })
       .finally(() => {
         dispatch(accountAction.setLoadingStatus({loading: false}));
@@ -224,7 +215,7 @@ const Home = ({navigation: {navigate, push, pop}}) => {
   }, []);
 
   useEffect(() => {
-    if (enroute) {
+    if(token){
       Geolocation.watchPosition(
         ({coords: {longitude, latitude}}) => {
           console.log('it has happened');
@@ -241,24 +232,11 @@ const Home = ({navigation: {navigate, push, pop}}) => {
         (error) => {
           console.error(error);
         },
-        {interval: 120000, enableHighAccuracy: true},
+        {interval: 60000, enableHighAccuracy: true, distanceFilter: 20},
       );
     }
-  }, [enroute]);
+  }, [currentEntry]);
 
-  useEffect(() => {
-    // if (socket) {
-    //   socket.on('assignEntry', (message) => {
-    //     console.log('entry', message);
-    //     dispatch(accountAction.setOrder({message}));
-    //     NotificationSounds.getNotifications('notification').then(
-    //       (soundsList) => {
-    //         playSampleSound(soundsList[1]);
-    //       },
-    //     );
-    //   });
-    // }
-  }, []);
   const onCountDownFinish = () => {
     rejectOrder(message, dispatch, token);
   };
@@ -375,16 +353,6 @@ const Home = ({navigation: {navigate, push, pop}}) => {
             </>
           )}
       </MapView>
-
-      {/* {!isOnline ? (
-        <Offline />
-      ) : !message?.data ? null : message?.accept ? null : (
-        <Order
-          onAccept={accept}
-          onCountDownFinish={onCountDownFinish}
-          timerIsRunning={running}
-        />
-      )} */}
 
       {!isOnline && <Offline />}
       <Loading visible={loading} size="large" />

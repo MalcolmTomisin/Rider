@@ -53,6 +53,7 @@ const RatingScreen = () => {
     })
       .then((res) => {
         const {msg, data} = res.data;
+        console.log('rate', data);
         setUserRatings(data);
         dispatch(feedbackAction.launch({open: true, severity: 's', msg}));
         calculateAverageRating();
@@ -92,7 +93,9 @@ const RatingScreen = () => {
               <Caption>{userRatings.length} users</Caption>
             </View>
           </View>
-          <Pie count={userRatings.length} />
+          <View>
+            <Pie count={userRatings.length} />
+          </View>
         </Surface>
       </ScrollView>
       <View style={classes.historyRoot}>

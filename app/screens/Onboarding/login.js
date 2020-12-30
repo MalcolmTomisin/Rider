@@ -73,6 +73,9 @@ const Login = ({navigation: {goBack, navigate}}) => {
             ['userDetails', JSON.stringify(data)],
           ]);
           dispatch(setSignInToken({signedIn: true}));
+          dispatch(
+            accountAction.setToken({token: res.headers['x-auth-token']}),
+          );
           dispatch(feedbackAction.launch({open: true, severity: 's', msg}));
           dispatch(accountAction.setUserData({user: data}));
           dispatch(accountAction.setOnline({isOnline: data.onlineStatus}));
@@ -126,9 +129,9 @@ const Login = ({navigation: {goBack, navigate}}) => {
             rootStyle={{marginBottom: 10}}
           />
           <Text
-          onPress={() => {
-            navigate("ForgotPassword")
-          }}
+            onPress={() => {
+              navigate('ForgotPassword');
+            }}
             style={{
               position: 'absolute',
               top: 8,
