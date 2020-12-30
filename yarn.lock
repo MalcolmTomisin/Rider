@@ -6269,6 +6269,11 @@ react-native-screens@^2.11.0:
   resolved "https://registry.yarnpkg.com/react-native-screens/-/react-native-screens-2.11.0.tgz#34b30b07c2d04aa100cba984b944b303bfa43ea6"
   integrity sha512-vJzJE3zI1XUtqthrX3Dh2TBQWB+xFyaGhF52KBq9FjJUN5ws4xpLZJxBWa1KbGV3DilmcSZ4jmZR5LGordwE7w==
 
+react-native-send-intent@^1.2.2:
+  version "1.2.2"
+  resolved "https://registry.yarnpkg.com/react-native-send-intent/-/react-native-send-intent-1.2.2.tgz#9ee3d375864e0fe5e10ad8f0cee9c054b0bee08e"
+  integrity sha512-vJUY89b4sgzazPqedKWG+wNEyqSjxJuwU9SP0tXIVvZdHHTt1AzH1GHJ1H3mtLDSdW7c4693L86i4GD10/pZqw==
+
 react-native-snap-carousel@^3.9.1:
   version "3.9.1"
   resolved "https://registry.yarnpkg.com/react-native-snap-carousel/-/react-native-snap-carousel-3.9.1.tgz#6fd9bd8839546c2c6043a41d2035afbc6fe0443e"

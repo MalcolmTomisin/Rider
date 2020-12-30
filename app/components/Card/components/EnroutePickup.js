@@ -6,10 +6,12 @@ import FeaterIcon from 'react-native-vector-icons/Feather';
 import {useSelector} from 'react-redux';
 import {colors} from '../../../theme';
 import {Button} from '../../Button';
+import {openGoogleMapsIntent} from '../../../utils';
 
 const EnroutePickup = ({onPress}) => {
   const {dark} = useSelector(({theme}) => theme);
   const {currentEntry} = useSelector(({delivery}) => delivery);
+
   return (
     <View style={classes.root}>
       <Surface style={classes.container}>
@@ -31,9 +33,16 @@ const EnroutePickup = ({onPress}) => {
                 color={dark ? colors.grey.light : colors.grey.dark}
               />
             </TouchableOpacity>
-            <TouchableOpacity style={classes.actionButtonRoot}>
+            <TouchableOpacity
+              style={classes.actionButtonRoot}
+              onPress={() =>
+                openGoogleMapsIntent(
+                  currentEntry.pickupLatitude,
+                  currentEntry.pickupLongitude,
+                )
+              }>
               <FeaterIcon
-                name="message-square"
+                name="map-pin"
                 size={30}
                 color={dark ? colors.grey.light : colors.grey.dark}
               />

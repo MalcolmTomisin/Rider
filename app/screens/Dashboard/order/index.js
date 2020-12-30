@@ -113,6 +113,7 @@ const OrderPool = ({navigation: {navigate, push, isFocused}}) => {
           pickUpAction={() => pickUp(v, i)}
           status={v?.status}
           serial={i}
+          orderInfo={v}
         />
       );
     });

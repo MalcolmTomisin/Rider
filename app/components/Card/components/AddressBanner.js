@@ -18,7 +18,7 @@ const AddressBanner = ({}) => {
         style={{margin: 5}}
         color="#707070"
       />
-      <Text style={styles.text}>
+      <Text style={styles.text} numberOfLines={1}>
         {currentEntry?.entry?.status !== 'pickedup' &&
         currentEntry?.entry?.status !== 'enrouteToDelivery' &&
         currentEntry?.entry?.status !== 'arrivedAtDelivery' &&
@@ -43,6 +43,7 @@ const styles = StyleSheet.create({
     top: 20,
     left: 20,
     alignItems: 'center',
+    padding: 10,
   },
   text: {
     fontFamily: 'Manrope-Medium',
@@ -51,8 +52,9 @@ const styles = StyleSheet.create({
     fontStyle: 'normal',
     lineHeight: 23,
     letterSpacing: 0,
-    textAlign: 'center',
+    textAlign: 'left',
     color: '#707070',
+    flex: 1,
   },
 });
 

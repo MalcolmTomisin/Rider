@@ -6,6 +6,7 @@ import FeaterIcon from 'react-native-vector-icons/Feather';
 import {useSelector, useDispatch} from 'react-redux';
 import {colors} from '../../../theme';
 import {Button} from '../../Button';
+import {openGoogleMapsIntent} from '../../../utils';
 
 const ConfirmDelivery = ({confirmDelivery}) => {
   const dispatch = useDispatch();
@@ -33,9 +34,16 @@ const ConfirmDelivery = ({confirmDelivery}) => {
                 color={dark ? colors.grey.light : colors.grey.dark}
               />
             </TouchableOpacity>
-            <TouchableOpacity style={classes.actionButtonRoot}>
+            <TouchableOpacity
+              style={classes.actionButtonRoot}
+              onPress={() =>
+                openGoogleMapsIntent(
+                  currentEntry.deliveryLatitude,
+                  currentEntry.deliveryLongitude,
+                )
+              }>
               <FeaterIcon
-                name="message-square"
+                name="map-pin"
                 size={30}
                 color={dark ? colors.grey.light : colors.grey.dark}
               />
@@ -95,7 +103,12 @@ const TimeDistance = ({entryInfo}) => {
 };
 
 const classes = StyleSheet.create({
-  root: {position: 'absolute', bottom: 60, paddingHorizontal: 20, width: '100%'},
+  root: {
+    position: 'absolute',
+    bottom: 60,
+    paddingHorizontal: 20,
+    width: '100%',
+  },
   container: {
     paddingVertical: 16,
     alignItems: 'center',

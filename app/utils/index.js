@@ -2,6 +2,7 @@ import {accountAction, deliveryAction} from '../store/actions';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {axios} from 'axios';
 import {instance} from '../api';
+import SendIntentAndroid from 'react-native-send-intent';
 
 export const validateEmail = (email) => {
   const re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
@@ -86,8 +87,15 @@ export const getMapOfWeeks = () => {
   daysOfWeek.set('7', 'Sat');
 
   return daysOfWeek;
-}
+};
 
 export const makeNetworkCalls = async (requestConfig) => {
   return await instance(requestConfig);
+};
+
+export const openGoogleMapsIntent = (latitude, longitude, type) => {
+  SendIntentAndroid.openMapsWithRoute(
+    `${latitude}, ${longitude}`,
+    type ? type : 'd',
+  );
 };

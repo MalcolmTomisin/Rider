@@ -9,6 +9,7 @@ import {Surface, Subheading, Caption, Paragraph} from 'react-native-paper';
 import {colors} from '../../../theme';
 import Icon from 'react-native-vector-icons/Feather';
 import {useSelector, useDispatch} from 'react-redux';
+import {openGoogleMapsIntent} from '../../../utils';
 
 const Task = ({
   pickUpAddress,
@@ -18,6 +19,7 @@ const Task = ({
   pickUpAction,
   status,
   serial,
+  orderInfo,
 }) => {
   const {dark} = useSelector(({theme}) => theme);
   const {buttonIconLoading} = useSelector(({account}) => account);
@@ -29,8 +31,7 @@ const Task = ({
   //   ))
   // }
   return (
-    <Surface
-      style={[classes.root, {height: status !== 'completed' ? 300 : 200}]}>
+    <Surface style={[classes.root]}>
       <View style={[classes.headerRoot, hr]}>
         <View>
           <Subheading>{`${
@@ -53,11 +54,30 @@ const Task = ({
           <Icon
             name={`${
               status !== 'completed' && status !== 'cancelled'
-                ? 'arrow-up-right'
+                ? 'map-pin'
                 : status === 'cancelled'
                 ? 'alert-triangle'
                 : 'shopping-bag'
             }`}
+            onPress={() => {
+              if (
+                status !== 'pickedup' &&
+                status !== 'enrouteToDelivery' &&
+                status !== 'arrivedAtDelivery' &&
+                status !== 'delivered' &&
+                status !== 'cancelled'
+              ) {
+                openGoogleMapsIntent(
+                  orderInfo.pickupLatitude,
+                  orderInfo.pickupLongitude,
+                );
+                return;
+              }
+              openGoogleMapsIntent(
+                orderInfo.deliveryLatitude,
+                orderInfo.deliveryLongitude,
+              );
+            }}
             size={15}
             color={colors.white}
           />
