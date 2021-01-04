@@ -101,15 +101,12 @@ const StartUp = () => {
     const unsubscribe = messaging().onMessage(async (remoteMessage) => {
       Alert.alert('A new FCM message arrived!', JSON.stringify(remoteMessage));
     });
-
-    return unsubscribe;
-  }, [token]);
-
-  React.useEffect(() => {
     setPreliminaries();
     if (token) {
       socketEvents();
     }
+
+    return unsubscribe;
   }, [token]);
 
   const socketEvents = () => {

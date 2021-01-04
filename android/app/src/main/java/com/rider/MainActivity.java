@@ -3,6 +3,7 @@ package com.rider;
 import android.os.Bundle;
 import com.facebook.react.ReactActivity;
 import org.devio.rn.splashscreen.SplashScreen;
+import android.os.Handler;
 
 public class MainActivity extends ReactActivity {
 
@@ -10,6 +11,7 @@ public class MainActivity extends ReactActivity {
     protected void onCreate(Bundle savedInstanceState) {
         SplashScreen.show(this);  // here
         super.onCreate(savedInstanceState);
+        new Handler().postDelayed(() -> SplashScreen.hide(MainActivity.this), 2500);
     }
 
   /**

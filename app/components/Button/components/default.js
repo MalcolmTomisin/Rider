@@ -1,4 +1,4 @@
-import React from 'react'
+import React from 'react';
 import {StyleSheet, TouchableOpacity, View} from 'react-native';
 import {Subheading, ActivityIndicator} from 'react-native-paper';
 import {colors} from '../../../theme';
