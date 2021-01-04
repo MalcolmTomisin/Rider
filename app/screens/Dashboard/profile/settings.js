@@ -13,7 +13,7 @@ const Settings = ({navigation: {navigate}}) => {
   const dispatch = useDispatch();
   return (
     <View style={classes.root}>
-      <List name="Bank details" onPress={() => navigate('BankAccount')} />
+      <List name="Bank details" onPress={() => navigate('Accounts')} />
       {/* <List
         name="Change Password"
         onPress={() => navigate('Change Password')}

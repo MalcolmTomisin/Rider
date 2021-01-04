@@ -29,15 +29,15 @@ const RatingScreen = () => {
 
   const dispatch = useDispatch();
 
-  const calculateAverageRating = () => {
+  const calculateAverageRating = (ratings) => {
     let sum = 0;
     let avgNum = 0;
-    if (userRatings.length > 0) {
-      for (let i = 0; i < userRatings.length; i++) {
-        sum += userRatings[i].rating;
-        if (i === userRatings.length - 1) {
-          avgNum = sum / userRatings.length;
-        }
+    if (ratings.length > 0) {
+      for (let i = 0; i < ratings.length; i++) {
+        sum += ratings[i].rating;
+      }
+      if (ratings.length > 1) {
+        avgNum = sum / ratings.length;
       }
       console.log('sum', sum);
       setAvg(avgNum);
@@ -56,7 +56,7 @@ const RatingScreen = () => {
         console.log('rate', data);
         setUserRatings(data);
         dispatch(feedbackAction.launch({open: true, severity: 's', msg}));
-        calculateAverageRating();
+        calculateAverageRating(data);
       })
       .catch((err) => {
         if (err.response) {
@@ -73,11 +73,13 @@ const RatingScreen = () => {
       });
   }, [token]);
   return (
-    <View style={classes.root}>
+    <View>
       <ScrollView>
         <Surface style={classes.surface}>
           <View style={classes.infoRoot}>
-            <Headline style={classes.ratingNumber}>{`${avg}`}</Headline>
+            <Headline style={classes.ratingNumber}>{`${
+              avg === 0 ? avg : avg.toFixed(1)
+            }`}</Headline>
             <Rating
               rated={avg === 0 ? 0 : avg / 2}
               totalCount={5}
@@ -97,41 +99,43 @@ const RatingScreen = () => {
             <Pie count={userRatings.length} />
           </View>
         </Surface>
-      </ScrollView>
-      <View style={classes.historyRoot}>
-        <View
-          style={[
-            classes.historyHeaderTab,
-            {backgroundColor: dark ? colors.grey.dark : colors.grey.light},
-          ]}>
-          <Subheading>
-            {' '}
-            {`${constants.month[new Date().getMonth()]}, 2020`}
-          </Subheading>
-        </View>
+        <View style={classes.historyRoot}>
+          <View
+            style={[
+              classes.historyHeaderTab,
+              {backgroundColor: dark ? colors.grey.dark : colors.grey.light},
+            ]}>
+            <Subheading>
+              {' '}
+              {`${
+                constants.month[new Date().getMonth()]
+              }, ${new Date().getFullYear()}`}
+            </Subheading>
+          </View>
 
-        <View>
-          <FlatList
-            data={userRatings}
-            keyExtractor={(item, index) => index.toString()}
-            renderItem={({item}) => (
-              <View style={classes.reviewRoot}>
-                <Rating
-                  rated={item?.rating / 2}
-                  totalCount={5}
-                  ratingColor="#f1c644"
-                  ratingBackgroundColor="#d4d4d4"
-                  size={12}
-                  readonly // by default is false
-                  icon="ios-star"
-                  direction="row" // anyOf["row" (default), "row-reverse", "column", "column-reverse"]
-                />
-                <Caption style={classes.review}>{`${item?.comment}`}</Caption>
-              </View>
-            )}
-          />
+          <View>
+            <FlatList
+              data={userRatings}
+              keyExtractor={(item, index) => index.toString()}
+              renderItem={({item}) => (
+                <View style={classes.reviewRoot}>
+                  <Rating
+                    rated={item?.rating / 2}
+                    totalCount={5}
+                    ratingColor="#f1c644"
+                    ratingBackgroundColor="#d4d4d4"
+                    size={12}
+                    readonly // by default is false
+                    icon="ios-star"
+                    direction="row" // anyOf["row" (default), "row-reverse", "column", "column-reverse"]
+                  />
+                  <Caption style={classes.review}>{`${item?.comment}`}</Caption>
+                </View>
+              )}
+            />
+          </View>
         </View>
-      </View>
+      </ScrollView>
       <Loading visible={loading} size="large" />
     </View>
   );

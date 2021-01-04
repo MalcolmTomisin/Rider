@@ -215,7 +215,7 @@ const Home = ({navigation: {navigate, push, pop}}) => {
   }, []);
 
   useEffect(() => {
-    if(token){
+    if (token) {
       Geolocation.watchPosition(
         ({coords: {longitude, latitude}}) => {
           console.log('it has happened');
@@ -232,10 +232,15 @@ const Home = ({navigation: {navigate, push, pop}}) => {
         (error) => {
           console.error(error);
         },
-        {interval: 60000, enableHighAccuracy: true, distanceFilter: 20},
+        {
+          enableHighAccuracy: true,
+          distanceFilter: 20,
+          fastestInterval: 30000,
+          interval: 60000,
+        },
       );
     }
-  }, [currentEntry]);
+  }, []);
 
   const onCountDownFinish = () => {
     rejectOrder(message, dispatch, token);

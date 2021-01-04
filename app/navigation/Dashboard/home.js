@@ -12,6 +12,7 @@ const Stack = createStackNavigator();
 
 const Dashboard = () => {
   const {isOnline, acceptedOrders, user} = useSelector(({account}) => account);
+  const {dark} = useSelector(({theme}) => theme);
 
   return (
     <Stack.Navigator initialRouteName="Home" headerMode="screen">
@@ -44,7 +45,11 @@ const Dashboard = () => {
                   acceptedOrders.filter((v) => v.status !== 'cancelled').length
                 }`}</Badge>
               ) : null}
-              <Icon size={35} name="basket" />
+              <Icon
+                size={35}
+                name="basket"
+                color={dark ? colors.grey.light : colors.black}
+              />
             </TouchableOpacity>
           ),
           headerRight: () => (

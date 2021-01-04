@@ -10,14 +10,16 @@ import {api} from '../../../api';
 import {Loading} from '../../../components/Loading';
 import {feedbackAction} from '../../../store/actions';
 import {colors} from '../../../theme';
+import {Caption, Checkbox} from 'react-native-paper';
 
-const BankAccount = ({navigation: {goBack, navigate}}) => {
+const BankAccount = ({navigation: {goBack, navigate, pop, push}}) => {
   const [banks, setBanks] = useState([]);
   const [loading, setLoading] = useState(false);
   const [selectedBank, setSelectedBank] = useState(null);
   const [sortCode, selectSortCode] = useState('');
   const [accountNumber, setAccountNumber] = useState('');
   const [accountName, setAccountName] = useState('');
+  const [defaultAccount, setDefaultAccount] = useState(false);
   const {token} = useSelector(({account}) => account);
   const [componentLoading, setComponentLoading] = useState(false);
   const {dark} = useSelector(({theme}) => theme);
@@ -93,13 +95,14 @@ const BankAccount = ({navigation: {goBack, navigate}}) => {
         accountNumber,
         bankName: selectedBank,
         bankCode: sortCode,
-        default: false,
+        default: defaultAccount,
       },
     })
       .then((res) => {
         const {msg} = res.data;
         dispatch(feedbackAction.launch({open: true, severity: 's', msg}));
-        navigate("Home");
+        pop();
+        push('Accounts');
       })
       .catch((err) => {
         const {msg} = err?.response?.data;
@@ -149,13 +152,6 @@ const BankAccount = ({navigation: {goBack, navigate}}) => {
           changeSortCode(banks[itemIndex].code);
         }}
       />
-      {/* <TextField
-        label="Bank Name"
-        rootStyle={classes.margin}
-        containerStyle={{height: 53}}
-        placeholder="Guarantee Trust bank"
-        placeholderTextColor="#a2a2a2"
-      /> */}
       <TextField
         label="Account Number"
         rootStyle={classes.margin}
@@ -187,6 +183,16 @@ const BankAccount = ({navigation: {goBack, navigate}}) => {
         value={sortCode}
         editable={false}
       />
+      <View style={{flexDirection: 'row', alignItems: 'center', margin: 10}}>
+        <Checkbox
+          status={defaultAccount ? 'checked' : 'unchecked'}
+          onPress={() => {
+            setDefaultAccount(!defaultAccount);
+          }}
+        />
+        <Caption>Set as default</Caption>
+      </View>
+
       <View
         style={{
           justifyContent: 'center',

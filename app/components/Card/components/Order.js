@@ -80,7 +80,6 @@ const Order = ({onAccept, onCountDownFinish, timerIsRunning}) => {
                 <View
                   style={{
                     width: DEVICE_WIDTH * 0.76,
-                    height: DEVICE_HEIGHT * 0.12,
                     borderRadius: 10,
                     backgroundColor: dark ? '#474545' : '#072D8F',
                     justifyContent: 'center',

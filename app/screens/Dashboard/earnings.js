@@ -6,6 +6,7 @@ import {
   ScrollView,
   FlatList,
   Text,
+  RefreshControl,
 } from 'react-native';
 import {
   Caption,
@@ -27,14 +28,40 @@ import Carousel from 'react-native-snap-carousel';
 import constants from '../../utils/constants';
 
 const {DEVICE_WIDTH} = constants;
-
+const dataForBarChart = [
+  {x: 'SUN', y: 0},
+  {x: 'MON', y: 0},
+  {x: 'TUES', y: 0},
+  {x: 'WEDS', y: 0},
+  {x: 'THURS', y: 0},
+  {x: 'FRI', y: 0},
+  {x: 'SAT', y: 0},
+];
 const Earnings = () => {
   const {dark} = useSelector(({theme}) => theme);
   const {token, loading} = useSelector(({account}) => account);
   const [summary, setSummary] = useState([]);
+  const [costSummary, setCostSummary] = useState(0);
   const [trips, setTrips] = useState([]);
   const [refreshing, setRefreshing] = useState(false);
+  const [dateProps, setDateProps] = useState(dataForBarChart);
   const dispatch = useDispatch();
+
+  const getDateDetails = (weeklyInfo) => {
+    let startingSum = 0;
+    for (let i = 0; i < weeklyInfo.length; i++) {
+      let infoDate = new Date(
+        weeklyInfo[i]?._id.year,
+        weeklyInfo[i]?._id.month - 1,
+        weeklyInfo[i]?._id.day,
+      );
+      startingSum += weeklyInfo[i]?.totalIncome;
+      let dayOfWeek = infoDate.getDay();
+      dataForBarChart[dayOfWeek].y = weeklyInfo[i]?.totalOrders;
+    }
+    setCostSummary(Math.round(startingSum));
+    setDateProps(dataForBarChart);
+  };
 
   const getEarningsAndTrips = () => {
     makeNetworkCalls({
@@ -48,6 +75,7 @@ const Earnings = () => {
         const {msg, data} = res.data;
         console.log('rear', data);
         setSummary(data);
+        getDateDetails(data);
         dispatch(feedbackAction.launch({open: true, severity: 's', msg}));
         return makeNetworkCalls({
           url: api.tripsCurrentMonth,
@@ -99,7 +127,7 @@ const Earnings = () => {
               <View style={classes.chartHeaderAmountRoot}>
                 <Caption style={classes.signChart}>₦</Caption>
                 <Subheading style={classes.chartHeaderAmount}>
-                  {`${Math.round(item?.estimatedCost)}`}
+                  {` ${Math.round(item?.totalIncome)}`}
                 </Subheading>
               </View>
             </View>
@@ -107,7 +135,7 @@ const Earnings = () => {
           </View>
 
           <View style={classes.chartBodyRoot}>
-            <Bar />
+            <Bar data={dateProps} />
           </View>
           <View style={classes.chartFooterRoot}>
             <View style={classes.chartFootContainer}>
@@ -123,8 +151,8 @@ const Earnings = () => {
             </View>
             <View style={classes.chartFootContainer}>
               <Subheading style={classes.chartFootTitle}>{`${Math.round(
-                item?.estimatedDistance,
-              )}`}</Subheading>
+                item?.totalDistance,
+              )} km`}</Subheading>
               <Caption>Total Distance</Caption>
             </View>
           </View>
@@ -134,50 +162,52 @@ const Earnings = () => {
   };
 
   return (
-    <View style={classes.root}>
-      <ScrollView>
-        <View style={classes.headerRoot}>
-          <Caption style={classes.headerTitle}>Total Balance</Caption>
-          <View style={classes.headerAmountRoot}>
-            <Caption style={classes.sign}>₦</Caption>
-            <Headline style={classes.headerAmount}>{`${
-              summary.length > 0 ? Math.round(summary[0].totalIncome) : 0
-            }`}</Headline>
-          </View>
+    <ScrollView
+      style={classes.root}
+      refreshControl={
+        <RefreshControl
+          refreshing={refreshing}
+          onRefresh={() => {
+            setRefreshing(true);
+            getEarningsAndTrips();
+          }}
+        />
+      }>
+      <View style={classes.headerRoot}>
+        <Caption style={classes.headerTitle}>Total Balance</Caption>
+        <View style={classes.headerAmountRoot}>
+          <Caption style={classes.sign}>₦</Caption>
+          <Headline style={classes.headerAmount}>{` ${
+            summary.length > 0 ? costSummary : 0
+          }`}</Headline>
         </View>
-        <View style={{justifyContent: 'center', alignItems: 'center'}}>
-          <Carousel
-            data={summary}
-            renderItem={_renderItem}
-            sliderWidth={DEVICE_WIDTH * 0.92}
-            itemWidth={DEVICE_WIDTH * 0.92}
-          />
-        </View>
+      </View>
+      <View style={{justifyContent: 'center', alignItems: 'center'}}>
+        <Carousel
+          data={summary}
+          renderItem={_renderItem}
+          sliderWidth={DEVICE_WIDTH * 0.92}
+          itemWidth={DEVICE_WIDTH * 0.92}
+        />
+      </View>
 
-        <View style={classes.historyRoot}>
-          <View
-            style={[
-              classes.historyHeaderTab,
-              {backgroundColor: dark ? colors.grey.dark : colors.grey.light},
-            ]}>
-            <Subheading>
-              {`${constants.month[new Date().getMonth()]}, 2020`}
-            </Subheading>
-          </View>
+      <View style={classes.historyRoot}>
+        <View
+          style={[
+            classes.historyHeaderTab,
+            {backgroundColor: dark ? colors.grey.dark : colors.grey.light},
+          ]}>
+          <Subheading>
+            {`${constants.month[new Date().getMonth()]}, ${new Date().getFullYear()}`}
+          </Subheading>
         </View>
-      </ScrollView>
-
+      </View>
       <FlatList
         data={trips}
         keyExtractor={(item, index) => index.toString()}
-        refreshing={refreshing}
-        onRefresh={() => {
-          setRefreshing(true);
-          getEarningsAndTrips();
-        }}
         renderItem={({item}) => (
           <View style={classes.historyListRoot}>
-            <View style={classes.historyListLeft}>
+            <View>
               <Subheading style={classes.historyListAmount}>
                 {`${
                   item?.status.charAt(0).toUpperCase() + item?.status.slice(1)
@@ -193,7 +223,7 @@ const Earnings = () => {
           </View>
         )}
       />
-    </View>
+    </ScrollView>
   );
 };
 
@@ -205,7 +235,6 @@ const classes = StyleSheet.create({
     // paddingHorizontal: 20,
   },
   headerRoot: {
-    flex: 2,
     alignItems: 'center',
     justifyContent: 'center',
     marginVertical: 20,
@@ -237,7 +266,6 @@ const classes = StyleSheet.create({
     color: colors.red.main,
   },
   chartRoot: {
-    flex: 4,
     margin: 20,
   },
   chartHeaderRoot: {

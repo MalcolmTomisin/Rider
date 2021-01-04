@@ -1,22 +1,12 @@
 import React, {useEffect, useState} from 'react';
 import {View, StyleSheet, Platform, ScrollView, FlatList} from 'react-native';
-import {
-  Caption,
-  Headline,
-  Surface,
-  Title,
-  Subheading,
-} from 'react-native-paper';
-import {Button} from '../../components/Button';
+import {Caption, Subheading} from 'react-native-paper';
 import {colors} from '../../theme';
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import {Bar} from '../../components/Chart';
 import {useSelector, useDispatch} from 'react-redux';
 import {makeNetworkCalls} from '../../utils';
 import {api} from '../../api';
 import {Loading} from '../../components/Loading';
 import {feedbackAction} from '../../store/actions';
-import constants from '../../utils/constants';
 
 const Trips = () => {
   const {dark} = useSelector(({theme}) => theme);

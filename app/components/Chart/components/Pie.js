@@ -16,11 +16,11 @@ const {width} = Dimensions.get('screen');
 const Pie = ({count}) => {
   const {dark} = useSelector(({theme}) => theme);
   const [percent, setPercent] = React.useState(25);
-  const [data, setData] = React.useState(0);
+  const [data, setData] = React.useState([]);
   let interval = null;
 
   React.useEffect(() => {
-    let newNum = count === 0 ? 0 : (count / 25) * 100;
+    let newNum = count === 0 ? 0 : (count / 40) * 100;
     setData(getData(newNum));
     // increasePercentage();
 

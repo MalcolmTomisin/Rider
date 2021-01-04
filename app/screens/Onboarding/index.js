@@ -21,6 +21,7 @@ const Onboarding = ({navigation: { navigate }}) => {
             label="Create account"
             rootStyle={classes.button}
             onPress={() => navigate('Register')}
+            disabled
           />
           <Button
             label="Sign In"
@@ -65,6 +66,7 @@ const classes = StyleSheet.create({
   },
   button: {
     width: '48%',
+    //backgroundColor: colors.grey.main,
   },
   buttonRyt: {
     width: '48%',
