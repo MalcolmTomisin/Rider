@@ -29,8 +29,22 @@ const Settings = ({navigation: {navigate}}) => {
           />
         }
       />
-      <List name="Terms & Conditions" onPress={() => navigate('Terms')} />
-      <List name="Privacy Policy" onPress={() => navigate('Terms')} />
+      <List
+        name="Terms & Conditions"
+        onPress={() =>
+          Linking.openURL(
+            'https://logistics-site.netlify.app/document/User%20Exalt%20app%20User%20T&C.pdf',
+          )
+        }
+      />
+      <List
+        name="Privacy Policy"
+        onPress={() =>
+          Linking.openURL(
+            'https://logistics-site.netlify.app/document/User%20Policy%20Exalt%20Courier%20User.pdf',
+          )
+        }
+      />
       <List
         name="Help"
         onPress={() =>
