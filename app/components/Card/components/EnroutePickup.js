@@ -1,5 +1,5 @@
 import React from 'react';
-import {StyleSheet, View, TouchableOpacity} from 'react-native';
+import {StyleSheet, View, TouchableOpacity, Linking} from 'react-native';
 import {Surface, Subheading, Avatar, Caption, Card} from 'react-native-paper';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import FeaterIcon from 'react-native-vector-icons/Feather';
@@ -26,7 +26,13 @@ const EnroutePickup = ({onPress}) => {
           </View>
 
           <View style={classes.item}>
-            <TouchableOpacity style={classes.actionButtonRoot}>
+            <TouchableOpacity
+              style={classes.actionButtonRoot}
+              onPress={() => {
+                Linking.openURL(
+                  `tel:+${currentEntry.countryCode}${currentEntry.phoneNumber}`,
+                );
+              }}>
               <FeaterIcon
                 name="phone-call"
                 size={30}
