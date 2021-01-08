@@ -96,7 +96,10 @@ const RatingScreen = () => {
             </View>
           </View>
           <View>
-            <Pie count={userRatings.length} />
+            <Pie
+              count={userRatings.length}
+              containerStyle={{paddingHorizontal: 10}}
+            />
           </View>
         </Surface>
         <View style={classes.historyRoot}>

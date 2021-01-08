@@ -130,7 +130,7 @@ android {
     }
 
     defaultConfig {
-        applicationId "com.rider"
+        applicationId "com.exalt.rider"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1

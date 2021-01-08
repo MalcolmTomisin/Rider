@@ -100,22 +100,23 @@ const Login = ({navigation: {goBack, navigate}}) => {
   return (
     <KeyboardAwareScrollView
       style={classes.root}
-      contentContainerStyle={{marginTop: constants.DEVICE_HEIGHT * 0.1}}>
+      contentContainerStyle={{marginTop: constants.DEVICE_HEIGHT * 0.1, paddingVertical: 10}}>
       <View style={classes.headerRoot}>
         <BackButton goBack={() => goBack()} />
       </View>
       <View style={classes.bodyRoot}>
         <Title style={classes.bodyTitle}>Login</Title>
         <TextField
-          label="Mobile Number"
+          label="Email"
           value={mobileNumber}
-          placeholder="+234"
+          placeholder="yourmail@email.com"
           placeholderTextColor="grey"
           onChangeText={(input) => {
             handleInput(1, input);
           }}
+          keyboardType="email-address"
         />
-        <View>
+        <View style={{marginVertical: 10}}>
           <TextField
             label="Password"
             value={password}
@@ -126,7 +127,7 @@ const Login = ({navigation: {goBack, navigate}}) => {
               handleInput(2, input);
             }}
             password
-            rootStyle={{marginBottom: 10}}
+            rootStyle={{marginVertical: 10}}
           />
           <Text
             onPress={() => {
@@ -143,9 +144,9 @@ const Login = ({navigation: {goBack, navigate}}) => {
           </Text>
         </View>
 
-        <Button label="Sign In" onPress={submit} />
+        <Button label="Sign In" onPress={submit} rootStyle={{marginTop: 10}} />
       </View>
-      <View style={classes.footerRoot}>
+      {/* <View style={classes.footerRoot}>
         <View style={{flexGrow: 1}} />
         <View style={classes.signupRoot}>
           <Subheading style={classes.signupLeft}>
@@ -158,7 +159,7 @@ const Login = ({navigation: {goBack, navigate}}) => {
             </Subheading>
           </Subheading>
         </View>
-      </View>
+      </View> */}
       <Loading visible={loading} size="large" />
     </KeyboardAwareScrollView>
   );

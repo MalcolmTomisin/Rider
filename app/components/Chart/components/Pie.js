@@ -13,7 +13,7 @@ import {useSelector} from 'react-redux';
 import Svg from 'react-native-svg';
 const {width} = Dimensions.get('screen');
 
-const Pie = ({count}) => {
+const Pie = ({count, containerStyle}) => {
   const {dark} = useSelector(({theme}) => theme);
   const [percent, setPercent] = React.useState(25);
   const [data, setData] = React.useState([]);
@@ -49,7 +49,7 @@ const Pie = ({count}) => {
   //console.log("data", data);
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, containerStyle]}>
       <Svg width={270} height={270}>
         <VictoryLabel
           textAnchor="middle"

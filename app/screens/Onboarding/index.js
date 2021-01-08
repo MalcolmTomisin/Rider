@@ -1,20 +1,21 @@
-import React from 'react'
-import { View, StyleSheet, ImageBackground, TouchableOpacity } from 'react-native'
+import React from 'react';
+import {
+  View,
+  StyleSheet,
+  ImageBackground,
+  TouchableOpacity,
+} from 'react-native';
 import {Title, Subheading} from 'react-native-paper';
-import { Button } from '../../components/Button';
+import {Button} from '../../components/Button';
 import img from '../../image';
-import { colors } from '../../theme';
+import {colors} from '../../theme';
 
-const Onboarding = ({navigation: { navigate }}) => {
-
-
+const Onboarding = ({navigation: {navigate}}) => {
   return (
     <View style={classes.root}>
-      <ImageBackground
-        source={img.setupBG}
-        style={classes.headerRoot}></ImageBackground>
+      <ImageBackground source={img.setupBG} style={classes.headerRoot} />
       <View style={classes.bodyRoot}>
-        <Title style={classes.title}>Welcome to Exalt Rider app</Title>
+        <Title style={classes.title}>Welcome to Exalt Rider App</Title>
 
         <View style={classes.buttonRoot}>
           <Button
@@ -60,7 +61,6 @@ const classes = StyleSheet.create({
   title: {
     fontWeight: '700',
     fontSize: 21,
-    width: 224,
     marginVertical: 20,
     marginHorizontal: 20,
   },
@@ -73,7 +73,7 @@ const classes = StyleSheet.create({
     backgroundColor: colors.red.light,
   },
   buttonLabel: {
-    color: colors.red.main
+    color: colors.red.main,
   },
   buttonRoot: {
     flexDirection: 'row',
