@@ -29,34 +29,6 @@ const Accounts = ({navigation: {navigate}}) => {
   const [indexToDelete, setIndexToDelete] = useState(null);
   const dispatch = useDispatch();
 
-  const deleteAccount = (i) => {
-    setLoading(true);
-    makeNetworkCalls({
-      url: api.addbank,
-      headers: {
-        'x-auth-token': token,
-        'Content-type': 'application/json',
-      },
-      data: {
-        riderBankId: accounts[i]._id,
-      },
-      method: 'delete',
-    })
-      .then((res) => {
-        const {msg} = res.data;
-        dispatch(feedbackAction.launch({open: true, severity: 's', msg}));
-        fetchBankAccounts();
-      })
-      .catch((err) => {
-        const {msg} = err.response.data;
-        dispatch(feedbackAction.launch({open: true, severity: 'w', msg}));
-      })
-      .finally(() => {
-        setLoading(false);
-        setIndexToDelete(null);
-      });
-  };
-
   const fetchBankAccounts = () => {
     makeNetworkCalls({
       url: api.addbank,
@@ -130,26 +102,6 @@ const Accounts = ({navigation: {navigate}}) => {
               </View>
               <MaterialIcon name="keyboard-arrow-right" size={28} color={colors.white} />
             </View>
-            {indexToDelete === index && (
-              <Icon
-                name="trash-o"
-                color={dark ? colors.grey.light : colors.grey.dark}
-                size={30}
-                onPress={() => {
-                  Alert.alert('Delete Account', 'Proceed to delete account?', [
-                    {
-                      text: 'Proceed',
-                      onPress: () => deleteAccount(index),
-                    },
-                    {
-                      text: 'Cancel',
-                      onPress: () => setIndexToDelete(null),
-                    },
-                  ]);
-                }}
-                style={{margin: 15}}
-              />
-            )}
           </TouchableOpacity>
         )}
       />
@@ -195,6 +147,7 @@ const classes = StyleSheet.create({
   historyListAmount: {
     fontWeight: '600',
     fontSize: 10,
+    color: colors.white,
   },
   historyListRoot: {
     //marginHorizontal: 5,
@@ -207,6 +160,7 @@ const classes = StyleSheet.create({
     paddingHorizontal: 10,
     width: '100%',
     backgroundColor: colors.grey.new,
+    borderRadius: 4,
   },
   prompt: {
     justifyContent: 'space-evenly',
@@ -221,5 +175,8 @@ const classes = StyleSheet.create({
     textAlign: 'center', 
     marginHorizontal: 20, 
     marginVertical: 10
+  },
+  historyListDate: {
+    color: colors.grey.main,
   }
 });

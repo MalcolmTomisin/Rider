@@ -12,9 +12,11 @@ import {feedbackAction} from '../../../store/actions';
 import {colors} from '../../../theme';
 import {Caption, Checkbox} from 'react-native-paper';
 
-const BankAccount = ({navigation: {goBack, navigate, pop, push, popToTop}}) => {
+const DeleteAccount = ({route, navigation: {goBack, navigate, pop, push, popToTop}}) => {
   const [banks, setBanks] = useState([]);
+  const [bankName, setBankName] = useState('');
   const [loading, setLoading] = useState(false);
+  const [id, setId] = useState(null);
   const [selectedBank, setSelectedBank] = useState(null);
   const [sortCode, selectSortCode] = useState('');
   const [accountNumber, setAccountNumber] = useState('');
@@ -25,78 +27,18 @@ const BankAccount = ({navigation: {goBack, navigate, pop, push, popToTop}}) => {
   const {dark} = useSelector(({theme}) => theme);
   const dispatch = useDispatch();
 
-  const changeSortCode = (code) => {
-    selectSortCode(code);
-  };
-  const submitAccountNumber = () => {
-    setComponentLoading(true);
-    makeNetworkCalls({
-      url:
-        api.validateBank +
-        `accountNumber=${accountNumber}&bankCode=${sortCode}`,
-      headers: {
-        'x-auth-token': token,
-      },
-    })
-      .then((res) => {
-        const {msg, data} = res.data;
-        setAccountName(data.account_name);
-      })
-      .catch((err) => {
-        if (err.response) {
-          const {msg} = err.response.data;
-          dispatch(feedbackAction.launch({open: true, severity: 'w', msg}));
-          return;
-        }
-      })
-      .finally(() => {
-        setComponentLoading(false);
-      });
-  };
-
-  const validateFields = () => {
-    if (selectedBank === '') {
-      dispatch(
-        feedbackAction.launch({
-          open: true,
-          severity: 'w',
-          msg: 'Please select a bank',
-        }),
-      );
-      return false;
-    }
-    if (accountNumber === '') {
-      dispatch(
-        feedbackAction.launch({
-          open: true,
-          severity: 'w',
-          msg: 'Please input a valid account Number',
-        }),
-      );
-      return false;
-    }
-    return true;
-  };
-
-  const submitDetails = () => {
-    if (!validateFields()) {
-      return;
-    }
+  const deleteAccount = (i) => {
     setLoading(true);
     makeNetworkCalls({
       url: api.addbank,
       headers: {
-        'Content-type': 'application/json',
         'x-auth-token': token,
+        'Content-type': 'application/json',
       },
-      method: 'post',
       data: {
-        accountName,
-        accountNumber,
-        bankName: selectedBank,
-        bankCode: sortCode,
-        default: defaultAccount,
+        riderBankId: id,
       },
+      method: 'delete',
     })
       .then((res) => {
         const {msg} = res.data;
@@ -105,7 +47,7 @@ const BankAccount = ({navigation: {goBack, navigate, pop, push, popToTop}}) => {
         push('Accounts');
       })
       .catch((err) => {
-        const {msg} = err?.response?.data;
+        const {msg} = err.response.data;
         dispatch(feedbackAction.launch({open: true, severity: 'w', msg}));
       })
       .finally(() => {
@@ -115,61 +57,35 @@ const BankAccount = ({navigation: {goBack, navigate, pop, push, popToTop}}) => {
 
   useEffect(() => {
     setLoading(true);
-    makeNetworkCalls({
-      url: api.listBank,
-      headers: {
-        'x-auth-token': token,
-      },
-    })
-      .then((res) => {
-        const {msg, data} = res.data;
-        dispatch(feedbackAction.launch({open: true, severity: 's', msg}));
-        setBanks(data);
-      })
-      .catch((err) => {
-        if (err.response) {
-          const {msg} = err.response.data;
-          dispatch(feedbackAction.launch({open: true, severity: 'w', msg}));
-          return;
-        }
-        dispatch(
-          feedbackAction.launch({open: true, severity: 'w', msg: `${err}`}),
-        );
-      })
-      .finally(() => setLoading(false));
+    const {bank, account, name, defaultAccount, bankCode, id} = route.params;
+    setBankName(bank);
+    setAccountName(name);
+    setAccountNumber(account);
+    selectSortCode(bankCode);
+    setDefaultAccount(defaultAccount);
+    setLoading(false);
+    setId(id);
   }, []);
   return (
     <KeyboardAwareScrollView style={classes.root}>
-      <Dropdown
-        containerStyle={[classes.dropdownContainer]}
-        data={banks}
+      <TextField
         label="Bank Name"
-        rootStyle={{marginHorizontal: 15}}
-        selectedValue={selectedBank}
-        onValueChange={(itemValue, itemIndex) => {
-          setSelectedBank(itemValue);
-          console.log('re', itemValue);
-          changeSortCode(banks[itemIndex].code);
-        }}
+        rootStyle={classes.margin}
+        containerStyle={{height: 53}}
+        value={bankName}
+        editable={false}
       />
       <TextField
         label="Account Number"
         rootStyle={classes.margin}
         containerStyle={{height: 53}}
-        placeholder="2933181931"
-        placeholderTextColor="#a2a2a2"
-        onChangeText={(text) => {
-          setAccountNumber(text);
-        }}
+        editable={false}
         value={accountNumber}
-        onSubmitEditing={submitAccountNumber}
       />
       <TextField
         label="Account Name"
         rootStyle={classes.margin}
         containerStyle={{height: 53}}
-        placeholder="Adekunle Ciroma Uche"
-        placeholderTextColor="#a2a2a2"
         value={accountName}
         editable={false}
         loading={componentLoading}
@@ -178,19 +94,13 @@ const BankAccount = ({navigation: {goBack, navigate, pop, push, popToTop}}) => {
         label="Bank Sort Number"
         rootStyle={classes.margin}
         containerStyle={{height: 53}}
-        placeholder="2123"
-        placeholderTextColor="#a2a2a2"
         value={sortCode}
         editable={false}
       />
       <View style={{flexDirection: 'row', alignItems: 'center', margin: 10}}>
         <Checkbox
           status={defaultAccount ? 'checked' : 'unchecked'}
-          onPress={() => {
-            setDefaultAccount(!defaultAccount);
-          }}
         />
-        <Caption>Set as default</Caption>
       </View>
 
       <View
@@ -200,7 +110,7 @@ const BankAccount = ({navigation: {goBack, navigate, pop, push, popToTop}}) => {
           marginVertical: 40,
           marginHorizontal: 15,
         }}>
-        <Button label="Add Bank Account" onPress={submitDetails} />
+        <Button label="Delete Account" onPress={deleteAccount} />
       </View>
 
       <View style={classes.footerRoot} />
@@ -209,7 +119,7 @@ const BankAccount = ({navigation: {goBack, navigate, pop, push, popToTop}}) => {
   );
 };
 
-export default BankAccount;
+export default DeleteAccount;
 
 const classes = StyleSheet.create({
   root: {

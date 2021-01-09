@@ -95,7 +95,7 @@ const RatingScreen = () => {
               <Caption>{userRatings.length} users</Caption>
             </View>
           </View>
-          <View style={{marginLeft: -20}}>
+          <View style={{justifyContent: 'center', alignItems: 'center', marginLeft: -20}}>
             <Pie
               count={userRatings.length}
             />

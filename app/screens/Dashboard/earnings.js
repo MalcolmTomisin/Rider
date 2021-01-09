@@ -296,7 +296,10 @@ const classes = StyleSheet.create({
     fontSize: 10,
     color: colors.red.main,
   },
-  chartBodyRoot: {},
+  chartBodyRoot: {
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
   surface: {
     borderRadius: 11,
     elevation: Platform.select({ios: 1, android: 8}),

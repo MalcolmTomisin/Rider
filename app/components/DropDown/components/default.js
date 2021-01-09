@@ -24,7 +24,7 @@ const Default = ({
           containerStyle,
           styles.border,
           {
-            borderColor: dark ? colors.white : colors.black,
+            borderColor: '#D9D9D9',
             padding: 10,
           },
         ]}>
