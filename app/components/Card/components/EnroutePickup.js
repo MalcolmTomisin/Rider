@@ -8,7 +8,7 @@ import {colors} from '../../../theme';
 import {Button} from '../../Button';
 import {openGoogleMapsIntent} from '../../../utils';
 
-const EnroutePickup = ({onPress}) => {
+const EnroutePickup = ({onPress, error}) => {
   const {dark} = useSelector(({theme}) => theme);
   const {currentEntry} = useSelector(({delivery}) => delivery);
 
@@ -61,6 +61,7 @@ const EnroutePickup = ({onPress}) => {
           rootStyle={classes.ButtonRoot}
           labelStyle={classes.Button}
           onPress={onPress}
+          error={error}
         />
 
         <View style={classes.productRoot}>

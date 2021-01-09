@@ -8,6 +8,7 @@ import {
   LOADING,
   ACCEPTED_ORDERS,
   ICON_LOADING,
+  NETWORK_INFO,
 } from '../types';
 
 // user data action
@@ -64,6 +65,11 @@ const setIconLoading = (payload) => ({
   type: ICON_LOADING,
 });
 
+const setNetWorkStatus = (payload) => ({
+  payload,
+  type: NETWORK_INFO,
+});
+
 export default {
   setUserData,
   setToken,
@@ -74,4 +80,5 @@ export default {
   setLoadingStatus,
   setAcceptedOrders,
   setIconLoading,
+  setNetWorkStatus,
 };

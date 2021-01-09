@@ -13,6 +13,7 @@ const colors = {
     light: '#F2F2F2',
     main: '#A2A2A2',
     dark: '#131313',
+    new: '#212121',
   },
   hr: {
     light: '#00000019',

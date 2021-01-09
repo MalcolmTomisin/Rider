@@ -11,7 +11,7 @@ import {
 import {colors} from '../../../theme';
 import {useSelector} from 'react-redux';
 import Svg from 'react-native-svg';
-const {width} = Dimensions.get('screen');
+const {width, height} = Dimensions.get('screen');
 
 const Pie = ({count, containerStyle}) => {
   const {dark} = useSelector(({theme}) => theme);

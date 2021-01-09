@@ -8,7 +8,7 @@ import {colors} from '../../../theme';
 import {Button} from '../../Button';
 import {openGoogleMapsIntent} from '../../../utils';
 
-const ConfirmDelivery = ({confirmDelivery}) => {
+const ConfirmDelivery = ({confirmDelivery, error}) => {
   const dispatch = useDispatch();
   const {dark} = useSelector(({theme}) => theme);
   const {currentEntry} = useSelector(({delivery}) => delivery);
@@ -62,6 +62,7 @@ const ConfirmDelivery = ({confirmDelivery}) => {
           rootStyle={classes.ButtonRoot}
           labelStyle={classes.Button}
           onPress={confirmDelivery}
+          error={error}
         />
 
         <TouchableOpacity style={classes.productRoot}>

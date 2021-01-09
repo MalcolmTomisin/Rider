@@ -8,6 +8,7 @@ import {
   LOADING,
   ACCEPTED_ORDERS,
   ICON_LOADING,
+  NETWORK_INFO
 } from '../types';
 
 const initialstate = {
@@ -40,6 +41,7 @@ const initialstate = {
   loading: false,
   acceptedOrders: [],
   buttonIconLoading: false,
+  networkOffline: false,
 };
 
 export default (state = initialstate, action) => {
@@ -63,6 +65,8 @@ export default (state = initialstate, action) => {
     case ACCEPTED_ORDERS:
       return {...state, ...action.payload};
     case ICON_LOADING:
+      return {...state, ...action.payload};
+    case NETWORK_INFO:
       return {...state, ...action.payload};
     default:
       return state;

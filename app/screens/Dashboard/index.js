@@ -51,6 +51,7 @@ const Home = ({navigation: {navigate, push, pop}}) => {
   const socket = useContext(WSContext);
   const mapView = React.useRef(null);
   const [running, setTimerIsRunning] = useState(true);
+  const [retry, setRetry] = useState(false);
   const dispatch = useDispatch();
   const [coordinates, setCoordinates] = useState({
     latitude: 6.6052898,
@@ -92,40 +93,6 @@ const Home = ({navigation: {navigate, push, pop}}) => {
       });
   };
 
-  //accept entry order
-  const accept = () => {
-    const {data} = message;
-    dispatch(accountAction.setLoadingStatus({loading: true}));
-    setTimerIsRunning(false);
-    makeNetworkCalls({
-      url: api.acceptEntry,
-      method: 'post',
-      headers: {
-        'x-auth-token': token,
-        'Content-type': 'application/json',
-      },
-      data: {entry: data._id},
-    })
-      .then(async (res) => {
-        message.accept = true;
-        //fetch basket for updated info about current entry
-        await callBasket(api.riderBasket, token, dispatch, currentIndex);
-        dispatch(
-          feedbackAction.launch({open: true, severity: 's', msg: res.data.msg}),
-        );
-        dispatch(accountAction.setOrder({message}));
-        push('OrderPool');
-      })
-      .catch((err) => {
-        const {msg} = err?.response?.data;
-        dispatch(feedbackAction.launch({open: true, severity: 'w', msg}));
-        setTimerIsRunning(true);
-      })
-      .finally(() => {
-        dispatch(accountAction.setLoadingStatus({loading: false}));
-      });
-  };
-
   //notify api rider already enroute
   const goingEnroute = () => {
     dispatch(accountAction.setLoadingStatus({loading: true}));
@@ -143,12 +110,14 @@ const Home = ({navigation: {navigate, push, pop}}) => {
         const {data, msg} = res.data;
         dispatch(feedbackAction.launch({open: true, severity: 's', msg}));
         dispatch(deliveryAction.setEnrouteToPickUp({enroute: true}));
+        setRetry(false);
         pop();
         push('Dashboard');
       })
       .catch((err) => {
         const {msg} = err?.response?.data;
         dispatch(feedbackAction.launch({open: true, severity: 'w', msg}));
+        setRetry(true);
       })
       .finally(() => {
         dispatch(accountAction.setLoadingStatus({loading: false}));
@@ -171,10 +140,12 @@ const Home = ({navigation: {navigate, push, pop}}) => {
         const {msg} = res.data;
         await callBasket(api.riderBasket, token, dispatch, currentIndex);
         dispatch(feedbackAction.launch({open: true, severity: 's', msg}));
+        setRetry(false);
       })
       .catch((err) => {
         const {msg} = err?.response?.data;
         dispatch(feedbackAction.launch({open: true, severity: 'w', msg}));
+        setRetry(true);
       })
       .finally(() => {
         dispatch(accountAction.setLoadingStatus({loading: false}));
@@ -197,12 +168,14 @@ const Home = ({navigation: {navigate, push, pop}}) => {
         await callBasket(api.riderBasket, token, dispatch, currentIndex);
         const {msg} = res.data;
         dispatch(feedbackAction.launch({open: true, severity: 's', msg}));
+        setRetry(false);
         pop();
         navigate('ConfirmDeliveryCode');
       })
       .catch((err) => {
         const {msg} = err?.response?.data;
         dispatch(feedbackAction.launch({open: true, severity: 'w', msg}));
+        setRetry(true);
       })
       .finally(() => {
         dispatch(accountAction.setLoadingStatus({loading: false}));
@@ -241,10 +214,6 @@ const Home = ({navigation: {navigate, push, pop}}) => {
       );
     }
   }, []);
-
-  const onCountDownFinish = () => {
-    rejectOrder(message, dispatch, token);
-  };
 
   const handleGetUserLocation = async () => {
     Geolocation.getCurrentPosition(
@@ -364,14 +333,14 @@ const Home = ({navigation: {navigate, push, pop}}) => {
 
       {currentEntry?.entry?.status === 'driverAccepted' ? (
         <>
-          <EnroutePickup onPress={goingEnroute} />
+          <EnroutePickup onPress={goingEnroute} error={retry} />
           <AddressBanner />
         </>
       ) : null}
 
       {currentEntry?.entry?.status === 'enrouteToPickup' ? (
         <>
-          <ConfirmPickup confirmArrival={alertUserOfArrival} />
+          <ConfirmPickup confirmArrival={alertUserOfArrival} error={retry} />
           <AddressBanner />
         </>
       ) : null}
@@ -385,14 +354,17 @@ const Home = ({navigation: {navigate, push, pop}}) => {
       {currentEntry?.status === 'pickedup' ? (
         <>
           <AddressBanner />
-          <EnrouteDelivery onPress={startDelievery} />
+          <EnrouteDelivery onPress={startDelievery} error={retry} />
         </>
       ) : null}
 
       {currentEntry?.status === 'enrouteToDelivery' ? (
         <>
           <AddressBanner />
-          <ConfirmDelivery confirmDelivery={announceArrivalAtDelivery} />
+          <ConfirmDelivery
+            confirmDelivery={announceArrivalAtDelivery}
+            error={retry}
+          />
         </>
       ) : null}
 

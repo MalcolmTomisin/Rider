@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {View, StyleSheet, TouchableOpacity, Text} from 'react-native';
+import {View, StyleSheet, TouchableOpacity, Text, SafeAreaView} from 'react-native';
 import {Title, Subheading} from 'react-native-paper';
 import {Button} from '../../components/Button';
 import img from '../../image';
@@ -100,10 +100,10 @@ const Login = ({navigation: {goBack, navigate}}) => {
   return (
     <KeyboardAwareScrollView
       style={classes.root}
-      contentContainerStyle={{marginTop: constants.DEVICE_HEIGHT * 0.1, paddingVertical: 10}}>
-      <View style={classes.headerRoot}>
+      contentContainerStyle={{ paddingVertical: 10}}>
+      <SafeAreaView style={classes.headerRoot}>
         <BackButton goBack={() => goBack()} />
-      </View>
+      </SafeAreaView>
       <View style={classes.bodyRoot}>
         <Title style={classes.bodyTitle}>Login</Title>
         <TextField
@@ -174,11 +174,13 @@ const classes = StyleSheet.create({
   headerRoot: {
     flex: 1,
     justifyContent: 'flex-end',
+    marginLeft: -8,
   },
   bodyRoot: {
     flex: 4,
     marginHorizontal: 20,
     justifyContent: 'space-evenly',
+    marginTop: constants.DEVICE_HEIGHT * 0.1,
   },
   bodyTitle: {
     fontSize: 28,

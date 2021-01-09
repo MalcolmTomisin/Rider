@@ -26,6 +26,7 @@ import {makeNetworkCalls, callBasket} from './utils';
 import {rejectOrder} from './components/Modal/components/CancelOrder';
 import {navigationRef} from './RootNavigation';
 import * as RootNavigation from './RootNavigation';
+import {useNetInfo} from '@react-native-community/netinfo';
 
 async function requestUserPermission() {
   const authStatus = await messaging().requestPermission();
@@ -43,6 +44,7 @@ const StartUp = () => {
   const [running, setTimerIsRunning] = useState(true);
   const dispatch = useDispatch();
   const theme = useSelector(({theme}) => theme);
+  const netInfo = useNetInfo();
   const {location, token, isOnline, message} = useSelector(
     ({account}) => account,
   );
@@ -146,7 +148,6 @@ const StartUp = () => {
             console.error(err);
           });
       }
-
       setSocket(s);
     } catch (error) {
       console.log('socket error', error);
@@ -291,6 +292,7 @@ const StartUp = () => {
               timerIsRunning={running}
             />
           )}
+          {!netInfo.isInternetReachable && <Offline isNetworkOff={true} />}
         </NavigationContainer>
         <FeedBack />
         <CancelOrder />

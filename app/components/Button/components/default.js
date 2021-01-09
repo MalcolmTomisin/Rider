@@ -2,6 +2,7 @@ import React from 'react';
 import {StyleSheet, TouchableOpacity, View} from 'react-native';
 import {Subheading, ActivityIndicator} from 'react-native-paper';
 import {colors} from '../../../theme';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 const DefaultButton = ({
   label,
@@ -11,6 +12,7 @@ const DefaultButton = ({
   loading,
   loadingColor,
   disabled,
+  error,
 }) => {
   return (
     <TouchableOpacity
@@ -26,6 +28,7 @@ const DefaultButton = ({
           />
         </View>
       )}
+      {error && <Icon name="reload" size={28} color={colors.white} />}
       <Subheading style={[classes.label, labelStyle]}>{label}</Subheading>
     </TouchableOpacity>
   );

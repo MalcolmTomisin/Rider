@@ -264,9 +264,9 @@ const Order = ({onAccept, onCountDownFinish, timerIsRunning}) => {
             marginVertical: 10,
           }}>
           <Button
-            rootStyle={{backgroundColor: colors.green.main, width: 136}}
+            rootStyle={{backgroundColor: colors.green.main, width: 136, marginHorizontal: 5}}
             label="Accept"
-            labelStyle={{fontSize: 10}}
+            labelStyle={{fontSize: 14}}
             onPress={onAccept}
           />
           <OutlineButton
@@ -277,11 +277,12 @@ const Order = ({onAccept, onCountDownFinish, timerIsRunning}) => {
             }}
             text="Cancel Order"
             textStyle={{
-              fontSize: 10,
+              fontSize: 14,
               textAlign: 'center',
               color: dark ? 'white' : colors.red.main,
             }}
             onPress={onCountDownFinish}
+            containerStyle={{marginHorizontal: 5}}
           />
         </View>
       </Surface>
@@ -341,7 +342,7 @@ const TimeDistance = ({data, onFinish, running}) => {
 const classes = StyleSheet.create({
   root: {
     position: 'absolute',
-    bottom: 250,
+    bottom: DEVICE_HEIGHT * 0.3,
     paddingHorizontal: 20,
     width: '100%',
     height: DEVICE_HEIGHT * 0.53,
@@ -350,8 +351,8 @@ const classes = StyleSheet.create({
     paddingVertical: 10,
     //alignItems: 'center',
     // flexDirection: 'row',
-    borderTopLeftRadius: 20,
-    borderTopRightRadius: 20,
+    borderTopLeftRadius: 5,
+    borderTopRightRadius: 5,
     elevation: 1,
     paddingHorizontal: 20,
   },

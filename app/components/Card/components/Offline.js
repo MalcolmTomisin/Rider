@@ -3,12 +3,12 @@ import {StyleSheet, View} from 'react-native';
 import {Surface, Subheading} from 'react-native-paper';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import {colors} from '../../../theme';
-const Offline = () => {
+const Offline = ({isNetworkOff}) => {
   return (
     <View style={classes.root}>
       <Surface style={classes.container}>
         <Icon name="airplane-off" size={20} color={colors.red.main} />
-        <Subheading style={classes.text}>You’re offline</Subheading>
+        <Subheading style={classes.text}>{`${isNetworkOff ? 'No internet connection': 'You’re offline'}`}</Subheading>
       </Surface>
     </View>
   );

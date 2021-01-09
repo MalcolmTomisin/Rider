@@ -8,8 +8,9 @@ const OutlineButton = ({
   textStyle,
   outlineStyle,
   outline,
+  containerStyle
 }) => (
-  <TouchableOpacity onPress={onPress} style={{height: 52}}>
+  <TouchableOpacity onPress={onPress} style={[{height: 52}, containerStyle]}>
     <View style={[styles.border, outlineStyle]}>
       {text && (
         <Text

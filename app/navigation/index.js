@@ -19,6 +19,7 @@ import {boundSetSignInToken} from '../store';
 import ChangePassword from '../screens/Dashboard/profile/changePassword';
 import Terms from '../screens/Dashboard/profile/terms';
 import Accounts from '../screens/Dashboard/profile/accounts';
+import DeleteAccount from '../screens/Dashboard/profile/deleteAccount';
 
 const Stack = createStackNavigator();
 
@@ -134,6 +135,15 @@ const Navigation = ({signedIn}) => {
               headerStyle: classes.header,
             })}
             component={Accounts}
+          />
+          <Stack.Screen 
+             name="Delete"
+             options={({navigation: {goBack}}) => ({
+               headerLeft: () => <Left goBack={goBack} name="Delete Account" />,
+               title: '',
+               headerStyle: classes.header,
+             })}
+             component={DeleteAccount}
           />
         </>
       ) : (

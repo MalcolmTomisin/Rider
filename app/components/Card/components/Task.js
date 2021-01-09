@@ -33,7 +33,7 @@ const Task = ({
   return (
     <Surface style={[classes.root]}>
       <View style={[classes.headerRoot, hr]}>
-        <View>
+        <View style={{marginLeft: -4}}>
           <Subheading>{`${
             status !== 'completed' && status !== 'cancelled'
               ? 'Ready to Deliver'
@@ -86,7 +86,6 @@ const Task = ({
       <View style={[classes.bodyRoot, hr]}>
         <View>
           <Subheading style={classes.bodyHeaderText}>
-            {' '}
             * Pickup address
           </Subheading>
           <Caption style={classes.content}>{pickUpAddress}</Caption>
@@ -101,7 +100,7 @@ const Task = ({
       </View>
       {status !== 'completed' && (
         <View style={classes.footerRoot}>
-          <View>
+          <View style={{marginLeft: -7}}>
             <Subheading style={classes.bodyHeaderText}>Payment</Subheading>
             <Paragraph style={classes.bodyHeaderText1}>{`₦ ${Math.ceil(
               estimatedCost,
