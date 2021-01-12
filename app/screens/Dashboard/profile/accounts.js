@@ -29,6 +29,7 @@ const Accounts = ({navigation: {navigate}}) => {
   const [indexToDelete, setIndexToDelete] = useState(null);
   const dispatch = useDispatch();
 
+  //get registered bank accounts from api
   const fetchBankAccounts = () => {
     makeNetworkCalls({
       url: api.addbank,

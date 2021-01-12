@@ -67,6 +67,8 @@ const Login = ({navigation: {goBack, navigate}}) => {
       })
         .then(async (res) => {
           const {msg, data} = res.data;
+          // #@api.userAuthKey controls routing based on sign in status on the app,
+          // later can be refactored to use token from REST API
           await AsyncStorage.multiSet([
             ['x-auth-token', res.headers['x-auth-token']],
             [api.userAuthKey, JSON.stringify(true)],

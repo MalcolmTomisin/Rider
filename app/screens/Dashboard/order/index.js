@@ -30,6 +30,7 @@ const OrderPool = ({navigation: {navigate, push, isFocused}}) => {
     refreshBasket();
   }, []);
 
+  //get updated information from api
   const refreshBasket = () => {
     setRefresh(true);
     makeNetworkCalls({

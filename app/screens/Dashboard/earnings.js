@@ -47,6 +47,7 @@ const Earnings = () => {
   const [dateProps, setDateProps] = useState(dataForBarChart);
   const dispatch = useDispatch();
 
+  //transform information from backend into data for chart components
   const getDateDetails = (weeklyInfo) => {
     let startingSum = 0;
     for (let i = 0; i < weeklyInfo.length; i++) {
@@ -63,6 +64,7 @@ const Earnings = () => {
     setDateProps(dataForBarChart);
   };
 
+  //get overview data from backend apis, 2 calls are being made
   const getEarningsAndTrips = () => {
     makeNetworkCalls({
       url: api.weeklyOverview,

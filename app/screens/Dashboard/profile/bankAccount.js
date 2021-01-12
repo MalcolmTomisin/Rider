@@ -28,6 +28,7 @@ const BankAccount = ({navigation: {goBack, navigate, pop, push, popToTop}}) => {
   const changeSortCode = (code) => {
     selectSortCode(code);
   };
+  //gets the account name for the respective bank
   const submitAccountNumber = () => {
     setComponentLoading(true);
     makeNetworkCalls({
@@ -78,6 +79,7 @@ const BankAccount = ({navigation: {goBack, navigate, pop, push, popToTop}}) => {
     return true;
   };
 
+  //submit bank details to api
   const submitDetails = () => {
     if (!validateFields()) {
       return;

@@ -6,6 +6,7 @@ import {
   SIGN_UP_PASSWORD,
 } from '../types';
 import {Platform} from 'react-native';
+//disregard this store since riders do no longer sign up on app
 
 const initialState = {
   firstName: '',

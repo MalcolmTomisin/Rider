@@ -221,6 +221,7 @@ const Order = ({onAccept, onCountDownFinish, timerIsRunning}) => {
               flexDirection: 'row',
               justifyContent: 'space-between',
             }}>
+              {/* capitalizing the first text */}
             <Avatar.Text
               label={`${
                 message?.data.name.indexOf(' ') !== -1

@@ -51,7 +51,7 @@ const StartUp = () => {
 
   const {currentIndex} = useSelector(({delivery}) => delivery);
 
-  //reverse geocode coordinates of rider
+  //reverse geocode coordinates of rider to set address of rider
   const getAddressFromCoordinates = () => {
     const {longitude, latitude} = location.coords;
     fetch(
@@ -68,6 +68,7 @@ const StartUp = () => {
       });
   };
 
+  // callback on event timer runs out
   const onCountDownFinish = () => {
     rejectOrder(message, dispatch, token);
   };
@@ -111,6 +112,10 @@ const StartUp = () => {
     return unsubscribe;
   }, [token]);
 
+  //multiple actions, 
+  // 1 connecting to socket service
+  // 2 listening to events on sockets
+  // 3 getting online/offline status of rider
   const socketEvents = () => {
     try {
       console.log(token, 'token');
@@ -154,6 +159,8 @@ const StartUp = () => {
     }
   };
 
+  // setting up, retrieving token, rider data and current order being handled by rider(if order exists) for hydrating redux
+  // setting up location permissions
   const setPreliminaries = async () => {
     let token, entryIndex, user;
     try {
@@ -175,6 +182,7 @@ const StartUp = () => {
     }
   };
 
+  //see above
   const requestLocationPermission = async () => {
     if (Platform.OS === 'ios') {
       Geolocation.requestAuthorization('always');
@@ -191,7 +199,7 @@ const StartUp = () => {
     }
     await handleLocation();
   };
-
+  //see above
   const handleLocation = async () => {
     Geolocation.getCurrentPosition(
       (position) => {
@@ -237,6 +245,7 @@ const StartUp = () => {
     },
   };
 
+  //function handling rider accepting an order
   const accept = () => {
     const {data} = message;
     dispatch(accountAction.setLoadingStatus({loading: true}));
@@ -292,6 +301,7 @@ const StartUp = () => {
               timerIsRunning={running}
             />
           )}
+          {/* internet listener */}
           {!netInfo.isInternetReachable && <Offline isNetworkOff={true} />}
         </NavigationContainer>
         <FeedBack />
@@ -303,17 +313,6 @@ const StartUp = () => {
 };
 
 export default StartUp;
-
-const GetAuth = async () => {
-  //check if token exists
-  try {
-    const value = await AsyncStorage.getItem(api.userAuthKey);
-    return value != null ? JSON.parse(value) : false;
-  } catch (e) {
-    //failure
-  }
-  return false;
-};
 
 const fontConfig = {
   ios: {

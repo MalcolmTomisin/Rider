@@ -43,6 +43,7 @@ export const formatMoney = (
   }
 };
 
+// action that get's recent status of the order basket, call this after every call that mutates order on the backend 
 export const callBasket = async (url, token, dispatch, currentIndex) => {
   dispatch(accountAction.setLoadingStatus({loading: true}));
   makeNetworkCalls({
@@ -89,6 +90,7 @@ export const getMapOfWeeks = () => {
   return daysOfWeek;
 };
 
+//wrapper for axios
 export const makeNetworkCalls = async (requestConfig) => {
   return await instance(requestConfig);
 };

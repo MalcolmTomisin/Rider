@@ -11,7 +11,7 @@ import {
   NETWORK_INFO,
 } from '../types';
 
-// user data action
+// sets rider's data
 const setUserData = (payload) => ({
   type: USER_DATA,
   payload,

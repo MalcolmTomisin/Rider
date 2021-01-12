@@ -41,16 +41,14 @@ const GOOGLE_MAPS_APIKEY = 'AIzaSyCiOd5vESI31DmPFd6e7QVRVMTX43sm_Ic';
 Geocoder.init(GOOGLE_MAPS_APIKEY);
 
 const Home = ({navigation: {navigate, push, pop}}) => {
-  let {isOnline, message, token, loading, location} = useSelector(
+  let {isOnline, token, loading} = useSelector(
     ({account}) => account,
   );
-  let {pickUp, currentEntry, enroute, cashPaid, currentIndex} = useSelector(
+  let {pickUp, currentEntry, currentIndex} = useSelector(
     ({delivery}) => delivery,
   );
   const {dark} = useSelector(({theme}) => theme);
-  const socket = useContext(WSContext);
   const mapView = React.useRef(null);
-  const [running, setTimerIsRunning] = useState(true);
   const [retry, setRetry] = useState(false);
   const dispatch = useDispatch();
   const [coordinates, setCoordinates] = useState({
@@ -64,7 +62,7 @@ const Home = ({navigation: {navigate, push, pop}}) => {
 
   useFetch();
 
-  //alert user of arrival
+  //rider alerts user/API of arrival
   const alertUserOfArrival = () => {
     dispatch(accountAction.setLoadingStatus({loading: true}));
     makeNetworkCalls({
@@ -189,6 +187,7 @@ const Home = ({navigation: {navigate, push, pop}}) => {
 
   useEffect(() => {
     if (token) {
+      //watch position and updates backend api with current status
       Geolocation.watchPosition(
         ({coords: {longitude, latitude}}) => {
           console.log('it has happened');

@@ -8,6 +8,8 @@ import {
   RATE_USER,
 } from '../types';
 
+// these actions effect UI changes especially of the component cards that show rider status
+
 const setDeliveryData = (payload) => ({
   type: DELIVERY_DATA,
   payload,
@@ -33,6 +35,7 @@ const setPaymentRecieved = (payload) => ({
   payload,
 });
 
+//the index of current entry being handled in redux
 const setIndexOfEntry = (payload) => ({
   type: INDEX_OF_ENTRY,
   payload,

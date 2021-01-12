@@ -1,5 +1,7 @@
 import {LAUNCH_FEEDBACK, DISMISS_FEEDBACK} from '../types';
 
+//providing feedback to users, note severity carries two constants, either 's' success or 'w' warning
+
 const initialstate = {
   open: false,
   severity: "",
