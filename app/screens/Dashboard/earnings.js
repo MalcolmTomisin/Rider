@@ -78,7 +78,7 @@ const Earnings = () => {
         console.log('rear', data);
         setSummary(data);
         getDateDetails(data);
-        dispatch(feedbackAction.launch({open: true, severity: 's', msg}));
+        //dispatch(feedbackAction.launch({open: true, severity: 's', msg}));
         return makeNetworkCalls({
           url: api.tripsCurrentMonth,
           headers: {

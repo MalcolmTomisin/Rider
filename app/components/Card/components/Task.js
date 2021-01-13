@@ -105,7 +105,7 @@ const Task = ({
             <Paragraph style={classes.bodyHeaderText1}>{`₦ ${Math.ceil(
               estimatedCost,
             )}`}</Paragraph>
-            <Caption style={classes.content}>Payment on Delivery</Caption>
+            <Caption style={classes.content}>{`${orderInfo?.transaction?.paymentMethod !== 'cash' ? 'Paid' : orderInfo?.transaction?.status === 'pending' ? 'Payment on Pickup' : ''}`}</Caption>
           </View>
 
           <TouchableOpacity

@@ -42,6 +42,7 @@ const initialstate = {
   acceptedOrders: [],
   buttonIconLoading: false,
   networkOffline: false,
+  resetTimer: Math.random(),
 };
 
 export default (state = initialstate, action) => {

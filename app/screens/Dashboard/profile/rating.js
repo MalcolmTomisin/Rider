@@ -55,7 +55,7 @@ const RatingScreen = () => {
         const {msg, data} = res.data;
         console.log('rate', data);
         setUserRatings(data);
-        dispatch(feedbackAction.launch({open: true, severity: 's', msg}));
+        //dispatch(feedbackAction.launch({open: true, severity: 's', msg}));
         calculateAverageRating(data);
       })
       .catch((err) => {

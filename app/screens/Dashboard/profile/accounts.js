@@ -39,7 +39,7 @@ const Accounts = ({navigation: {navigate}}) => {
     })
       .then((res) => {
         const {msg, data} = res.data;
-        dispatch(feedbackAction.launch({open: true, severity: 's', msg}));
+        //dispatch(feedbackAction.launch({open: true, severity: 's', msg}));
         setAccount(data);
       })
       .catch((err) => {

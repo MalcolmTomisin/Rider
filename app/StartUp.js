@@ -45,7 +45,7 @@ const StartUp = () => {
   const dispatch = useDispatch();
   const theme = useSelector(({theme}) => theme);
   const netInfo = useNetInfo();
-  const {location, token, isOnline, message} = useSelector(
+  const {location, token, isOnline, message, resetTimer} = useSelector(
     ({account}) => account,
   );
 
@@ -130,7 +130,8 @@ const StartUp = () => {
 
       s.on('assignEntry', (message) => {
         console.log('mess', message);
-        dispatch(accountAction.setOrder({message}));
+        let resetTimer = Math.random();
+        dispatch(accountAction.setOrder({message, resetTimer}));
       });
       if (token) {
         makeNetworkCalls({
@@ -299,6 +300,7 @@ const StartUp = () => {
               onAccept={accept}
               onCountDownFinish={onCountDownFinish}
               timerIsRunning={running}
+              reset={resetTimer.toString()}
             />
           )}
           {/* internet listener */}

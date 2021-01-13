@@ -26,7 +26,7 @@ const Trips = () => {
       .then((res) => {
         const {msg, data} = res.data;
         setTrips(data);
-        dispatch(feedbackAction.launch({open: true, severity: 's', msg}));
+        //dispatch(feedbackAction.launch({open: true, severity: 's', msg}));
       })
       .catch((err) => {
         if (err.response) {

@@ -24,7 +24,7 @@ import constants from '../../../utils/constants';
 
 const {DEVICE_HEIGHT, DEVICE_WIDTH} = constants;
 
-const Order = ({onAccept, onCountDownFinish, timerIsRunning}) => {
+const Order = ({onAccept, onCountDownFinish, timerIsRunning, reset}) => {
   const dispatch = useDispatch();
   const {dark} = useSelector(({theme}) => theme);
   const {message, address} = useSelector(({account}) => account);
@@ -49,6 +49,7 @@ const Order = ({onAccept, onCountDownFinish, timerIsRunning}) => {
             color={dark ? 'white' : 'black'}
           />
           <CountDown
+            id={reset}
             until={120}
             timeToShow={['M', 'S']}
             onFinish={onCountDownFinish}
@@ -138,11 +139,11 @@ const Order = ({onAccept, onCountDownFinish, timerIsRunning}) => {
                         color: colors.red.main,
                         marginBottom: -5,
                       }}>
-                      {`₦${v?.estimatedCost}`}
+                      {`₦${Math.round(v?.estimatedCost)}`}
                     </Caption>
                     <Caption
                       style={{fontSize: 8, color: dark ? 'white' : 'black'}}>
-                      Cash on Pickup
+                      {`${message.data?.transaction?.paymentMethod !== 'cash' ? 'Paid' : 'Cash payment'}`}
                     </Caption>
                   </View>
                 )}
@@ -158,7 +159,7 @@ const Order = ({onAccept, onCountDownFinish, timerIsRunning}) => {
                   </Caption>
                   <Caption
                     style={{fontSize: 8, color: dark ? 'white' : 'black'}}>
-                    Estimated Delivery time:{' '}
+                    Estimated Delivery time:
                     <Caption
                       style={{
                         fontSize: 8,
@@ -177,7 +178,7 @@ const Order = ({onAccept, onCountDownFinish, timerIsRunning}) => {
                 }}>
                 <Caption
                   style={{fontSize: 10, color: dark ? 'white' : 'black'}}>
-                  Picking up order{' '}
+                  Picking up order
                   <Caption style={{color: colors.red.main, fontSize: 10}}>
                     {`${v?.orderId}`}
                   </Caption>
@@ -374,7 +375,7 @@ const classes = StyleSheet.create({
     fontSize: 10,
     fontWeight: '400',
     color: 'white',
-    textAlign: 'right',
+    textAlign: 'left',
   },
   dash: {
     height: 2,

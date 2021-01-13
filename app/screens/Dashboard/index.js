@@ -29,9 +29,6 @@ import {
 import {rejectOrder} from '../../components/Modal/components/CancelOrder';
 import {ConfirmDialog} from '../../components/Modal';
 import {callBasket, makeNetworkCalls} from '../../utils';
-import NotificationSounds, {
-  playSampleSound,
-} from 'react-native-notification-sounds';
 import {useFetch} from '../../utils/fetchHook';
 
 const {width, height} = Dimensions.get('window');

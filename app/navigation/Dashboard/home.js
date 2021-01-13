@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import {createStackNavigator} from '@react-navigation/stack';
 import {View, TouchableOpacity, Image, StyleSheet} from 'react-native';
 import Home from '../../screens/Dashboard';
@@ -7,12 +7,23 @@ import {colors} from '../../theme';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import {Switch} from '../../components/Switch';
 import {useSelector} from 'react-redux';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const Stack = createStackNavigator();
 
 const Dashboard = () => {
   const {isOnline, acceptedOrders, user} = useSelector(({account}) => account);
   const {dark} = useSelector(({theme}) => theme);
+  const [userDetails, setUserDetails] = useState(null);
+
+  useEffect(() => {
+    (async () => {
+      let stringifiedUserDetails = await AsyncStorage.getItem('userDetails');
+      if (stringifiedUserDetails) {
+        setUserDetails(JSON.parse(stringifiedUserDetails));
+      }
+    })();
+  }, []);
 
   return (
     <Stack.Navigator initialRouteName="Home" headerMode="screen">
@@ -21,16 +32,23 @@ const Dashboard = () => {
         options={({navigation: {navigate}}) => ({
           headerLeft: () => (
             <View style={classes.left}>
-              <Avatar.Text
+              <Avatar.Image
                 size={35}
-                label={`${
-                  user?.name.indexOf(' ') !== -1
-                    ? `${user?.name.charAt(0)}${user?.name.charAt(
-                        user?.name.indexOf(' ') + 1,
-                      )}`
-                    : `${user?.name.charAt(0)}`
-                }`}
-                color={colors.red.main}
+                // label={`${
+                //   user?.name.indexOf(' ') !== -1
+                //     ? `${user?.name.charAt(0)}${user?.name.charAt(
+                //         user?.name.indexOf(' ') + 1,
+                //       )}`
+                //     : `${user?.name.charAt(0)}`
+                // }`}
+                //color={colors.red.main}
+                source={
+                  userDetails?.img
+                    ? {
+                        uri: `https://df7sglzvhxylw.cloudfront.net/${userDetails.img}`,
+                      }
+                    : null
+                }
               />
             </View>
           ),
