@@ -1,6 +1,5 @@
 import {accountAction, deliveryAction} from '../store/actions';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {axios} from 'axios';
 import {instance} from '../api';
 import SendIntentAndroid from 'react-native-send-intent';
 

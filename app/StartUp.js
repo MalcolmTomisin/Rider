@@ -27,6 +27,10 @@ import {rejectOrder} from './components/Modal/components/CancelOrder';
 import {navigationRef} from './RootNavigation';
 import * as RootNavigation from './RootNavigation';
 import {useNetInfo} from '@react-native-community/netinfo';
+import axios from 'axios';
+import {setSignInToken} from './store/actions/signUp';
+
+
 
 async function requestUserPermission() {
   const authStatus = await messaging().requestPermission();
@@ -48,6 +52,22 @@ const StartUp = () => {
   const {location, token, isOnline, message, resetTimer} = useSelector(
     ({account}) => account,
   );
+
+  const intercept = () => {
+    axios.interceptors.response.use((response) => {
+      console.log('intercept response', response);
+      return Promise.resolve(response);  
+    }, (error) => {
+      console.log('intercept', error.response);
+    if (error?.response?.status === 440){
+      Alert.alert('Security', 'You are logged in on another device');
+      AsyncStorage.clear();
+      dispatch(setSignInToken({signedIn: false}));
+      RootNavigation.navigate('Onboarding');
+    }
+    return Promise.reject(error);
+  })
+  }
 
   const {currentIndex} = useSelector(({delivery}) => delivery);
 
@@ -78,6 +98,7 @@ const StartUp = () => {
       .getToken()
       .then((fcmToken) => {
         //console.log('ftoken', token);
+       
         if (token) {
           makeNetworkCalls({
             url: api.fcmToken,
@@ -133,6 +154,11 @@ const StartUp = () => {
         let resetTimer = Math.random();
         dispatch(accountAction.setOrder({message, resetTimer}));
       });
+
+      s.on('takenEntry', () => {
+        dispatch(accountAction.setOrder({message: null}));
+      });
+
       if (token) {
         makeNetworkCalls({
           url: api.riderDetails,

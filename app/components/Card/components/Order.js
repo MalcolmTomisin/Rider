@@ -14,8 +14,6 @@ import Ionicon from 'react-native-vector-icons/Ionicons';
 import {useSelector, useDispatch} from 'react-redux';
 import {colors} from '../../../theme';
 import {Button, OutlineButton} from '../../Button';
-import {deliveryAction, accountAction} from '../../../store/actions';
-import {useNavigation} from '@react-navigation/native';
 import CountDown from 'react-native-countdown-component';
 import NotificationSounds, {
   playSampleSound,

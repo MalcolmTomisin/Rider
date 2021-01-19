@@ -15,7 +15,6 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import {api, baseURL} from '../../../api';
 import WSContext from '../../Socket/context';
 import {makeNetworkCalls} from '../../../utils';
-import axios from 'axios';
 
 const Switch = () => {
   const {
