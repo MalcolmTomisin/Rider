@@ -151,11 +151,12 @@ const StartUp = () => {
 
       s.on('assignEntry', (message) => {
         console.log('mess', message);
-        let resetTimer = Math.random();
+        let resetTimer = Math.random() * Math.random();
         dispatch(accountAction.setOrder({message, resetTimer}));
       });
 
       s.on('takenEntry', () => {
+        console.log('taken');
         dispatch(accountAction.setOrder({message: null}));
       });
 
@@ -310,6 +311,7 @@ const StartUp = () => {
           setTimerIsRunning(true);
           return;
         }
+        setTimerIsRunning(true);
       })
       .finally(() => {
         dispatch(accountAction.setLoadingStatus({loading: false}));

@@ -3,6 +3,7 @@ import {View, StyleSheet, TouchableOpacity, ScrollView, Linking} from 'react-nat
 import {Subheading, Avatar, Caption} from 'react-native-paper';
 import {colors} from '../../../theme';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import {accountAction} from '../../../store/actions';
 import {useSelector, useDispatch} from 'react-redux';
 import img from '../../../image';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -57,6 +58,7 @@ const Profile = ({navigation: {navigate}}) => {
           onPress={() => {
             AsyncStorage.clear();
             dispatch(setSignInToken({signedIn: false}));
+            dispatch(accountAction.setToken({token: null}));
             navigate('Onboarding');
           }}
         />

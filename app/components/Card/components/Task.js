@@ -10,6 +10,8 @@ import {colors} from '../../../theme';
 import Icon from 'react-native-vector-icons/Feather';
 import {useSelector, useDispatch} from 'react-redux';
 import {openGoogleMapsIntent} from '../../../utils';
+import Clipboard from '@react-native-community/clipboard';
+import {feedbackAction} from '../../../store/actions';
 
 const Task = ({
   pickUpAddress,
@@ -24,6 +26,7 @@ const Task = ({
   const {dark} = useSelector(({theme}) => theme);
   const {buttonIconLoading} = useSelector(({account}) => account);
   const hr = {borderBottomColor: dark ? colors.hr.dark : colors.hr.light};
+  const dispatch = useDispatch();
 
   // const renderOrders = orders => {
   //   return orders.map((v,i) => (
@@ -35,13 +38,22 @@ const Task = ({
       <View style={[classes.headerRoot, hr]}>
         <View style={{marginLeft: -4}}>
           <Subheading>{`${
+            orderInfo?.pickupType !== 'anytime' ? 'Instant Pickup' :
             status !== 'completed' && status !== 'cancelled'
               ? 'Ready to Deliver'
               : status === 'cancelled'
               ? 'Cancelled'
               : 'Delivered'
           }`}</Subheading>
+          <View style={{flexDirection: 'row', justifyContent: 'space-evenly', alignItems: 'center'}}>
           <Caption style={classes.content}>{id}</Caption>
+          <Icon name="copy" color={dark ? colors.white : colors.grey.dark} size={20} 
+          onPress={() => {
+            Clipboard.setString(id)
+            dispatch(feedbackAction.launch({open: true, severity: 's', msg: 'copied'}))
+            }} />
+          </View>
+          
         </View>
         <View
           style={[

@@ -97,7 +97,7 @@ const Order = ({onAccept, onCountDownFinish, timerIsRunning, reset}) => {
                         size={8}
                         color={dark ? colors.grey.light : colors.grey.dark}
                       />
-                      <Caption style={classes.orderContentAddressText}>
+                      <Caption numberOfLines={1} style={classes.orderContentAddressText}>
                         {message?.data?.pickupAddress}
                       </Caption>
                     </View>
@@ -116,7 +116,7 @@ const Order = ({onAccept, onCountDownFinish, timerIsRunning, reset}) => {
                         size={8}
                         color={dark ? colors.grey.light : colors.grey.dark}
                       />
-                      <Caption style={classes.orderContentAddressText}>
+                      <Caption numberOfLines={1} style={classes.orderContentAddressText}>
                         {v?.deliveryAddress}
                       </Caption>
                     </View>
@@ -369,11 +369,11 @@ const classes = StyleSheet.create({
     flexDirection: 'row',
   },
   orderContentAddressText: {
-    //marginLeft: 10,
     fontSize: 10,
     fontWeight: '400',
     color: 'white',
     textAlign: 'left',
+    marginRight: 5,
   },
   dash: {
     height: 2,
