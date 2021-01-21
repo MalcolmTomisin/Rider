@@ -48,9 +48,11 @@ const Task = ({
           <View style={{flexDirection: 'row', justifyContent: 'space-evenly', alignItems: 'center'}}>
           <Caption style={classes.content}>{id}</Caption>
           <Icon name="copy" color={dark ? colors.white : colors.grey.dark} size={20} 
-          onPress={() => {
+          onPress={async () => {
             Clipboard.setString(id)
-            dispatch(feedbackAction.launch({open: true, severity: 's', msg: 'copied'}))
+            dispatch(feedbackAction.launch({open: true, severity: 's', msg: 'copied'}));
+            await new Promise(r => setTimeout(r, 1500));
+            dispatch(feedbackAction.dismiss())
             }} />
           </View>
           
