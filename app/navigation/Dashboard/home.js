@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {createStackNavigator} from '@react-navigation/stack';
-import {View, TouchableOpacity, Image, StyleSheet} from 'react-native';
+import {View, TouchableOpacity, StyleSheet} from 'react-native';
 import Home from '../../screens/Dashboard';
 import {Avatar, Badge} from 'react-native-paper';
 import {colors} from '../../theme';
@@ -8,6 +8,7 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import {Switch} from '../../components/Switch';
 import {useSelector} from 'react-redux';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import constants from '../../utils/constants';
 
 const Stack = createStackNavigator();
 
@@ -102,7 +103,7 @@ const classes = StyleSheet.create({
   },
   badge: {
     position: 'absolute',
-    left: 120,
+    left: constants.IS_IOS ? constants.DEVICE_WIDTH * 0.5 - 40 : 120,
     bottom: 18,
     zIndex: 5,
     backgroundColor: colors.red.main,
