@@ -29,6 +29,7 @@ import * as RootNavigation from './RootNavigation';
 import {useNetInfo} from '@react-native-community/netinfo';
 import axios from 'axios';
 import {setSignInToken} from './store/actions/signUp';
+import SplashScreen from 'react-native-splash-screen';
 
 
 
@@ -94,6 +95,7 @@ const StartUp = () => {
   };
 
   React.useEffect(() => {
+    SplashScreen.hide();
     messaging()
       .getToken()
       .then((fcmToken) => {
