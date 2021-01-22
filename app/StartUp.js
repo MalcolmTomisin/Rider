@@ -100,7 +100,6 @@ const StartUp = () => {
       .getToken()
       .then((fcmToken) => {
         //console.log('ftoken', token);
-       
         if (token) {
           makeNetworkCalls({
             url: api.fcmToken,
