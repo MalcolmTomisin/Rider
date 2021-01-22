@@ -1,20 +1,22 @@
-import React, {useEffect, useState} from 'react';
-import {createStackNavigator} from '@react-navigation/stack';
-import {View, TouchableOpacity, StyleSheet} from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { createStackNavigator } from '@react-navigation/stack';
+import { View, TouchableOpacity, StyleSheet } from 'react-native';
 import Home from '../../screens/Dashboard';
-import {Avatar, Badge} from 'react-native-paper';
-import {colors} from '../../theme';
+import { Avatar, Badge } from 'react-native-paper';
+import { colors } from '../../theme';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import {Switch} from '../../components/Switch';
-import {useSelector} from 'react-redux';
+import { Switch } from '../../components/Switch';
+import { useSelector } from 'react-redux';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import constants from '../../utils/constants';
 
 const Stack = createStackNavigator();
 
+console.log(constants.DEVICE_WIDTH / 20);
+
 const Dashboard = () => {
-  const {isOnline, acceptedOrders, user} = useSelector(({account}) => account);
-  const {dark} = useSelector(({theme}) => theme);
+  const { isOnline, acceptedOrders, user } = useSelector(({ account }) => account);
+  const { dark } = useSelector(({ theme }) => theme);
   const [userDetails, setUserDetails] = useState(null);
 
   useEffect(() => {
@@ -30,7 +32,7 @@ const Dashboard = () => {
     <Stack.Navigator initialRouteName="Home" headerMode="screen">
       <Stack.Screen
         name="Home"
-        options={({navigation: {navigate}}) => ({
+        options={({ navigation: { navigate } }) => ({
           headerLeft: () => (
             <View style={classes.left}>
               <Avatar.Image
@@ -46,8 +48,8 @@ const Dashboard = () => {
                 source={
                   userDetails?.img
                     ? {
-                        uri: `https://df7sglzvhxylw.cloudfront.net/${userDetails.img}`,
-                      }
+                      uri: `https://df7sglzvhxylw.cloudfront.net/${userDetails.img}`,
+                    }
                     : null
                 }
               />
@@ -55,15 +57,14 @@ const Dashboard = () => {
           ),
           headerTitle: () => (
             <TouchableOpacity
-              style={{justifyContent: 'center', alignItems: 'center'}}
+              style={{ justifyContent: 'center', alignItems: 'center' }}
               onPress={() => navigate('OrderPool')}>
               {isOnline &&
-              acceptedOrders?.filter((v) => v.status !== 'cancelled').length >
+                acceptedOrders?.filter((v) => v.status !== 'cancelled').length >
                 0 ? (
-                <Badge style={classes.badge}>{`${
-                  acceptedOrders.filter((v) => v.status !== 'cancelled').length
-                }`}</Badge>
-              ) : null}
+                  <Badge style={classes.badge}>{`${acceptedOrders.filter((v) => v.status !== 'cancelled').length
+                    }`}</Badge>
+                ) : null}
               <Icon
                 size={35}
                 name="basket"
@@ -103,7 +104,7 @@ const classes = StyleSheet.create({
   },
   badge: {
     position: 'absolute',
-    left: constants.IS_IOS ? constants.DEVICE_WIDTH * 0.5 - 40 : 120,
+    left: constants.IS_IOS ? constants.DEVICE_WIDTH / 40 - 10 : 120,
     bottom: 18,
     zIndex: 5,
     backgroundColor: colors.red.main,
