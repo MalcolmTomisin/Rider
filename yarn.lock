@@ -2160,6 +2160,11 @@ bcrypt-pbkdf@^1.0.0:
   dependencies:
     tweetnacl "^0.14.3"
 
+between-range@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/between-range/-/between-range-1.0.0.tgz#aab7c2f46ef87a3b4ba9a7611724d9b813e7e149"
+  integrity sha1-qrfC9G74ejtLqadhFyTZuBPn4Uk=
+
 big-integer@^1.6.44:
   version "1.6.48"
   resolved "https://registry.yarnpkg.com/big-integer/-/big-integer-1.6.48.tgz#8fd88bd1632cba4a1c8c3e3d7159f08bb95b4b9e"
@@ -4351,6 +4356,13 @@ is-typedarray@^1.0.0, is-typedarray@~1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/is-typedarray/-/is-typedarray-1.0.0.tgz#e479c80858df0c1b11ddda6940f96011fcda4a9a"
   integrity sha1-5HnICFjfDBsR3dppQPlgEfzaSpo=
+
+is-valid-coordinates@1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/is-valid-coordinates/-/is-valid-coordinates-1.0.0.tgz#ac26e968be78f73903e26fbe990808e8a5015310"
+  integrity sha1-rCbpaL549zkD4m++mQgI6KUBUxA=
+  dependencies:
+    between-range "^1.0.0"
 
 is-windows@^1.0.2:
   version "1.0.2"
@@ -6575,6 +6587,13 @@ react-native-maps@0.27.1:
   version "0.27.1"
   resolved "https://registry.yarnpkg.com/react-native-maps/-/react-native-maps-0.27.1.tgz#2f10cd417bb2fd938c9e015b1c9b6d9b1a44b97f"
   integrity sha512-HygBkZBecTnIVRYrSiLRAvu4OmXOYso/A7c6Cy73HkOh9CgGV8Ap5eBea24tvmFGptjj5Hg8AJ94/YbmWK1Okw==
+
+react-native-navigation-directions@^1.0.4:
+  version "1.0.4"
+  resolved "https://registry.yarnpkg.com/react-native-navigation-directions/-/react-native-navigation-directions-1.0.4.tgz#e4522e1eaaf143320877bbe117050e5123aa5712"
+  integrity sha512-hfodbALxN5dMG4ZW5yzeYhng6JoIzuox/U0iU96LKaeNuedWD0d3JPtCvY5J5WElK52iPspUwHmsPhlSCePylg==
+  dependencies:
+    is-valid-coordinates "1.0.0"
 
 react-native-notification-sounds@^0.5.2:
   version "0.5.2"

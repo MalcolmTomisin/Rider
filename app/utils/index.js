@@ -2,6 +2,9 @@ import {accountAction, deliveryAction} from '../store/actions';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {instance} from '../api';
 import SendIntentAndroid from 'react-native-send-intent';
+import { OpenMapDirections } from 'react-native-navigation-directions';
+import constants from './constants';
+import store from '../store';
 
 export const validateEmail = (email) => {
   const re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
@@ -95,6 +98,12 @@ export const makeNetworkCalls = async (requestConfig) => {
 };
 
 export const openGoogleMapsIntent = (latitude, longitude, type) => {
+  if (constants.IS_IOS) {
+    const state = store.getState();
+    const {coordinates} = state.account;
+    OpenMapDirections(coordinates, {latitude, longitude}, 'd');
+    return;
+  }
   SendIntentAndroid.openMapsWithRoute(
     `${latitude}, ${longitude}`,
     type ? type : 'd',

@@ -8,7 +8,8 @@ import {
   LOADING,
   ACCEPTED_ORDERS,
   ICON_LOADING,
-  NETWORK_INFO
+  NETWORK_INFO,
+  SET_COORDINATES,
 } from '../types';
 
 const initialstate = {
@@ -43,6 +44,7 @@ const initialstate = {
   buttonIconLoading: false,
   networkOffline: false,
   resetTimer: Math.random(),
+  coordinates: {latitude: null, longitude: null},
 };
 
 export default (state = initialstate, action) => {
@@ -68,6 +70,8 @@ export default (state = initialstate, action) => {
     case ICON_LOADING:
       return {...state, ...action.payload};
     case NETWORK_INFO:
+      return {...state, ...action.payload};
+    case SET_COORDINATES:
       return {...state, ...action.payload};
     default:
       return state;

@@ -1,18 +1,16 @@
 import React from 'react';
 import {View, StyleSheet, TouchableOpacity} from 'react-native';
-import {Title, Subheading, Caption, Paragraph} from 'react-native-paper';
-import {useSelector, useDispatch} from 'react-redux';
+import {Title, Subheading, Paragraph} from 'react-native-paper';
+import {useDispatch} from 'react-redux';
 import {Button} from '../../../components/Button';
 import BackButton from '../../../navigation/custom/BackButton';
-import {makeNetworkCalls, validateEmail} from '../../../utils';
+import {makeNetworkCalls} from '../../../utils';
 import {api} from '../../../api';
 import {feedbackAction} from '../../../store/actions';
 import {Loading} from '../../../components/Loading';
-import constants from '../../../utils/constants';
 import {colors} from '../../../theme';
 import OTPTextInput from 'react-native-otp-textinput';
 import CountDown from 'react-native-countdown-component';
-import {FeedBack} from '../../../components/Feedback';
 
 const OTPVerification = ({
   navigation: {navigate, goBack},
@@ -28,7 +26,7 @@ const OTPVerification = ({
   const dispatch = useDispatch();
 
   const handleTextChange = (val) => {
-      console.log('val', val);
+    console.log('val', val);
     setValue(val);
   };
 

@@ -38,9 +38,7 @@ const GOOGLE_MAPS_APIKEY = 'AIzaSyCiOd5vESI31DmPFd6e7QVRVMTX43sm_Ic';
 Geocoder.init(GOOGLE_MAPS_APIKEY);
 
 const Home = ({navigation: {navigate, push, pop}}) => {
-  let {isOnline, token, loading} = useSelector(
-    ({account}) => account,
-  );
+  let {isOnline, token, loading} = useSelector(({account}) => account);
   let {pickUp, currentEntry, currentIndex} = useSelector(
     ({delivery}) => delivery,
   );
@@ -188,6 +186,11 @@ const Home = ({navigation: {navigate, push, pop}}) => {
       Geolocation.watchPosition(
         ({coords: {longitude, latitude}}) => {
           console.log('it has happened');
+          dispatch(
+            accountAction.setNewLocationCoords({
+              coordinates: {latitude, longitude},
+            }),
+          );
           makeNetworkCalls({
             url: api.location,
             headers: {

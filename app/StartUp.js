@@ -31,8 +31,6 @@ import axios from 'axios';
 import {setSignInToken} from './store/actions/signUp';
 import SplashScreen from 'react-native-splash-screen';
 
-
-
 async function requestUserPermission() {
   const authStatus = await messaging().requestPermission();
   const enabled =
@@ -55,20 +53,23 @@ const StartUp = () => {
   );
 
   const intercept = () => {
-    axios.interceptors.response.use((response) => {
-      console.log('intercept response', response);
-      return Promise.resolve(response);  
-    }, (error) => {
-      console.log('intercept', error.response);
-    if (error?.response?.status === 440){
-      Alert.alert('Security', 'You are logged in on another device');
-      AsyncStorage.clear();
-      dispatch(setSignInToken({signedIn: false}));
-      RootNavigation.navigate('Onboarding');
-    }
-    return Promise.reject(error);
-  })
-  }
+    axios.interceptors.response.use(
+      (response) => {
+        console.log('intercept response', response);
+        return Promise.resolve(response);
+      },
+      (error) => {
+        console.log('intercept', error.response);
+        if (error?.response?.status === 440) {
+          Alert.alert('Security', 'You are logged in on another device');
+          AsyncStorage.clear();
+          dispatch(setSignInToken({signedIn: false}));
+          RootNavigation.navigate('Onboarding');
+        }
+        return Promise.reject(error);
+      },
+    );
+  };
 
   const {currentIndex} = useSelector(({delivery}) => delivery);
 
@@ -134,7 +135,7 @@ const StartUp = () => {
     return unsubscribe;
   }, [token]);
 
-  //multiple actions, 
+  //multiple actions,
   // 1 connecting to socket service
   // 2 listening to events on sockets
   // 3 getting online/offline status of rider
@@ -233,7 +234,13 @@ const StartUp = () => {
     Geolocation.getCurrentPosition(
       (position) => {
         //console.log('position', position);
+        const {latitude, longitude} = position.coords;
         dispatch(accountAction.setLocation(position));
+        dispatch(
+          accountAction.setNewLocationCoords({
+            coordinates: {latitude, longitude},
+          }),
+        );
         getAddressFromCoordinates();
       },
       (error) => {

@@ -9,6 +9,7 @@ import {
   ACCEPTED_ORDERS,
   ICON_LOADING,
   NETWORK_INFO,
+  SET_COORDINATES,
 } from '../types';
 
 // sets rider's data
@@ -70,6 +71,11 @@ const setNetWorkStatus = (payload) => ({
   type: NETWORK_INFO,
 });
 
+const setNewLocationCoords = (payload) => ({
+  payload,
+  type: SET_COORDINATES,
+})
+
 export default {
   setUserData,
   setToken,
@@ -81,4 +87,5 @@ export default {
   setAcceptedOrders,
   setIconLoading,
   setNetWorkStatus,
+  setNewLocationCoords,
 };
