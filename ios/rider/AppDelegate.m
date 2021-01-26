@@ -5,6 +5,8 @@
 #import <React/RCTBridge.h>
 #import <React/RCTBundleURLProvider.h>
 #import <React/RCTRootView.h>
+#import "RNSplashScreen.h"
+
 
 #ifdef FB_SONARKIT_ENABLED
 #import <FlipperKit/FlipperClient.h>
@@ -13,7 +15,7 @@
 #import <FlipperKitNetworkPlugin/FlipperKitNetworkPlugin.h>
 #import <SKIOSNetworkPlugin/SKIOSNetworkAdapter.h>
 #import <FlipperKitReactPlugin/FlipperKitReactPlugin.h>
-#import "RNSplashScreen.h"
+
 
 static void InitializeFlipper(UIApplication *application) {
   FlipperClient *client = [FlipperClient sharedClient];
@@ -52,6 +54,7 @@ static void InitializeFlipper(UIApplication *application) {
   self.window.rootViewController = rootViewController;
   [self.window makeKeyAndVisible];
   [RNSplashScreen show];
+  
   return YES;
 }
 
