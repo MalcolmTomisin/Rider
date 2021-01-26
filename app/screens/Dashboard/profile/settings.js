@@ -45,8 +45,16 @@ const Settings = ({navigation: {navigate}}) => {
           )
         }
       />
-      <List
+      {/* <List
         name="Help"
+        onPress={() =>
+          Linking.openURL(
+            'mailto:support@exaltapp.com?subject=SendMail&body=Description',
+          )
+        }
+      /> */}
+      <List
+        name="Support"
         onPress={() =>
           Linking.openURL(
             'mailto:support@exaltapp.com?subject=SendMail&body=Description',

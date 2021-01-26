@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {View, StyleSheet} from 'react-native';
+import {View, StyleSheet, ActionSheetIOS, TouchableOpacity} from 'react-native';
 import {Button} from '../../../components/Button';
 import {TextField} from '../../../components/TextField';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
@@ -11,6 +11,7 @@ import {Loading} from '../../../components/Loading';
 import {feedbackAction} from '../../../store/actions';
 import {colors} from '../../../theme';
 import {Caption, Checkbox} from 'react-native-paper';
+import constants from '../../../utils/constants';
 
 const BankAccount = ({navigation: {goBack, navigate, pop, push, popToTop}}) => {
   const [banks, setBanks] = useState([]);
@@ -79,6 +80,18 @@ const BankAccount = ({navigation: {goBack, navigate, pop, push, popToTop}}) => {
     return true;
   };
 
+  const selectBankIOS = () => {
+    if (banks.length > 0) {
+      ActionSheetIOS.showActionSheetWithOptions(
+        {options: banks, title: 'Select Bank'},
+        (i) => {
+          setSelectedBank(banks[i].name);
+          changeSortCode(banks[i].code);
+        },
+      );
+    }
+  };
+
   //submit bank details to api
   const submitDetails = () => {
     if (!validateFields()) {
@@ -142,18 +155,33 @@ const BankAccount = ({navigation: {goBack, navigate, pop, push, popToTop}}) => {
   }, []);
   return (
     <KeyboardAwareScrollView style={classes.root}>
-      <Dropdown
-        containerStyle={[classes.dropdownContainer]}
-        data={banks}
-        label="Bank Name"
-        rootStyle={{marginHorizontal: 15}}
-        selectedValue={selectedBank}
-        onValueChange={(itemValue, itemIndex) => {
-          setSelectedBank(itemValue);
-          console.log('re', itemValue);
-          changeSortCode(banks[itemIndex].code);
-        }}
-      />
+      {constants.IS_IOS ? (
+        <TouchableOpacity
+          onPress={selectBankIOS}
+          style={{marginHorizontal: 15}}>
+          <View style={classes.dropDownIOS}>
+            {!selectedBank
+              ? banks.length > 0
+                ? banks[0].name
+                : ''
+              : selectedBank}
+          </View>
+        </TouchableOpacity>
+      ) : (
+        <Dropdown
+          containerStyle={[classes.dropdownContainer]}
+          data={banks}
+          label="Bank Name"
+          rootStyle={{marginHorizontal: 15}}
+          selectedValue={selectedBank}
+          onValueChange={(itemValue, itemIndex) => {
+            setSelectedBank(itemValue);
+            console.log('re', itemValue);
+            changeSortCode(banks[itemIndex].code);
+          }}
+        />
+      )}
+
       <TextField
         label="Account Number"
         rootStyle={classes.margin}
@@ -241,6 +269,11 @@ const classes = StyleSheet.create({
   dropdownContainer: {
     justifyContent: 'center',
     alignItems: 'center',
+    height: 53,
+  },
+  dropDownIOS: {
+    borderWidth: 1,
+    borderRadius: 6,
     height: 53,
   },
 });

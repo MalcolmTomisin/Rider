@@ -20,6 +20,7 @@ import ChangePassword from '../screens/Dashboard/profile/changePassword';
 import Terms from '../screens/Dashboard/profile/terms';
 import Accounts from '../screens/Dashboard/profile/accounts';
 import DeleteAccount from '../screens/Dashboard/profile/deleteAccount';
+import Support from '../screens/Dashboard/profile/support';
 
 const Stack = createStackNavigator();
 
@@ -136,14 +137,23 @@ const Navigation = ({signedIn}) => {
             })}
             component={Accounts}
           />
-          <Stack.Screen 
-             name="Delete"
-             options={({navigation: {goBack}}) => ({
-               headerLeft: () => <Left goBack={goBack} name="Delete Account" />,
-               title: '',
-               headerStyle: classes.header,
-             })}
-             component={DeleteAccount}
+          <Stack.Screen
+            name="Delete"
+            options={({navigation: {goBack}}) => ({
+              headerLeft: () => <Left goBack={goBack} name="Delete Account" />,
+              title: '',
+              headerStyle: classes.header,
+            })}
+            component={DeleteAccount}
+          />
+          <Stack.Screen
+            name="Support"
+            options={({navigation: {goBack}}) => ({
+              headerLeft: () => <Left goBack={goBack} name="Support" />,
+              title: '',
+              headerStyle: classes.header,
+            })}
+            component={Support}
           />
         </>
       ) : (
