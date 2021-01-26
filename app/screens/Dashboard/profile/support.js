@@ -1,3 +1,4 @@
+import React from 'react';
 import LiveChat from 'react-native-livechat';
 
 const Support = () => (
