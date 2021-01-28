@@ -40,7 +40,7 @@ const Task = ({
           <Subheading>{`${
             orderInfo?.pickupType !== 'anytime' ? 'Instant Pickup' :
             status !== 'completed' && status !== 'cancelled'
-              ? 'Ready to Deliver'
+              ? 'Ready to Deliver!'
               : status === 'cancelled'
               ? 'Cancelled'
               : 'Delivered'

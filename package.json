@@ -27,6 +27,7 @@
     "radio-buttons-react-native": "^1.0.4",
     "react": "16.13.1",
     "react-native": "0.63.3",
+    "react-native-code-push": "^7.0.0",
     "react-native-countdown-component": "^2.7.1",
     "react-native-geocoding": "^0.4.0",
     "react-native-geolocation-service": "^5.0.0",

@@ -4,9 +4,12 @@ import {Provider} from 'react-redux';
 import {StatusBar} from 'react-native';
 import store from './app/store';
 import remoteConfig from '@react-native-firebase/remote-config';
+import codePush from "react-native-code-push";
 
 // THEMES
 import StartUp from './app/StartUp';
+
+let codePushOptions = { checkFrequency: codePush.CheckFrequency.ON_APP_RESUME };
 
 const App = () => {
   useEffect(() => {
@@ -29,4 +32,4 @@ store.subscribe(() => {
   //console.log('Store Changed, ', store.getState());
 });
 
-export default App;
+export default codePush(codePushOptions)(App);

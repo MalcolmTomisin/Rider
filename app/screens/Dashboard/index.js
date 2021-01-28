@@ -345,7 +345,7 @@ const Home = ({navigation: {navigate, push, pop}}) => {
       ) : null}
 
       {currentEntry?.entry?.status === 'arrivedAtPickup' &&
-      currentEntry.entry.paymentMethod !== 'card' &&
+      currentEntry.entry.paymentMethod === 'cash' &&
       currentEntry?.transaction?.status !== 'approved' ? (
         <ConfirmPayment />
       ) : null}

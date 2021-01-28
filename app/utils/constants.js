@@ -24,4 +24,7 @@ export default {
   GOOGLE_MAPS_APIKEY: 'AIzaSyCiOd5vESI31DmPFd6e7QVRVMTX43sm_Ic',
   PICK_UP: 'enrouteToPickup',
   month,
+  CLIENT_ID: '9484c8dad9c2f64e1bf6ffeda54ff4d5',
+  LICENSE_ID: '12568446',
+  REDIRECT_URL: 'https://exalt-courier.netlify.app',
 };
