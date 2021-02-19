@@ -14,3 +14,6 @@ messaging().setBackgroundMessageHandler(async remoteMessage => {
   
 
 AppRegistry.registerComponent(appName, () => App);
+AppRegistry.registerHeadlessTask('Headless', () =>
+  require('Headless');
+);

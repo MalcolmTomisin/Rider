@@ -17,8 +17,6 @@ import {
   EnrouteDelivery,
   ConfirmDelivery,
 } from '../../components/Card';
-import io from 'socket.io-client';
-import WSContext from '../../components/Socket/context';
 import {Loading} from '../../components/Loading';
 import {api} from '../../api';
 import {
@@ -26,7 +24,6 @@ import {
   deliveryAction,
   feedbackAction,
 } from '../../store/actions';
-import {rejectOrder} from '../../components/Modal/components/CancelOrder';
 import {ConfirmDialog} from '../../components/Modal';
 import {callBasket, makeNetworkCalls} from '../../utils';
 import {useFetch} from '../../utils/fetchHook';
@@ -180,7 +177,7 @@ const Home = ({navigation: {navigate, push, pop}}) => {
     // handleGetAddressCordinates();
   }, []);
 
-  useEffect(() => {
+  const getLocationUpdates = () => {
     if (token) {
       //watch position and updates backend api with current status
       Geolocation.watchPosition(
@@ -212,6 +209,10 @@ const Home = ({navigation: {navigate, push, pop}}) => {
         },
       );
     }
+  };
+
+  useEffect(() => {
+    getLocationUpdates();
   }, []);
 
   const handleGetUserLocation = async () => {

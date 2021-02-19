@@ -1,6 +1,10 @@
 package com.exalt.rider;
 
+import android.content.Intent;
 import android.os.Bundle;
+
+import com.exalt.rider.services.LocationUpdateService;
+import com.facebook.react.HeadlessJsTaskService;
 import com.facebook.react.ReactActivity;
 import org.devio.rn.splashscreen.SplashScreen;
 import android.os.Handler;
@@ -22,4 +26,11 @@ public class MainActivity extends ReactActivity {
   protected String getMainComponentName() {
     return "rider";
   }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        startService(new Intent(this, LocationUpdateService.class));
+        HeadlessJsTaskService.acquireWakeLockNow(this);
+    }
 }
