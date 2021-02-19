@@ -63,11 +63,11 @@ const Order = ({onAccept, onCountDownFinish, timerIsRunning, reset}) => {
             separatorStyle={{color: colors.red.main}}
             running={timerIsRunning}
             onChange={() => {
-              NotificationSounds.getNotifications('notification').then(
-                (soundsList) => {
-                  playSampleSound(soundsList[1]);
-                },
-              );
+              NotificationSounds.getNotifications(
+                constants.IS_ANDROID ? 'alarm' : 'notification',
+              ).then((soundsList) => {
+                playSampleSound(soundsList[1]);
+              });
             }}
           />
         </View>
@@ -97,7 +97,9 @@ const Order = ({onAccept, onCountDownFinish, timerIsRunning, reset}) => {
                         size={8}
                         color={dark ? colors.grey.light : colors.grey.dark}
                       />
-                      <Caption numberOfLines={1} style={classes.orderContentAddressText}>
+                      <Caption
+                        numberOfLines={1}
+                        style={classes.orderContentAddressText}>
                         {message?.data?.pickupAddress}
                       </Caption>
                     </View>
@@ -116,7 +118,9 @@ const Order = ({onAccept, onCountDownFinish, timerIsRunning, reset}) => {
                         size={8}
                         color={dark ? colors.grey.light : colors.grey.dark}
                       />
-                      <Caption numberOfLines={1} style={classes.orderContentAddressText}>
+                      <Caption
+                        numberOfLines={1}
+                        style={classes.orderContentAddressText}>
                         {v?.deliveryAddress}
                       </Caption>
                     </View>
@@ -141,7 +145,11 @@ const Order = ({onAccept, onCountDownFinish, timerIsRunning, reset}) => {
                     </Caption>
                     <Caption
                       style={{fontSize: 8, color: dark ? 'white' : 'black'}}>
-                      {`${message.data?.transaction?.paymentMethod !== 'cash' ? 'Paid' : 'Cash payment'}`}
+                      {`${
+                        message.data?.transaction?.paymentMethod !== 'cash'
+                          ? 'Paid'
+                          : 'Cash payment'
+                      }`}
                     </Caption>
                   </View>
                 )}
@@ -220,7 +228,7 @@ const Order = ({onAccept, onCountDownFinish, timerIsRunning, reset}) => {
               flexDirection: 'row',
               justifyContent: 'space-between',
             }}>
-              {/* capitalizing the first text */}
+            {/* capitalizing the first text */}
             <Avatar.Text
               label={`${
                 message?.data.name.indexOf(' ') !== -1
@@ -264,7 +272,11 @@ const Order = ({onAccept, onCountDownFinish, timerIsRunning, reset}) => {
             marginVertical: 10,
           }}>
           <Button
-            rootStyle={{backgroundColor: colors.green.main, width: 136, marginHorizontal: 5}}
+            rootStyle={{
+              backgroundColor: colors.green.main,
+              width: 136,
+              marginHorizontal: 5,
+            }}
             label="Accept"
             labelStyle={{fontSize: 14}}
             onPress={onAccept}
