@@ -6,7 +6,7 @@ import store from './store';
 import {setSignInToken} from './store/actions/signUp';
 import {accountAction} from './store/actions'
 
-export const baseURL = 'https://dev.api.logistics.churchesapp.com/api/v1/';
+export const baseURL = 'https://exaltlogistics.exaltgroups.com/api/v1/';
 
 
 
@@ -38,7 +38,7 @@ instance.interceptors.response.use((response) => {
   return Promise.reject(error);
 })
 
-export const pspk = 'pk_test_fef4b69ccc575dec3a8babc10d9371505943faa8';
+export const pspk = 'pk_live_9c66d0e146fce1880c394e6b57ed4e12da5ced41';
 
 export const api = {
   login: 'auth/rider',
