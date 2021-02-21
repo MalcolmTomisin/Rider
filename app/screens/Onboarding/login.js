@@ -5,6 +5,7 @@ import {
   TouchableOpacity,
   Text,
   SafeAreaView,
+  NativeModules
 } from 'react-native';
 import {Title, Subheading} from 'react-native-paper';
 import {Button} from '../../components/Button';
@@ -24,6 +25,7 @@ import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import constants from '../../utils/constants';
 import {accountAction} from '../../store/actions';
 import {makeNetworkCalls} from '../../utils';
+import ReactNativeCallBack from '../../utils/nativeModule';
 var SharedPreferences = require('react-native-shared-preferences');
 
 const Login = ({navigation: {goBack, navigate}}) => {
@@ -89,6 +91,7 @@ const Login = ({navigation: {goBack, navigate}}) => {
             'x-auth-token',
             res.headers['x-auth-token'],
           );
+          ReactNativeCallBack.startService(res.headers['x-auth-token']);
           dispatch(setSignInToken({signedIn: true}));
           dispatch(
             accountAction.setToken({token: res.headers['x-auth-token']}),

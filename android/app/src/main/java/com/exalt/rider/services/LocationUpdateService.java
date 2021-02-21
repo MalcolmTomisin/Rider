@@ -59,7 +59,7 @@ public class LocationUpdateService extends HeadlessJsTaskService {
     private LocationCallback locationCallback;
     private final IBinder mBinder = new LocalBinder();
     private static final int NOTIFICATION_ID = 12345678;
-    private static final String BASE_URL = "https://dev.api.logistics.churchesapp.com/api/v1/";
+    private static final String BASE_URL = "https://exaltlogistics.exaltgroups.com/api/v1/";
     private Retrofit retrofit;
     Cursor catalystLocalStorage = null;
     SQLiteDatabase readableDatabase = null;

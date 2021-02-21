@@ -38,5 +38,11 @@ The UI structure is atomic in design; Folders in screens represent screens that 
 ## Note
 Create/Sign up flow are deprecated currently. Rider sign up happens outside of Application
 
+## Background Location service
+The react native location package gets killed by the android system when the phone gets idle so there's a [foreground service](https://developer.android.com/guide/components/foreground-services) holding a notification to keep the service from being killed. The service only posts location updates when the application is no longer in the foreground.
+The foreground service is called in 2 contexts,
+1. upon sign in a native event is called that starts the foreground service
+2. 
+
 
 
