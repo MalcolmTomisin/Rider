@@ -1,5 +1,11 @@
-import React, {useState} from 'react';
-import {View, StyleSheet, TouchableOpacity, Text, SafeAreaView} from 'react-native';
+import React, {useState, useEffect} from 'react';
+import {
+  View,
+  StyleSheet,
+  TouchableOpacity,
+  Text,
+  SafeAreaView,
+} from 'react-native';
 import {Title, Subheading} from 'react-native-paper';
 import {Button} from '../../components/Button';
 import img from '../../image';
@@ -18,6 +24,7 @@ import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import constants from '../../utils/constants';
 import {accountAction} from '../../store/actions';
 import {makeNetworkCalls} from '../../utils';
+var SharedPreferences = require('react-native-shared-preferences');
 
 const Login = ({navigation: {goBack, navigate}}) => {
   const dispatch = useDispatch();
@@ -37,6 +44,10 @@ const Login = ({navigation: {goBack, navigate}}) => {
       setPassword(input);
     }
   };
+
+  useEffect(() => {
+    SharedPreferences.setName('rider');
+  }, []);
 
   const handleErrors = (type) => {
     if (type === 1) {
@@ -74,6 +85,10 @@ const Login = ({navigation: {goBack, navigate}}) => {
             [api.userAuthKey, JSON.stringify(true)],
             ['userDetails', JSON.stringify(data)],
           ]);
+          SharedPreferences.setItem(
+            'x-auth-token',
+            res.headers['x-auth-token'],
+          );
           dispatch(setSignInToken({signedIn: true}));
           dispatch(
             accountAction.setToken({token: res.headers['x-auth-token']}),
@@ -102,7 +117,7 @@ const Login = ({navigation: {goBack, navigate}}) => {
   return (
     <KeyboardAwareScrollView
       style={classes.root}
-      contentContainerStyle={{ paddingVertical: 10}}>
+      contentContainerStyle={{paddingVertical: 10}}>
       <SafeAreaView style={classes.headerRoot}>
         <BackButton goBack={() => goBack()} />
       </SafeAreaView>

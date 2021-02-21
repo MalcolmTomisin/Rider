@@ -52,24 +52,24 @@ const StartUp = () => {
     ({account}) => account,
   );
 
-  const intercept = () => {
-    axios.interceptors.response.use(
-      (response) => {
-        console.log('intercept response', response);
-        return Promise.resolve(response);
-      },
-      (error) => {
-        console.log('intercept', error.response);
-        if (error?.response?.status === 440) {
-          Alert.alert('Security', 'You are logged in on another device');
-          AsyncStorage.clear();
-          dispatch(setSignInToken({signedIn: false}));
-          RootNavigation.navigate('Onboarding');
-        }
-        return Promise.reject(error);
-      },
-    );
-  };
+  // const intercept = () => {
+  //   axios.interceptors.response.use(
+  //     (response) => {
+  //       console.log('intercept response', response);
+  //       return Promise.resolve(response);
+  //     },
+  //     (error) => {
+  //       console.log('intercept', error.response);
+  //       if (error?.response?.status === 440) {
+  //         Alert.alert('Security', 'You are logged in on another device');
+  //         AsyncStorage.clear();
+  //         dispatch(setSignInToken({signedIn: false}));
+  //         RootNavigation.navigate('Onboarding');
+  //       }
+  //       return Promise.reject(error);
+  //     },
+  //   );
+  // };
 
   const {currentIndex} = useSelector(({delivery}) => delivery);
 
@@ -95,8 +95,7 @@ const StartUp = () => {
     rejectOrder(message, dispatch, token);
   };
 
-  React.useEffect(() => {
-    SplashScreen.hide();
+  const updateFCMToken = () => {
     messaging()
       .getToken()
       .then((fcmToken) => {
@@ -124,6 +123,11 @@ const StartUp = () => {
             });
         }
       });
+  };
+
+  React.useEffect(() => {
+    SplashScreen.hide();
+    updateFCMToken();
     const unsubscribe = messaging().onMessage(async (remoteMessage) => {
       Alert.alert('A new FCM message arrived!', JSON.stringify(remoteMessage));
     });
@@ -153,7 +157,7 @@ const StartUp = () => {
 
       s.on('assignEntry', (message) => {
         console.log('mess', message);
-        let resetTimer = Math.random() * Math.random();
+        let resetTimer = Date.now();
         dispatch(accountAction.setOrder({message, resetTimer}));
       });
 

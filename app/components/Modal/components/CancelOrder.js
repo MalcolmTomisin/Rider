@@ -65,6 +65,7 @@ export default CancelOrder;
 
 export const rejectOrder = (message, dispatch, token) => {
   const {data} = message;
+  console.log('id', message);
   dispatch(accountAction.setLoadingStatus({loading: true}));
   makeNetworkCalls({
     url: api.rejectEntry,
@@ -82,6 +83,18 @@ export const rejectOrder = (message, dispatch, token) => {
       dispatch(accountAction.setOrder({message}));
     })
     .catch((err) => {
+      dispatch(accountAction.setOrder({message: null}));
+      if (err.response) {
+        const {msg} = err.response.data;
+        dispatch(
+          feedbackAction.launch({
+            open: true,
+            severity: 'w',
+            msg,
+          }),
+        );
+        return;
+      }
       dispatch(
         feedbackAction.launch({open: true, severity: 'w', msg: `${err}`}),
       );

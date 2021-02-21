@@ -3,7 +3,7 @@ import {makeNetworkCalls} from './app/utils';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {api} from './app/api';
 
-module.exports = async (taskData) => {
+export const Headless = async (taskData) => {
   const token = await AsyncStorage.getItem('x-auth-token');
   if (token) {
     //watch position and updates backend api with current status

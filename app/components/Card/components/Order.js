@@ -64,7 +64,7 @@ const Order = ({onAccept, onCountDownFinish, timerIsRunning, reset}) => {
             running={timerIsRunning}
             onChange={() => {
               NotificationSounds.getNotifications(
-                constants.IS_ANDROID ? 'alarm' : 'notification',
+                constants.IS_ANDROID ? 'ringtone' : 'ringtone',
               ).then((soundsList) => {
                 playSampleSound(soundsList[1]);
               });
@@ -231,11 +231,11 @@ const Order = ({onAccept, onCountDownFinish, timerIsRunning, reset}) => {
             {/* capitalizing the first text */}
             <Avatar.Text
               label={`${
-                message?.data.name.indexOf(' ') !== -1
-                  ? `${message?.data.name.charAt(0)}${message?.data.name.charAt(
-                      message?.data.name.indexOf(' ') + 1,
+                message?.data?.name?.indexOf(' ') !== -1
+                  ? `${message?.data?.name?.charAt(0)}${message?.data?.name?.charAt(
+                      message?.data?.name.indexOf(' ') + 1,
                     )}`
-                  : `${message?.data.name.charAt(0)}`
+                  : `${message?.data?.name.charAt(0)}`
               }`}
               size={45}
               style={{}}

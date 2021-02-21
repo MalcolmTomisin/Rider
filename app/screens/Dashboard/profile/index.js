@@ -7,7 +7,7 @@ import {accountAction} from '../../../store/actions';
 import {useSelector, useDispatch} from 'react-redux';
 import img from '../../../image';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-
+var SharedPreferences = require('react-native-shared-preferences');
 import {setSignInToken} from '../../../store/actions/signUp';
 
 const Profile = ({navigation: {navigate}}) => {
@@ -57,6 +57,7 @@ const Profile = ({navigation: {navigate}}) => {
           name="Logout"
           onPress={() => {
             AsyncStorage.clear();
+            SharedPreferences.clear();
             dispatch(setSignInToken({signedIn: false}));
             dispatch(accountAction.setToken({token: null}));
             navigate('Onboarding');

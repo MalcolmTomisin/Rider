@@ -43,7 +43,7 @@ const initialstate = {
   acceptedOrders: [],
   buttonIconLoading: false,
   networkOffline: false,
-  resetTimer: Math.random(),
+  resetTimer: Date.now(),
   coordinates: {latitude: null, longitude: null},
 };
 
