@@ -4,11 +4,10 @@ import {Alert} from 'react-native';
 import * as RootNavigation from './RootNavigation';
 import store from './store';
 import {setSignInToken} from './store/actions/signUp';
-import {accountAction} from './store/actions'
+import {accountAction} from './store/actions';
 
 export const baseURL = 'https://exaltlogistics.exaltgroups.com/api/v1/';
-
-
+const baseURLDev = 'https://dev.api.logistics.churchesapp.com/api/v1/';
 
 export const instance = axios.create({
   baseURL,
@@ -21,22 +20,25 @@ export const instance = axios.create({
 //   return Promise.reject(error);
 // })
 
-instance.interceptors.response.use((response) => {
-  console.log('response', response);
-  return response;
-}, (error) => {
+instance.interceptors.response.use(
+  (response) => {
+    console.log('response', response);
+    return response;
+  },
+  (error) => {
     console.log('intercept', error.response);
     console.log('intercept error', error);
-  if (error.response.status === 440){
-    console.log('intercept log out', error.response);
-    Alert.alert('Security', 'You are logged in on another device');
-    AsyncStorage.clear();
-    store.dispatch(setSignInToken({signedIn: false}));
-    store.dispatch(accountAction.setToken({token: null}));
-    RootNavigation.navigate('Onboarding');
-  }
-  return Promise.reject(error);
-})
+    if (error.response.status === 440) {
+      console.log('intercept log out', error.response);
+      Alert.alert('Security', 'You are logged in on another device');
+      AsyncStorage.clear();
+      store.dispatch(setSignInToken({signedIn: false}));
+      store.dispatch(accountAction.setToken({token: null}));
+      RootNavigation.navigate('Onboarding');
+    }
+    return Promise.reject(error);
+  },
+);
 
 export const pspk = 'pk_live_9c66d0e146fce1880c394e6b57ed4e12da5ced41';
 

@@ -2,14 +2,14 @@ import React, {useState, useEffect} from 'react';
 import {
   View,
   StyleSheet,
-  TouchableOpacity,
   Text,
   SafeAreaView,
-  NativeModules
+  Platform,
+  PermissionsAndroid,
+  Alert,
 } from 'react-native';
 import {Title, Subheading} from 'react-native-paper';
 import {Button} from '../../components/Button';
-import img from '../../image';
 import {colors} from '../../theme';
 import {TextField} from '../../components/TextField';
 import BackButton from '../../navigation/custom/BackButton';
@@ -18,7 +18,6 @@ import {setSignInToken} from '../../store/actions/signUp';
 import {validateEmail} from '../../utils';
 import {api} from '../../api';
 import feedbackAction from '../../store/actions/feedback';
-import {FeedBack} from '../../components/Feedback';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {Loading} from '../../components/Loading';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
@@ -26,6 +25,7 @@ import constants from '../../utils/constants';
 import {accountAction} from '../../store/actions';
 import {makeNetworkCalls} from '../../utils';
 import ReactNativeCallBack from '../../utils/nativeModule';
+import Geolocation from 'react-native-geolocation-service';
 var SharedPreferences = require('react-native-shared-preferences');
 
 const Login = ({navigation: {goBack, navigate}}) => {
@@ -67,6 +67,61 @@ const Login = ({navigation: {goBack, navigate}}) => {
     }
   };
 
+  const requestLocationPermission = async () => {
+    if (Platform.OS === 'ios') {
+      Geolocation.requestAuthorization('always');
+      Geolocation.setRNConfiguration({
+        skipPermissionRequests: false,
+        authorizationLevel: 'whenInUse',
+      });
+    }
+
+    if (Platform.OS === 'android') {
+      await PermissionsAndroid.request(
+        PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+      );
+    }
+    await handleLocation();
+  };
+
+  const handleLocation = async () => {
+    Geolocation.getCurrentPosition(
+      (position) => {
+        //console.log('position', position);
+        const {latitude, longitude} = position.coords;
+        dispatch(accountAction.setLocation(position));
+        dispatch(
+          accountAction.setNewLocationCoords({
+            coordinates: {latitude, longitude},
+          }),
+        );
+        getAddressFromCoordinates(position);
+      },
+      (error) => {
+        // See error code charts below.
+        //console.log(error.code, error.message);
+      },
+      {enableHighAccuracy: true, timeout: 15000, maximumAge: 10000},
+    );
+  };
+
+  //reverse geocode coordinates of rider to set address of rider
+  const getAddressFromCoordinates = (location) => {
+    const {longitude, latitude} = location.coords;
+    fetch(
+      `${api.reverseGeocode}latlng=${latitude},${longitude}&result_type=street_address&key=${constants.GOOGLE_MAPS_APIKEY}`,
+    )
+      .then((res) => res.json())
+      .then((res) => {
+        dispatch(
+          accountAction.setAddress({address: res.results[0].formatted_address}),
+        );
+      })
+      .catch((err) => {
+        //console.log(err, 'err');
+      });
+  };
+
   const submit = () => {
     if (!error.mobileNumber && !error.password) {
       dispatch(accountAction.setLoadingStatus({loading: true}));
@@ -79,6 +134,7 @@ const Login = ({navigation: {goBack, navigate}}) => {
         data: {email: mobileNumber.trim(), password: password.trim()},
       })
         .then(async (res) => {
+          await requestLocationPermission();
           const {msg, data} = res.data;
           // #@api.userAuthKey controls routing based on sign in status on the app,
           // later can be refactored to use token from REST API
@@ -87,6 +143,7 @@ const Login = ({navigation: {goBack, navigate}}) => {
             [api.userAuthKey, JSON.stringify(true)],
             ['userDetails', JSON.stringify(data)],
           ]);
+          //passing token to java layer
           SharedPreferences.setItem(
             'x-auth-token',
             res.headers['x-auth-token'],
@@ -164,7 +221,21 @@ const Login = ({navigation: {goBack, navigate}}) => {
           </Text>
         </View>
 
-        <Button label="Sign In" onPress={submit} rootStyle={{marginTop: 10}} />
+        <Button
+          label="Sign In"
+          onPress={() => {
+            Alert.alert(
+              'Exalt Rider Uses Location Data',
+              'This app collects location data to enable Riders and Drivers to be tracked even when the app is closed or not in use, This is important to provide Exalt Courier customers the best experience in getting their package delivered.',
+              [
+                {text: 'Proceed', onPress: submit},
+                {text: 'Cancel', onPress: () => {}},
+              ],
+              {cancelable: false},
+            );
+          }}
+          rootStyle={{marginTop: 10}}
+        />
       </View>
       {/* <View style={classes.footerRoot}>
         <View style={{flexGrow: 1}} />

@@ -196,9 +196,9 @@ const StartUp = () => {
   // setting up, retrieving token, rider data and current order being handled by rider(if order exists) for hydrating redux
   // setting up location permissions
   const setPreliminaries = async () => {
-    let token, entryIndex, user;
+    let mToken, entryIndex, user;
     try {
-      token = await AsyncStorage.getItem('x-auth-token');
+      mToken = await AsyncStorage.getItem('x-auth-token');
       entryIndex = await AsyncStorage.getItem('currentEntry');
       user = await AsyncStorage.getItem('userDetails');
       if (entryIndex) {
@@ -208,9 +208,12 @@ const StartUp = () => {
           }),
         );
       }
-      dispatch(accountAction.setToken({token}));
+      console.log('mToken', mToken);
+      dispatch(accountAction.setToken({token: mToken}));
       dispatch(accountAction.setUserData({user: JSON.parse(user)}));
-      await requestLocationPermission();
+      if (mToken) {
+        await requestLocationPermission();
+      }
     } catch (e) {
       console.error(e);
     }
