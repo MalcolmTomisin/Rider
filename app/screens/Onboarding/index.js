@@ -33,7 +33,10 @@ const Onboarding = ({navigation: {navigate}}) => {
         </View>
 
         <View style={classes.hr} />
-        <TouchableOpacity onPress={() => navigate('Register')}>
+        <TouchableOpacity
+          onPress={() => {
+            //navigate('Register')
+          }}>
           <Subheading style={classes.order}>Order with Exalt</Subheading>
         </TouchableOpacity>
       </View>
