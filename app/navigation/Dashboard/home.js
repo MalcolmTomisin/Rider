@@ -48,7 +48,7 @@ const Dashboard = () => {
                 source={
                   userDetails?.img
                     ? {
-                      uri: `https://df7sglzvhxylw.cloudfront.net/${userDetails.img}`,
+                      uri: `http://d3b5nb6dytkgih.cloudfront.net/${userDetails.img}`,
                     }
                     : null
                 }

@@ -204,7 +204,7 @@ const Order = ({onAccept, onCountDownFinish, timerIsRunning, reset}) => {
                       message?.data?.img?.map((v, i) => (
                         <Card.Cover
                           source={{
-                            uri: `https://df7sglzvhxylw.cloudfront.net/${v}`,
+                            uri: `http://d3b5nb6dytkgih.cloudfront.net/${v}`,
                           }}
                           style={classes.img}
                         />
