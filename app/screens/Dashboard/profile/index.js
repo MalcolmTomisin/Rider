@@ -52,7 +52,7 @@ const Profile = ({navigation: {navigate}}) => {
         <List name="Order Basket" onPress={() => navigate('OrderPool')} />
         <List name="Ratings" onPress={() => navigate('Rating')} />
         <List name="Settings" onPress={() => navigate('Settings')} />
-        <List name="Help" onPress={() => Linking.openURL('mailto:support@exaltapp.com?subject=SendMail&body=Description')} />
+        <List name="Support" onPress={() => navigate('Support')} />
         <List
           name="Logout"
           onPress={() => {

@@ -129,7 +129,7 @@ const StartUp = () => {
     SplashScreen.hide();
     updateFCMToken();
     const unsubscribe = messaging().onMessage(async (remoteMessage) => {
-      Alert.alert('A new FCM message arrived!', JSON.stringify(remoteMessage));
+      Alert.alert(remoteMessage?.notification.title, remoteMessage.data?.body);
     });
     setPreliminaries();
     if (token) {
@@ -222,6 +222,7 @@ const StartUp = () => {
   //see above
   const requestLocationPermission = async () => {
     if (Platform.OS === 'ios') {
+      await requestUserPermission();
       Geolocation.requestAuthorization('always');
       Geolocation.setRNConfiguration({
         skipPermissionRequests: false,

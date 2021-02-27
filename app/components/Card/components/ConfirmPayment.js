@@ -57,7 +57,7 @@ const ConfirmPayment = () => {
             style={{
               fontSize: 18,
               color: colors.red.main,
-            }}>{`₦${currentEntry?.transaction?.amount}`}</Caption>
+            }}>{`₦${Math.ceil(currentEntry?.transaction?.amount)}`}</Caption>
         </View>
 
         <View
