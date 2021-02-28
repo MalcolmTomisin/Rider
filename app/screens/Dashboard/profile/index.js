@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {View, StyleSheet, TouchableOpacity, ScrollView, Linking} from 'react-native';
+import {View, StyleSheet, TouchableOpacity, ScrollView} from 'react-native';
 import {Subheading, Avatar, Caption} from 'react-native-paper';
 import {colors} from '../../../theme';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -9,6 +9,7 @@ import img from '../../../image';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 var SharedPreferences = require('react-native-shared-preferences');
 import {setSignInToken} from '../../../store/actions/signUp';
+import {cloudURL} from '../../../api';
 
 const Profile = ({navigation: {navigate}}) => {
   const {dark} = useSelector(({theme}) => theme);
@@ -30,7 +31,7 @@ const Profile = ({navigation: {navigate}}) => {
         <Avatar.Image
           source={
             userDetails?.img
-              ? {uri: `http://d3b5nb6dytkgih.cloudfront.net/${userDetails.img}`}
+              ? {uri: `${cloudURL}${userDetails.img}`}
               : img.securityImg
           }
           size={90}
@@ -38,13 +39,6 @@ const Profile = ({navigation: {navigate}}) => {
         <View style={classes.headerContent}>
           <Subheading
             style={classes.listTitle}>{`${userDetails?.name}`}</Subheading>
-
-          {/* <View style={classes.headerLocation}>
-            <Icon name="map-marker" size={15} color={colors.red.main} />
-            <Caption style={classes.headerLocationTitle}>
-              7 Hughes avenue, Lawal Road
-            </Caption>
-          </View> */}
         </View>
       </View>
       <ScrollView>

@@ -9,6 +9,7 @@ import { Switch } from '../../components/Switch';
 import { useSelector } from 'react-redux';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import constants from '../../utils/constants';
+import {cloudURL} from '../../api';
 
 const Stack = createStackNavigator();
 
@@ -48,7 +49,7 @@ const Dashboard = () => {
                 source={
                   userDetails?.img
                     ? {
-                      uri: `http://d3b5nb6dytkgih.cloudfront.net/${userDetails.img}`,
+                      uri: `${cloudURL}${userDetails.img}`,
                     }
                     : null
                 }

@@ -19,6 +19,7 @@ import NotificationSounds, {
   playSampleSound,
 } from 'react-native-notification-sounds';
 import constants from '../../../utils/constants';
+import {cloudURL} from '../../../api';
 
 const {DEVICE_HEIGHT, DEVICE_WIDTH} = constants;
 
@@ -204,7 +205,7 @@ const Order = ({onAccept, onCountDownFinish, timerIsRunning, reset}) => {
                       message?.data?.img?.map((v, i) => (
                         <Card.Cover
                           source={{
-                            uri: `http://d3b5nb6dytkgih.cloudfront.net/${v}`,
+                            uri: `${cloudURL}${v}`,
                           }}
                           style={classes.img}
                         />
