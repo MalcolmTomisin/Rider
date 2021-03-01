@@ -347,8 +347,8 @@ const StartUp = () => {
               reset={resetTimer.toString()}
             />
           )}
-          {/* internet listener */}
-          {!netInfo.isInternetReachable && <Offline isNetworkOff={true} />}
+          {/* internet listener, use different listener on android */}
+          {!netInfo.isConnected && <Offline isNetworkOff={true} />}
         </NavigationContainer>
         <FeedBack />
         <CancelOrder />
