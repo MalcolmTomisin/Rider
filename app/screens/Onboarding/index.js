@@ -4,6 +4,7 @@ import {
   StyleSheet,
   ImageBackground,
   TouchableOpacity,
+  Linking
 } from 'react-native';
 import {Title, Subheading} from 'react-native-paper';
 import {Button} from '../../components/Button';
@@ -21,8 +22,7 @@ const Onboarding = ({navigation: {navigate}}) => {
           <Button
             label="Create account"
             rootStyle={classes.button}
-            onPress={() => navigate('Register')}
-            disabled
+            onPress={() => Linking.openURL('https://exaltlogistics.com/register-rider')}
           />
           <Button
             label="Sign In"
@@ -35,7 +35,7 @@ const Onboarding = ({navigation: {navigate}}) => {
         <View style={classes.hr} />
         <TouchableOpacity
           onPress={() => {
-            //navigate('Register')
+            Linking.openURL('https://exaltlogistics.com/get-started');
           }}>
           <Subheading style={classes.order}>Order with Exalt</Subheading>
         </TouchableOpacity>

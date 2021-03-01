@@ -144,11 +144,13 @@ const Login = ({navigation: {goBack, navigate}}) => {
             ['userDetails', JSON.stringify(data)],
           ]);
           //passing token to java layer
-          SharedPreferences.setItem(
-            'x-auth-token',
-            res.headers['x-auth-token'],
-          );
-          ReactNativeCallBack.startService(res.headers['x-auth-token']);
+          if (constants.IS_ANDROID){
+            SharedPreferences.setItem(
+              'x-auth-token',
+              res.headers['x-auth-token'],
+            );
+            ReactNativeCallBack.startService(res.headers['x-auth-token']);
+          }
           dispatch(setSignInToken({signedIn: true}));
           dispatch(
             accountAction.setToken({token: res.headers['x-auth-token']}),
