@@ -11,7 +11,7 @@ export const cloudURL = 'https://d3b5nb6dytkgih.cloudfront.net/';
 export const baseURLDev = 'https://dev.api.logistics.churchesapp.com/api/v1/';
 
 export const instance = axios.create({
-  baseURL,
+  baseURL: baseURLDev,
 });
 // instance.interceptors.request.use((config) => {
 //   console.log('config before fail', config);
@@ -29,7 +29,7 @@ instance.interceptors.response.use(
   (error) => {
     console.log('intercept', error.response);
     console.log('intercept error', error);
-    if (error.response.status === 440) {
+    if (error.response?.status === 440) {
       console.log('intercept log out', error.response);
       Alert.alert('Security', 'You are logged in on another device');
       AsyncStorage.clear();

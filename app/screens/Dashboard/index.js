@@ -68,15 +68,24 @@ const Home = ({navigation: {navigate, push, pop}}) => {
     })
       .then(async (res) => {
         const {data, msg} = res.data;
-        await callBasket(api.riderBasket, token, dispatch, currentIndex);
+        //await callBasket(api.riderBasket, token, dispatch, currentIndex);
         dispatch(feedbackAction.launch({open: true, severity: 's', msg}));
+        return callBasket(api.riderBasket, token, dispatch, currentIndex);
+      })
+      .then(() => {
         if (currentEntry.entry.paymentMethod !== 'cash') {
           navigate('ConfirmPickupCode');
         }
       })
       .catch((err) => {
-        const {msg} = err?.response?.data;
-        dispatch(feedbackAction.launch({open: true, severity: 'w', msg}));
+        if (err.response) {
+          const {msg} = err?.response?.data;
+          dispatch(feedbackAction.launch({open: true, severity: 'w', msg}));
+          return;
+        }
+        dispatch(
+          feedbackAction.launch({open: true, severity: 'w', msg: `${err}`}),
+        );
       })
       .finally(() => {
         dispatch(accountAction.setLoadingStatus({loading: false}));
@@ -96,17 +105,26 @@ const Home = ({navigation: {navigate, push, pop}}) => {
       data: {entry: currentEntry.entry._id},
     })
       .then(async (res) => {
-        await callBasket(api.riderBasket, token, dispatch, currentIndex);
         const {data, msg} = res.data;
         dispatch(feedbackAction.launch({open: true, severity: 's', msg}));
+        return callBasket(api.riderBasket, token, dispatch, currentIndex);
+      })
+      .then(() => {
         dispatch(deliveryAction.setEnrouteToPickUp({enroute: true}));
         setRetry(false);
         pop();
         push('Dashboard');
       })
       .catch((err) => {
-        const {msg} = err?.response?.data;
-        dispatch(feedbackAction.launch({open: true, severity: 'w', msg}));
+        if (err.response) {
+          const {msg} = err?.response?.data;
+          dispatch(feedbackAction.launch({open: true, severity: 'w', msg}));
+          setRetry(true);
+          return;
+        }
+        dispatch(
+          feedbackAction.launch({open: true, severity: 'w', msg: `${err}`}),
+        );
         setRetry(true);
       })
       .finally(() => {
@@ -126,16 +144,24 @@ const Home = ({navigation: {navigate, push, pop}}) => {
       },
       data: {order: currentEntry._id},
     })
-      .then(async (res) => {
+      .then((res) => {
         const {msg} = res.data;
-        await callBasket(api.riderBasket, token, dispatch, currentIndex);
         dispatch(feedbackAction.launch({open: true, severity: 's', msg}));
+        return callBasket(api.riderBasket, token, dispatch, currentIndex);
+      })
+      .then(() => {
         setRetry(false);
       })
       .catch((err) => {
-        const {msg} = err?.response?.data;
-        dispatch(feedbackAction.launch({open: true, severity: 'w', msg}));
         setRetry(true);
+        if (err.response) {
+          const {msg} = err?.response?.data;
+          dispatch(feedbackAction.launch({open: true, severity: 'w', msg}));
+          return;
+        }
+        dispatch(
+          feedbackAction.launch({open: true, severity: 'w', msg: `${err}`}),
+        );
       })
       .finally(() => {
         dispatch(accountAction.setLoadingStatus({loading: false}));
@@ -155,17 +181,25 @@ const Home = ({navigation: {navigate, push, pop}}) => {
       data: {order: currentEntry._id},
     })
       .then(async (res) => {
-        await callBasket(api.riderBasket, token, dispatch, currentIndex);
         const {msg} = res.data;
         dispatch(feedbackAction.launch({open: true, severity: 's', msg}));
+        return callBasket(api.riderBasket, token, dispatch, currentIndex);
+      })
+      .then(() => {
         setRetry(false);
         pop();
         navigate('ConfirmDeliveryCode');
       })
       .catch((err) => {
-        const {msg} = err?.response?.data;
-        dispatch(feedbackAction.launch({open: true, severity: 'w', msg}));
         setRetry(true);
+        if (err.response) {
+          const {msg} = err?.response?.data;
+          dispatch(feedbackAction.launch({open: true, severity: 'w', msg}));
+          return;
+        }
+        dispatch(
+          feedbackAction.launch({open: true, severity: 'w', msg: `${err}`}),
+        );
       })
       .finally(() => {
         dispatch(accountAction.setLoadingStatus({loading: false}));
