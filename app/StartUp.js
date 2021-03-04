@@ -146,7 +146,7 @@ const StartUp = () => {
   const socketEvents = () => {
     try {
       console.log(token, 'token');
-      const s = io(`https://exaltlogistics.exaltgroups.com?token=${token}`, {
+      const s = io(`https://dev.api.logistics.churchesapp.com?token=${token}`, {
         path: '/sio',
         transports: ['websocket'],
       });

@@ -16,7 +16,7 @@ import {colors} from '../../../theme';
 import {Button, OutlineButton} from '../../Button';
 import CountDown from 'react-native-countdown-component';
 import NotificationSounds, {
-  playSampleSound,
+  playSampleSound, stopSampleSound
 } from 'react-native-notification-sounds';
 import constants from '../../../utils/constants';
 import {cloudURL} from '../../../api';
