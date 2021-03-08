@@ -9,7 +9,9 @@ import {accountAction} from './store/actions';
 export const baseURL = __DEV__
   ? 'https://dev.api.logistics.churchesapp.com/api/v1/'
   : 'https://exaltlogistics.exaltgroups.com/api/v1/';
-export const cloudURL = 'https://d3b5nb6dytkgih.cloudfront.net/';
+export const cloudURL = __DEV__
+  ? 'https://df7sglzvhxylw.cloudfront.net/'
+  : 'https://d3b5nb6dytkgih.cloudfront.net/';
 
 export const instance = axios.create({
   baseURL,
