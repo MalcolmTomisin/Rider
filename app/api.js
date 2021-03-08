@@ -6,12 +6,13 @@ import store from './store';
 import {setSignInToken} from './store/actions/signUp';
 import {accountAction} from './store/actions';
 
-export const baseURL = 'https://exaltlogistics.exaltgroups.com/api/v1/';
+export const baseURL = __DEV__
+  ? 'https://dev.api.logistics.churchesapp.com/api/v1/'
+  : 'https://exaltlogistics.exaltgroups.com/api/v1/';
 export const cloudURL = 'https://d3b5nb6dytkgih.cloudfront.net/';
-export const baseURLDev = 'https://dev.api.logistics.churchesapp.com/api/v1/';
 
 export const instance = axios.create({
-  baseURL: baseURLDev,
+  baseURL,
 });
 // instance.interceptors.request.use((config) => {
 //   console.log('config before fail', config);
