@@ -32,7 +32,7 @@ const ConfirmPickup = ({confirmArrival, error}) => {
               onPress={() => {
                 console.log('currentEntry1', currentEntry);
                 Linking.openURL(
-                  `tel:+${currentEntry.countryCode}${currentEntry.phoneNumber}`,
+                  `tel:+${currentEntry.countryCode}${currentEntry.entry?.phoneNumber}`,
                 );
               }}>
               <FeaterIcon

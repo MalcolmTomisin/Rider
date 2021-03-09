@@ -364,6 +364,7 @@ const classes = StyleSheet.create({
     bottom: DEVICE_HEIGHT * 0.3,
     paddingHorizontal: 20,
     width: '100%',
+    height: DEVICE_HEIGHT * 0.53,
   },
   container: {
     paddingVertical: 10,

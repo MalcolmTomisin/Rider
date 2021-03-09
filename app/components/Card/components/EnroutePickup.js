@@ -31,7 +31,7 @@ const EnroutePickup = ({onPress, error}) => {
               onPress={() => {
                 console.log('currentEntry0', currentEntry);
                 Linking.openURL(
-                  `tel:+${currentEntry.countryCode}${currentEntry.phoneNumber}`,
+                  `tel:+${currentEntry.countryCode}${currentEntry.entry?.phoneNumber}`,
                 );
               }}>
               <FeaterIcon
