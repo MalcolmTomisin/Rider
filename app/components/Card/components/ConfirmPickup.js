@@ -30,6 +30,7 @@ const ConfirmPickup = ({confirmArrival, error}) => {
             <TouchableOpacity
               style={classes.actionButtonRoot}
               onPress={() => {
+                console.log('currentEntry1', currentEntry);
                 Linking.openURL(
                   `tel:+${currentEntry.countryCode}${currentEntry.phoneNumber}`,
                 );

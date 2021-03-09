@@ -30,6 +30,7 @@ const ConfirmDelivery = ({confirmDelivery, error}) => {
             <TouchableOpacity
               style={classes.actionButtonRoot}
               onPress={() => {
+                console.log('currentEntry3', currentEntry);
                 Linking.openURL(
                   `tel:+${currentEntry.countryCode}${currentEntry.phoneNumber}`,
                 );

@@ -29,6 +29,7 @@ const EnroutePickup = ({onPress, error}) => {
             <TouchableOpacity
               style={classes.actionButtonRoot}
               onPress={() => {
+                console.log('currentEntry0', currentEntry);
                 Linking.openURL(
                   `tel:+${currentEntry.countryCode}${currentEntry.phoneNumber}`,
                 );
