@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {
   StyleSheet,
   View,
@@ -16,19 +16,23 @@ import {colors} from '../../../theme';
 import {Button, OutlineButton} from '../../Button';
 import CountDown from 'react-native-countdown-component';
 import NotificationSounds, {
-  playSampleSound, stopSampleSound
+  playSampleSound,
+  stopSampleSound,
 } from 'react-native-notification-sounds';
 import constants from '../../../utils/constants';
 import {cloudURL} from '../../../api';
 
 const {DEVICE_HEIGHT, DEVICE_WIDTH} = constants;
-
 const Order = ({onAccept, onCountDownFinish, timerIsRunning, reset}) => {
   const dispatch = useDispatch();
   const {dark} = useSelector(({theme}) => theme);
   const {message, address} = useSelector(({account}) => account);
   //const {data} = message;
   const [images, setImages] = useState(false);
+
+  useEffect(() => {
+    console.log('message', message);
+  }, []);
 
   const showImages = () => {
     setImages(!images);
@@ -233,7 +237,9 @@ const Order = ({onAccept, onCountDownFinish, timerIsRunning, reset}) => {
             <Avatar.Text
               label={`${
                 message?.data?.name?.indexOf(' ') !== -1
-                  ? `${message?.data?.name?.charAt(0)}${message?.data?.name?.charAt(
+                  ? `${message?.data?.name?.charAt(
+                      0,
+                    )}${message?.data?.name?.charAt(
                       message?.data?.name.indexOf(' ') + 1,
                     )}`
                   : `${message?.data?.name.charAt(0)}`
@@ -358,7 +364,6 @@ const classes = StyleSheet.create({
     bottom: DEVICE_HEIGHT * 0.3,
     paddingHorizontal: 20,
     width: '100%',
-    height: DEVICE_HEIGHT * 0.53,
   },
   container: {
     paddingVertical: 10,
