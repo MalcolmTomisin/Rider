@@ -109,3 +109,15 @@ export const openGoogleMapsIntent = (latitude, longitude, type) => {
     type ? type : 'd',
   );
 };
+
+export const entryStatus = {
+  request: 0,
+  pending: 1,
+  companyAccepted: 2,
+  driverAccepted: 3,
+  enrouteToPickUp: 4,
+  arriveAtPickUp: 5,
+  pickedUp: 6,
+  enrouteToDelivery: 7,
+  arrivedAtDelivery: 8,
+};

@@ -57,45 +57,12 @@ const Task = ({
           </View>
           
         </View>
-        <View
-          style={[
-            classes.headerIconRoot,
-            {
-              backgroundColor:
-                status === 'cancelled' ? 'grey' : colors.red.main,
-            },
-          ]}>
-          <Icon
-            name={`${
-              status !== 'completed' && status !== 'cancelled'
-                ? 'map-pin'
-                : status === 'cancelled'
-                ? 'alert-triangle'
-                : 'shopping-bag'
-            }`}
-            onPress={() => {
-              if (
-                status !== 'pickedup' &&
-                status !== 'enrouteToDelivery' &&
-                status !== 'arrivedAtDelivery' &&
-                status !== 'delivered' &&
-                status !== 'cancelled'
-              ) {
-                openGoogleMapsIntent(
-                  orderInfo.pickupLatitude,
-                  orderInfo.pickupLongitude,
-                );
-                return;
-              }
-              openGoogleMapsIntent(
-                orderInfo.deliveryLatitude,
-                orderInfo.deliveryLongitude,
-              );
-            }}
-            size={15}
-            color={colors.white}
-          />
-        </View>
+        <View style={{marginLeft: -7}}>
+            <Subheading style={classes.bodyHeaderText}>Payment</Subheading>
+            <Paragraph style={classes.bodyHeaderText1}>{`₦ ${Math.ceil(
+              estimatedCost,
+            )}`}</Paragraph>
+          </View>
       </View>
       <View style={[classes.bodyRoot, hr]}>
         <View>
@@ -119,7 +86,6 @@ const Task = ({
             <Paragraph style={classes.bodyHeaderText1}>{`₦ ${Math.ceil(
               estimatedCost,
             )}`}</Paragraph>
-            <Caption style={classes.content}>{`${orderInfo?.transaction?.paymentMethod !== 'cash' ? 'Paid' : orderInfo?.transaction?.status === 'pending' ? 'Payment on Pickup' : ''}`}</Caption>
           </View>
 
           <TouchableOpacity
