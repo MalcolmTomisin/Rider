@@ -122,7 +122,7 @@ const Earnings = () => {
               <Caption style={classes.chartHeaderTitle}>
                 {`${new Date(
                   item?._id?.year,
-                  item?._id?.month,
+                  item?._id?.month - 1,
                   item?._id?.day,
                 ).toDateString()}`}
               </Caption>

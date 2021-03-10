@@ -37,7 +37,7 @@ const Task = ({
     <Surface style={[classes.root]}>
       <View style={[classes.headerRoot, hr]}>
         <View style={{marginLeft: -4}}>
-          <Subheading>{`${
+          <Subheading style={{fontSize: 12}}>{`${
             orderInfo?.pickupType !== 'anytime' ? 'Instant Pickup' :
             status !== 'completed' && status !== 'cancelled'
               ? 'Ready to Deliver!'
@@ -58,8 +58,8 @@ const Task = ({
           
         </View>
         <View style={{marginLeft: -7}}>
-            <Subheading style={classes.bodyHeaderText}>Payment</Subheading>
-            <Paragraph style={classes.bodyHeaderText1}>{`₦ ${Math.ceil(
+            <Subheading style={{fontSize: 12, lineHeight: 16.39, color: colors.red.main}}>Payment</Subheading>
+            <Paragraph style={{textAlign: 'right', fontSize: 9.5}}>{`₦ ${Math.ceil(
               estimatedCost,
             )}`}</Paragraph>
           </View>
@@ -69,24 +69,19 @@ const Task = ({
           <Subheading style={classes.bodyHeaderText}>
             * Pickup address
           </Subheading>
-          <Caption style={classes.content}>{pickUpAddress}</Caption>
+          <Caption style={[classes.content, {marginTop: -7}]}>{pickUpAddress}</Caption>
         </View>
 
         <View>
           <Subheading style={classes.bodyHeaderText}>
             * Delivery address
           </Subheading>
-          <Caption style={classes.content}>{deliveryAddress}</Caption>
+          <Caption style={[classes.content, {marginTop: -7}]}>{deliveryAddress}</Caption>
         </View>
       </View>
       {status !== 'completed' && (
         <View style={classes.footerRoot}>
-          <View style={{marginLeft: -7}}>
-            <Subheading style={classes.bodyHeaderText}>Payment</Subheading>
-            <Paragraph style={classes.bodyHeaderText1}>{`₦ ${Math.ceil(
-              estimatedCost,
-            )}`}</Paragraph>
-          </View>
+          
 
           <TouchableOpacity
             style={[
@@ -135,6 +130,9 @@ const Task = ({
               color={colors.white}
             />
           </TouchableOpacity>
+          <TouchableOpacity style={[classes.buttonRoot, {backgroundColor: colors.red.main}]}>
+            <Caption style={classes.buttonText}>Cancel Order</Caption>
+          </TouchableOpacity>
         </View>
       )}
     </Surface>
@@ -147,8 +145,8 @@ const classes = StyleSheet.create({
   root: {
     // flex: 1,
     //height: 300,
-    elevation: 2,
-    marginVertical: 10,
+    marginVertical: 30,
+    marginHorizontal: 20
   },
   headerRoot: {
     flexDirection: 'row',
@@ -166,7 +164,7 @@ const classes = StyleSheet.create({
     alignItems: 'center',
   },
   content: {
-    fontSize: 13,
+    fontSize: 10,
     fontWeight: '400',
   },
   bodyRoot: {
@@ -175,34 +173,30 @@ const classes = StyleSheet.create({
     paddingVertical: 10,
   },
   bodyHeaderText: {
-    fontSize: 15,
+    fontSize: 10,
     color: colors.red.main,
   },
   footerRoot: {
-    paddingHorizontal: 25,
-    paddingVertical: 10,
+    paddingVertical: 15,
     alignItems: 'flex-end',
     flexDirection: 'row',
-    justifyContent: 'space-between',
+    justifyContent: 'space-evenly',
   },
   buttonRoot: {
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 3,
-    },
-    shadowOpacity: 0.27,
-    shadowRadius: 4.65,
-
-    elevation: 6,
+    
     paddingHorizontal: 10,
     paddingVertical: 5,
     borderRadius: 5,
     flexDirection: 'row',
     alignItems: 'center',
+    height: 36,
+    width: '45%',
+    justifyContent: 'center',
+    alignItems: 'center'
   },
   buttonText: {
     color: colors.white,
     marginRight: 5,
+    fontSize: 10
   },
 });
