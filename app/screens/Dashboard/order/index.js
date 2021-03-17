@@ -66,6 +66,44 @@ const OrderPool = ({navigation: {navigate, push, isFocused}}) => {
         setRefresh(false);
       });
   };
+  
+  const rejectOrder = (item, index) => {
+    dispatch(accountAction.setLoadingStatus({loading: true}));
+    console.log('req',  api.riderBasket + `/${item._id}/remove`);
+    //setRefresh(true);
+    makeNetworkCalls({
+      url: api.riderBasket + `/${item._id}/remove`,
+      method: 'patch',
+      headers: {
+        'x-auth-token': token,
+      },
+    })
+      .then((res) => {
+        const {msg} = res.data;
+        if (isFocused()) {
+          dispatch(feedbackAction.launch({open: true, severity: 's', msg}));
+        }
+        if (currentIndex === index) {
+          dispatch(deliveryAction.setIndexOfEntry({currentIndex: index}));
+        }
+        refreshBasket();
+      })
+      .catch((err) => {
+        if (isFocused()) {
+          if (err.response) {
+            const {msg} = err.response.data;
+            dispatch(feedbackAction.launch({open: true, severity: 'w', msg}));
+            return;
+          }
+          dispatch(
+            feedbackAction.launch({open: true, severity: 'w', msg: `${err}`}),
+          );
+        }
+      })
+      .finally(() => {
+        dispatch(accountAction.setLoadingStatus({loading: false}));
+      });
+  };
 
   const pickUp = async (item, index) => {
     dispatch(accountAction.setIconLoading({buttonIconLoading: index}));
