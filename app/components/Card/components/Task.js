@@ -237,7 +237,7 @@ const Task = ({
               color={colors.white}
             />
           </TouchableOpacity>
-          <TouchableOpacity style={[classes.buttonRoot, {backgroundColor: colors.red.main}]}>
+          <TouchableOpacity onPress={() => {}} style={[classes.buttonRoot, {backgroundColor: colors.red.main}]}>
             <Caption style={classes.buttonText}>Cancel Order</Caption>
           </TouchableOpacity>
                   </View>
