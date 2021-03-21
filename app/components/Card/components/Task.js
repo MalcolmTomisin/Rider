@@ -25,6 +25,7 @@ const Task = ({
   status,
   serial,
   orderInfo,
+  rejectOrder
 }) => {
   const {dark} = useSelector(({theme}) => theme);
   const {buttonIconLoading} = useSelector(({account}) => account);
@@ -237,7 +238,10 @@ const Task = ({
               color={colors.white}
             />
           </TouchableOpacity>
-          <TouchableOpacity onPress={() => {}} style={[classes.buttonRoot, {backgroundColor: colors.red.main}]}>
+          <TouchableOpacity 
+          onPress={rejectOrder} 
+          disabled={orderInfo?.entry?.status !== 'enrouteToPickup' && orderInfo?.entry?.status !== 'driverAccepted'} 
+          style={[classes.buttonRoot, {backgroundColor: orderInfo?.entry?.status !== 'enrouteToPickup' && orderInfo?.entry?.status !== 'driverAccepted' ? colors.grey.main : colors.red.main}]}>
             <Caption style={classes.buttonText}>Cancel Order</Caption>
           </TouchableOpacity>
                   </View>

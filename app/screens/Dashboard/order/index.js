@@ -153,6 +153,7 @@ const OrderPool = ({navigation: {navigate, push, isFocused}}) => {
           status={v?.status}
           serial={i}
           orderInfo={v}
+          rejectOrder={() => rejectOrder(v, i)}
         />
       );
     });
