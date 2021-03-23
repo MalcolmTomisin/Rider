@@ -21,7 +21,8 @@ import {api} from './api';
 import constants from './utils/constants';
 import messaging from '@react-native-firebase/messaging';
 import {useFetch} from './utils/fetchHook';
-import {Order, Offline} from './components/Card';
+//import {Order, Offline} from './components/Card';
+import Order from './components/Card/newComponents/Order';
 import {makeNetworkCalls, callBasket} from './utils';
 import {rejectOrder} from './components/Modal/components/CancelOrder';
 import {navigationRef} from './RootNavigation';
@@ -339,16 +340,18 @@ const StartUp = () => {
       <PaperProvider theme={RNPTheme}>
         <NavigationContainer theme={RNTheme} ref={navigationRef}>
           <Navigation />
-          {!isOnline ? null : !message?.data ? null : message?.accept ? null : (
+          {/* {!isOnline ? null : !message?.data ? null : message?.accept ? null : (
             <Order
               onAccept={accept}
               onCountDownFinish={onCountDownFinish}
               timerIsRunning={running}
               reset={resetTimer.toString()}
             />
-          )}
+          )} */}
+
           {/* internet listener, use different listener on android */}
-          {!netInfo.isConnected && <Offline isNetworkOff={true} />}
+          {/* {!netInfo.isConnected && <Offline isNetworkOff={true} />} */}
+          <Order />
         </NavigationContainer>
         <FeedBack />
         <CancelOrder />

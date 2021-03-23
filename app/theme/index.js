@@ -21,6 +21,7 @@ const colors = {
   },
   blue: {
     main: '#1D2C7E',
+    secondary: '#072D8F',
   },
 };
 
