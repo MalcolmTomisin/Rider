@@ -60,6 +60,7 @@ public class LocationUpdateService extends HeadlessJsTaskService {
     private final IBinder mBinder = new LocalBinder();
     private static final int NOTIFICATION_ID = 12345678;
     private static final String BASE_URL = "https://exaltlogistics.exaltgroups.com/api/v1/";
+    public static boolean IS_RUNNING = false;
     private Retrofit retrofit;
     Cursor catalystLocalStorage = null;
     SQLiteDatabase readableDatabase = null;
@@ -89,10 +90,6 @@ public class LocationUpdateService extends HeadlessJsTaskService {
     @Override
     public void onCreate() {
         super.onCreate();
-//        SharedPreferences preferences = getSharedPreferences("rider", Context.MODE_PRIVATE);
-//        if (preferences != null){
-//            authToken = preferences.getString("x-auth-token", "");
-//        }
         client = LocationServices.getFusedLocationProviderClient(this);
         locationCallback = new LocationCallback() {
             @Override
@@ -109,17 +106,7 @@ public class LocationUpdateService extends HeadlessJsTaskService {
         } catch (SecurityException unlikely) {
             Log.e(TAG, "Lost location permission. Could not request updates. " + unlikely);
         }
-//        LocationSettingsRequest.Builder builder = new LocationSettingsRequest.Builder()
-//                .addLocationRequest(locationRequest);
-//        SettingsClient client = LocationServices.getSettingsClient(this);
-//        Task<LocationSettingsResponse> task = client.checkLocationSettings(builder.build());
-//        task.addOnSuccessListener(new OnSuccessListener<LocationSettingsResponse>() {
-//            @Override
-//            public void onSuccess(LocationSettingsResponse locationSettingsResponse) {
-//                canRequestUpdates = true;
-//            }
-//        });
-
+        //initialize network client
         retrofit = new Retrofit.Builder()
                 .baseUrl(BASE_URL)
                 .addConverterFactory(GsonConverterFactory.create())
@@ -128,12 +115,34 @@ public class LocationUpdateService extends HeadlessJsTaskService {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        authToken = intent.getStringExtra(MainActivity.TOKEN);
-        createNotificationChannel();
-        startForeground(NOTIFICATION_ID, getNotification());
+        if(intent.getAction().equals(Utils.ACTION_START_SERVICE)){
+            authToken = intent.getStringExtra(MainActivity.TOKEN);
+            createNotificationChannel();
+            startForeground(NOTIFICATION_ID, getNotification());
+            IS_RUNNING = true;
+        }
+        else if(intent.getAction().equals(Utils.ACTION_STOP_SERVICE)){
+            Log.i(TAG, "Received Stop Foreground Intent");
+            //your end servce code
+            stopForeground(true);
+            stopSelfResult(startId);
+            IS_RUNNING = false;
+        }
         //do heavy work on a background thread
         //stopSelf();
         return START_NOT_STICKY;
+    }
+
+    private void createNotificationChannel() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            NotificationChannel serviceChannel = new NotificationChannel(
+                    CHANNEL_ID,
+                    "Foreground Service Channel",
+                    NotificationManager.IMPORTANCE_DEFAULT
+            );
+            NotificationManager manager = getSystemService(NotificationManager.class);
+            manager.createNotificationChannel(serviceChannel);
+        }
     }
 
     private Notification getNotification(){
@@ -141,6 +150,9 @@ public class LocationUpdateService extends HeadlessJsTaskService {
         Intent notificationIntent = new Intent(this, MainActivity.class);
         PendingIntent pendingIntent = PendingIntent.getActivity(this,
                 0, notificationIntent, 0);
+        Intent stopServiceIntent = new Intent(this, LocationUpdateService.class);
+        stopServiceIntent.setAction(Utils.ACTION_STOP_SERVICE);
+        PendingIntent stopServicePending = PendingIntent.getService(this, 0, stopServiceIntent, 0);
 
         return new NotificationCompat.Builder(this, CHANNEL_ID)
                 .setContentTitle("Exalt Rider")
@@ -149,6 +161,7 @@ public class LocationUpdateService extends HeadlessJsTaskService {
                 .setContentIntent(pendingIntent)
                 .setPriority(Notification.PRIORITY_HIGH)
                 .setWhen(System.currentTimeMillis())
+                .addAction(android.R.drawable.ic_menu_close_clear_cancel, "close", stopServicePending)
                 .build();
     }
     @Override
@@ -240,36 +253,17 @@ public class LocationUpdateService extends HeadlessJsTaskService {
         }
     }
 
-    private void createNotificationChannel() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            NotificationChannel serviceChannel = new NotificationChannel(
-                    CHANNEL_ID,
-                    "Foreground Service Channel",
-                    NotificationManager.IMPORTANCE_DEFAULT
-            );
-            NotificationManager manager = getSystemService(NotificationManager.class);
-            manager.createNotificationChannel(serviceChannel);
-        }
-    }
+
 
     private void createLocationRequest() {
         locationRequest = LocationRequest.create();
-        locationRequest.setInterval(10000);
-        locationRequest.setFastestInterval(10000);
+        locationRequest.setInterval(40000);
+        locationRequest.setFastestInterval(40000);
         locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
     }
 
     private void onNewLocation(Location location) {
         Log.e(TAG, "New location: " + location);
-        // Notify anyone listening for broadcasts about the new location.
-//        Intent intent = new Intent(ACTION_BROADCAST);
-//        intent.putExtra(EXTRA_LOCATION, location);
-//        LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(intent);
-
-        // Update notification content if running as a foreground service.
-//        if (serviceIsRunningInForeground(this)) {
-//            mNotificationManager.notify(NOTIFICATION_ID, getNotification());
-//        }
         if(!isAppOnForeground(this) && authToken != null){
             Log.e(TAG, "enters network calls" + " " + authToken);
             RiderServiceAPI serviceAPI = retrofit.create(RiderServiceAPI.class);

@@ -1,11 +1,11 @@
 import React, {Component, useState, useContext, useEffect} from 'react';
 import {Dimensions, StyleSheet, View, Alert} from 'react-native';
-import MapView, {PROVIDER_GOOGLE} from 'react-native-maps';
+import MapView, {PROVIDER_GOOGLE, Marker} from 'react-native-maps';
 import MapViewDirections from 'react-native-maps-directions';
 import Geolocation from 'react-native-geolocation-service';
 import Geocoder from 'react-native-geocoding';
 import {ActivityIndicator, Surface} from 'react-native-paper';
-import {colors, DARK_MAP_THEME} from '../../theme';
+import {colors, DARK_MAP_THEME, SILVER_THEME} from '../../theme';
 import {useSelector, useDispatch} from 'react-redux';
 import {
   Offline,
@@ -15,7 +15,7 @@ import {
   AddressBanner,
   ConfirmPayment,
   EnrouteDelivery,
-  ConfirmDelivery,
+  //ConfirmDelivery,
 } from '../../components/Card';
 import {Loading} from '../../components/Loading';
 import {api} from '../../api';
@@ -25,8 +25,17 @@ import {
   feedbackAction,
 } from '../../store/actions';
 import {ConfirmDialog} from '../../components/Modal';
-import {callBasket, makeNetworkCalls} from '../../utils';
+import {makeNetworkCalls} from '../../utils';
 import {useFetch} from '../../utils/fetchHook';
+import PickUp from '../../components/Card/newComponents/PickUp';
+import PickUpConfirm from '../../components/Card/newComponents/ConfirmPickUp';
+import CashConfirm from '../../components/Card/newComponents/CashConfirm';
+import {PaymentDialog, Note} from '../../components/Card/newComponents/Modals';
+import ConfirmDelivery from '../../components/Card/newComponents/Deliver';
+import DeliveryCode from '../../components/Card/newComponents/ConfirmDelivery';
+import DeliveryPin from '../../components/svg/DeliveryPin';
+import PickupPin from '../../components/svg/PickupPin';
+import RiderPin from '../../components/svg/RiderPin';
 
 const {width, height} = Dimensions.get('window');
 
@@ -36,12 +45,14 @@ Geocoder.init(GOOGLE_MAPS_APIKEY);
 
 const Home = ({navigation: {navigate, push, pop}}) => {
   let {isOnline, token, loading} = useSelector(({account}) => account);
-  let {pickUp, currentEntry, currentIndex} = useSelector(
+  let {pickUp, currentEntry, currentIndex, recievedPayment} = useSelector(
     ({delivery}) => delivery,
   );
   const {dark} = useSelector(({theme}) => theme);
   const mapView = React.useRef(null);
   const [retry, setRetry] = useState(false);
+  const [showPayment, setShowPayment] = useState(false);
+  const [showNotes, setShowNotes] = useState(false);
   const dispatch = useDispatch();
   const [coordinates, setCoordinates] = useState({
     latitude: 6.6052898,
@@ -52,7 +63,7 @@ const Home = ({navigation: {navigate, push, pop}}) => {
     longitude: 3.3171244316839394,
   });
 
-  useFetch();
+  //useFetch();
 
   //rider alerts user/API of arrival
   const alertUserOfArrival = () => {
@@ -66,15 +77,16 @@ const Home = ({navigation: {navigate, push, pop}}) => {
       },
       data: {entry: currentEntry.entry._id},
     })
-      .then(async (res) => {
+      .then((res) => {
         const {data, msg} = res.data;
         //await callBasket(api.riderBasket, token, dispatch, currentIndex);
         dispatch(feedbackAction.launch({open: true, severity: 's', msg}));
-        return callBasket(api.riderBasket, token, dispatch, currentIndex);
+        callBasket(api.riderBasket);
       })
       .then(() => {
+        push('Dashboard');
         if (currentEntry.entry.paymentMethod !== 'cash') {
-          navigate('ConfirmPickupCode');
+          //navigate('ConfirmPickupCode');
         }
       })
       .catch((err) => {
@@ -92,70 +104,53 @@ const Home = ({navigation: {navigate, push, pop}}) => {
       });
   };
 
-  //notify api rider already enroute
-  const goingEnroute = () => {
+  const handlePayment = (flag) => {
     dispatch(accountAction.setLoadingStatus({loading: true}));
+    let data = {};
+    data.status = flag;
+    if (currentEntry?.status === 'arrivedAtDelivery'){
+        data.order = currentEntry?._id;
+        data.type = currentEntry?.transaction?.cashPaymentType;
+    }
+    else {
+      data.entry = currentEntry?.entry?._id;
+    }
     makeNetworkCalls({
-      url: api.enroute,
+      url: api.cashPayment,
       method: 'post',
       headers: {
         'Content-type': 'application/json',
         'x-auth-token': token,
       },
-      data: {entry: currentEntry.entry._id},
+      data,
     })
       .then(async (res) => {
-        const {data, msg} = res.data;
-        dispatch(feedbackAction.launch({open: true, severity: 's', msg}));
-        return callBasket(api.riderBasket, token, dispatch, currentIndex);
-      })
-      .then(() => {
-        dispatch(deliveryAction.setEnrouteToPickUp({enroute: true}));
-        setRetry(false);
-        pop();
-        push('Dashboard');
-      })
-      .catch((err) => {
-        if (err.response) {
-          const {msg} = err?.response?.data;
-          dispatch(feedbackAction.launch({open: true, severity: 'w', msg}));
-          setRetry(true);
-          return;
-        }
-        dispatch(
-          feedbackAction.launch({open: true, severity: 'w', msg: `${err}`}),
-        );
-        setRetry(true);
-      })
-      .finally(() => {
-        dispatch(accountAction.setLoadingStatus({loading: false}));
-      });
-  };
-
-  //notify api delivery has started
-  const startDelievery = () => {
-    dispatch(accountAction.setLoadingStatus({loading: true}));
-    makeNetworkCalls({
-      url: api.startDelivery,
-      method: 'post',
-      headers: {
-        'x-auth-token': token,
-        'Content-type': 'application/json',
-      },
-      data: {order: currentEntry._id},
-    })
-      .then((res) => {
+        callBasket(api.riderBasket);
         const {msg} = res.data;
+        if (recievedPayment === 0) {
+          dispatch(accountAction.setOrder({message: null}));
+          dispatch(
+            deliveryAction.setCurrentPickupInfo({
+              currentEntry: null,
+              currentIndex: null,
+            }),
+          );
+        }
+        dispatch(
+          deliveryAction.setPaymentRecieved({
+            recievedPayment: null,
+            cashPaid: recievedPayment !== 0 ? true : false,
+          }),
+        );
         dispatch(feedbackAction.launch({open: true, severity: 's', msg}));
-        return callBasket(api.riderBasket, token, dispatch, currentIndex);
-      })
-      .then(() => {
-        setRetry(false);
+        if (recievedPayment !== 0) {
+          //navigation('ConfirmPickupCode');
+          push('Dashboard');
+        }
       })
       .catch((err) => {
-        setRetry(true);
-        if (err.response) {
-          const {msg} = err?.response?.data;
+        if (err.response.data) {
+          const {msg} = err.response.data;
           dispatch(feedbackAction.launch({open: true, severity: 'w', msg}));
           return;
         }
@@ -165,11 +160,13 @@ const Home = ({navigation: {navigate, push, pop}}) => {
       })
       .finally(() => {
         dispatch(accountAction.setLoadingStatus({loading: false}));
+        setShowPayment(false);
       });
   };
 
   //notify api delivery has arrived
   const announceArrivalAtDelivery = () => {
+    console.log('width', width);
     dispatch(accountAction.setLoadingStatus({loading: true}));
     makeNetworkCalls({
       url: api.alertArrivalAtDelivery,
@@ -183,12 +180,12 @@ const Home = ({navigation: {navigate, push, pop}}) => {
       .then(async (res) => {
         const {msg} = res.data;
         dispatch(feedbackAction.launch({open: true, severity: 's', msg}));
-        return callBasket(api.riderBasket, token, dispatch, currentIndex);
+        callBasket(api.riderBasket);
       })
       .then(() => {
         setRetry(false);
-        pop();
-        navigate('ConfirmDeliveryCode');
+        //pop();
+        //navigate('ConfirmDeliveryCode');
       })
       .catch((err) => {
         setRetry(true);
@@ -284,7 +281,33 @@ const Home = ({navigation: {navigate, push, pop}}) => {
     }
   };
 
-  const mapStyle = dark ? DARK_MAP_THEME : [];
+  const callBasket = (url) => {
+    dispatch(accountAction.setLoadingStatus({loading: true}));
+    makeNetworkCalls({
+      url,
+      method: 'get',
+      headers: {
+        'x-auth-token': token,
+      },
+    })
+      .then((res) => {
+        const {data, msg} = res.data;
+        dispatch(accountAction.setAcceptedOrders({acceptedOrders: data}));
+        if (typeof currentIndex !== 'undefined') {
+          dispatch(
+            deliveryAction.setCurrentPickupInfo({
+              currentEntry: data[currentIndex],
+            }),
+          );
+        }
+      })
+      .catch((err) => console.log(err))
+      .finally(() =>
+        dispatch(accountAction.setLoadingStatus({loading: false})),
+      );
+  };
+
+  const mapStyle = dark ? DARK_MAP_THEME : SILVER_THEME;
 
   return (
     <View style={classes.root}>
@@ -302,8 +325,12 @@ const Home = ({navigation: {navigate, push, pop}}) => {
           currentEntry?.entry?.status !== 'cancelled' &&
           currentEntry?.entry?.status !== 'delivered' && (
             <>
-              <MapView.Marker coordinate={coordinates} />
-              <MapView.Marker coordinate={pickUp} />
+              <Marker coordinate={coordinates}>
+                <RiderPin />
+              </Marker>
+              <Marker coordinate={pickUp}>
+                <PickupPin />
+              </Marker>
               <MapViewDirections
                 origin={coordinates}
                 destination={{
@@ -333,13 +360,16 @@ const Home = ({navigation: {navigate, push, pop}}) => {
           currentEntry?.entry?.status !== 'completed' &&
           currentEntry?.entry?.status !== 'cancelled' && (
             <>
-              <MapView.Marker coordinate={coordinates} />
+              <MapView.Marker coordinate={coordinates}>
+                <RiderPin />
+              </MapView.Marker>
               <MapView.Marker
                 coordinate={{
                   latitude: currentEntry?.deliveryLatitude,
                   longitude: currentEntry?.deliveryLongitude,
-                }}
-              />
+                }}>
+                <DeliveryPin />
+              </MapView.Marker>
               <MapViewDirections
                 origin={coordinates}
                 destination={{
@@ -365,44 +395,79 @@ const Home = ({navigation: {navigate, push, pop}}) => {
       {!isOnline && <Offline />}
       <Loading visible={loading} size="large" />
 
-      {currentEntry?.entry?.status === 'driverAccepted' ? (
-        <>
-          <EnroutePickup onPress={goingEnroute} error={retry} />
-          <AddressBanner />
-        </>
-      ) : null}
-
-      {currentEntry?.entry?.status === 'enrouteToPickup' ? (
-        <>
-          <ConfirmPickup confirmArrival={alertUserOfArrival} error={retry} />
-          <AddressBanner />
-        </>
-      ) : null}
+      {currentEntry?.entry?.status === 'enrouteToPickup' && !showNotes && (
+        <PickUp
+          confirmArrival={alertUserOfArrival}
+          error={retry}
+          showNote={() => setShowNotes(true)}
+        />
+      )}
 
       {currentEntry?.entry?.status === 'arrivedAtPickup' &&
-      currentEntry.entry.paymentMethod === 'cash' &&
-      currentEntry?.transaction?.status !== 'approved' ? (
-        <ConfirmPayment />
-      ) : null}
+        currentEntry.transaction.paymentMethod !== 'cash' && (
+          <PickUpConfirm push={push} pop={pop} />
+        )}
 
-      {currentEntry?.status === 'pickedup' ? (
-        <>
-          <AddressBanner />
-          <EnrouteDelivery onPress={startDelievery} error={retry} />
-        </>
-      ) : null}
+{currentEntry?.entry?.status === 'arrivedAtPickup' &&
+        currentEntry.transaction.status !== 'pending' && currentEntry.transaction.cashPaymentType === 'pickup' && (
+          <PickUpConfirm push={push} pop={pop} />
+        )}
 
-      {currentEntry?.status === 'enrouteToDelivery' ? (
-        <>
-          <AddressBanner />
-          <ConfirmDelivery
-            confirmDelivery={announceArrivalAtDelivery}
-            error={retry}
+{currentEntry?.entry?.status === 'arrivedAtPickup' &&
+        currentEntry.transaction.status === 'pending' && currentEntry.transaction.cashPaymentType !== 'pickup' && (
+          <PickUpConfirm push={push} pop={pop} />
+        )}
+      {currentEntry?.entry?.status === 'arrivedAtPickup' &&
+        currentEntry?.entry.paymentMethod === 'cash' &&
+        currentEntry.transaction.status === 'pending' &&
+        currentEntry?.transaction?.cashPaymentType === 'pickup' &&
+        !showPayment && (
+          <CashConfirm
+            confirm={() => setShowPayment(true)}
+            name={currentEntry?.name}
+            price={Math.round(currentEntry?.transaction?.amount)}
           />
-        </>
-      ) : null}
+        )}
+
+      {currentEntry?.status === 'arrivedAtDelivery' &&
+        currentEntry?.entry.paymentMethod === 'cash' &&
+        currentEntry.transaction.status === 'pending' &&
+        currentEntry?.transaction?.cashPaymentType !== 'pickup' &&
+        !showPayment && (
+          <CashConfirm
+            confirm={() => setShowPayment(true)}
+            name={currentEntry?.name}
+            price={Math.round(currentEntry?.transaction?.amount)}
+          />
+        )}
+      {currentEntry?.status === 'enrouteToDelivery' && !showNotes && (
+        <ConfirmDelivery
+          confirmDelivery={announceArrivalAtDelivery}
+          error={retry}
+          showNote={() => setShowNotes(true)}
+        />
+      )}
+
+      {currentEntry?.status === 'arrivedAtDelivery' &&
+        currentEntry.transaction.status !== 'pending' && (
+          <DeliveryCode pop={pop} push={push} />
+        )}
 
       <ConfirmDialog navigation={push} />
+      <PaymentDialog
+        showPayment={showPayment}
+        paid={() => {
+          handlePayment('approved');
+        }}
+        notPaid={() => handlePayment('declined')}
+        name={currentEntry?.name}
+        price={Math.round(currentEntry?.transaction?.amount)}
+      />
+      <Note
+        showNotes={showNotes}
+        dismiss={() => setShowNotes(false)}
+        riderNote={currentEntry?.transaction?.note}
+      />
     </View>
   );
 };
@@ -416,7 +481,7 @@ const classes = StyleSheet.create({
   church: {
     position: 'absolute',
     bottom: 0,
-    elevation: 6,
+    elevation: 8,
     width: '100%',
     padding: 5,
   },

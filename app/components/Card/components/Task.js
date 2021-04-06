@@ -15,6 +15,7 @@ import {openGoogleMapsIntent} from '../../../utils';
 import Clipboard from '@react-native-community/clipboard';
 import {feedbackAction} from '../../../store/actions';
 import Ionicon from 'react-native-vector-icons/MaterialIcons';
+import {getStatusOfOrder} from '../../../utils'
 
 const Task = ({
   pickUpAddress,
@@ -25,7 +26,7 @@ const Task = ({
   status,
   serial,
   orderInfo,
-  rejectOrder
+  rejectOrder,
 }) => {
   const {dark} = useSelector(({theme}) => theme);
   const {buttonIconLoading} = useSelector(({account}) => account);
@@ -114,17 +115,7 @@ const Task = ({
               <ActivityIndicator size="small" color="white" />
             ) : (
               <Caption style={classes.buttonText}>{`${
-                status !== 'pickedup' &&
-                status !== 'enrouteToDelivery' &&
-                status !== 'arrivedAtDelivery' &&
-                status !== 'delivered' &&
-                status !== 'cancelled'
-                  ? 'Proceed Pickup'
-                  : status === 'cancelled'
-                  ? 'Cancelled'
-                  : status === 'delivered'
-                  ? 'Delivered'
-                  : 'Start Delivery'
+                getStatusOfOrder().get(status)
               }`}</Caption>
             )}
             <Icon
@@ -139,7 +130,7 @@ const Task = ({
               color={colors.white}
             />
           </TouchableOpacity>
-          <TouchableOpacity style={[classes.buttonRoot, {backgroundColor: colors.red.main}]}>
+          <TouchableOpacity onPress={rejectOrder} style={[classes.buttonRoot, {backgroundColor: orderInfo?.entry?.status !== 'enrouteToPickup' && orderInfo?.entry?.status !== 'driverAccepted' ? colors.grey.main : colors.red.main}]} disabled={orderInfo?.entry?.status !== 'enrouteToPickup' && orderInfo?.entry?.status !== 'driverAccepted'}>
             <Caption style={classes.buttonText}>Cancel Order</Caption>
           </TouchableOpacity>
         </View>
@@ -159,35 +150,35 @@ const Task = ({
                <View style={classes.spacing}>
                  <View>
                   <Text style={classes.littleText}>Payment</Text>
-                  <Text></Text>
+                  <Text style={{fontFamily: 'Manrope-Bold', fontSize: 12, color: colors.red.main}}>N {orderInfo?.estimatedCost}</Text>
                 </View>
                 <View>
                   <Text style={[classes.littleText, {textAlign: 'right'}]}>Payment Type</Text>
-                  <Text></Text>
+                  <Text style={[classes.boldText , {textAlign: 'right'}]}>{orderInfo?.transaction.paymentMethod}</Text>
                 </View>
                </View>
                 <View style={classes.spacing}>
                   <View>
                   <Text style={classes.littleText}>Total Distance</Text>
-                  <Text></Text>
+                  <Text style={classes.boldText}>{orderInfo?.estimatedDistance}</Text>
                 </View>
                 <View>
                   <Text style={classes.littleText}>Estimated Delivery Time</Text>
-                  <Text></Text>
+                  <Text style={[classes.boldText , {textAlign: 'right'}]}>{`${Math.ceil(orderInfo?.estimatedTravelduration)} mins`}</Text>
                 </View>
                 </View>
                  <View style={{marginBottom: 30}}>
                   <Text style={classes.littleText}>Pickup Address</Text>
-                  <Text></Text>
+                  <Text style={classes.boldText}>{orderInfo?.pickupAddress}</Text>
                 </View>
                   <View>
                     <View style={{marginBottom: 30}}>
                   <Text style={classes.littleText}>Delivery Address</Text>
-                  <Text></Text>
+                  <Text style={classes.boldText}>{orderInfo?.deliveryAddress}</Text>
                 </View>
                 <View style={{marginBottom: 30}}>
                   <Text style={classes.littleText}>Note</Text>
-                  <Text></Text>
+                  <Text style={{fontFamily: 'Manrope-Light', fontSize: 10}}>{orderInfo?.transaction.note}</Text>
                 </View>
                   </View>
                   <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
@@ -208,22 +199,15 @@ const Task = ({
               },
             ]}
             disabled={status === 'cancelled'}
-            onPress={pickUpAction}>
+            onPress={() => {
+              setOpen(false);
+              pickUpAction();
+            }}>
             {buttonIconLoading === serial ? (
               <ActivityIndicator size="small" color="white" />
             ) : (
               <Caption style={classes.buttonText}>{`${
-                status !== 'pickedup' &&
-                status !== 'enrouteToDelivery' &&
-                status !== 'arrivedAtDelivery' &&
-                status !== 'delivered' &&
-                status !== 'cancelled'
-                  ? 'Proceed Pickup'
-                  : status === 'cancelled'
-                  ? 'Cancelled'
-                  : status === 'delivered'
-                  ? 'Delivered'
-                  : 'Start Delivery'
+                getStatusOfOrder().get(status)
               }`}</Caption>
             )}
             <Icon
@@ -239,7 +223,10 @@ const Task = ({
             />
           </TouchableOpacity>
           <TouchableOpacity 
-          onPress={rejectOrder} 
+          onPress={() => {
+            setOpen(false);
+            rejectOrder();
+          }}
           disabled={orderInfo?.entry?.status !== 'enrouteToPickup' && orderInfo?.entry?.status !== 'driverAccepted'} 
           style={[classes.buttonRoot, {backgroundColor: orderInfo?.entry?.status !== 'enrouteToPickup' && orderInfo?.entry?.status !== 'driverAccepted' ? colors.grey.main : colors.red.main}]}>
             <Caption style={classes.buttonText}>Cancel Order</Caption>
@@ -257,8 +244,8 @@ const classes = StyleSheet.create({
   root: {
     // flex: 1,
     //height: 300,
-    marginVertical: 30,
-    marginHorizontal: 20
+    marginVertical: 15,
+    marginHorizontal: 20,
   },
   headerRoot: {
     flexDirection: 'row',
@@ -295,7 +282,6 @@ const classes = StyleSheet.create({
     justifyContent: 'space-evenly',
   },
   buttonRoot: {
-    
     paddingHorizontal: 10,
     paddingVertical: 5,
     borderRadius: 5,
@@ -304,12 +290,13 @@ const classes = StyleSheet.create({
     height: 38,
     width: '45%',
     justifyContent: 'center',
-    alignItems: 'center'
   },
   buttonText: {
     color: colors.white,
     marginRight: 5,
-    fontSize: 10
+    fontSize: 10,
+    //numberOfLines: 1,
+    fontFamily: 'Manrope-Bold',
   },
   littleText: {
     fontSize: 8,
@@ -317,10 +304,10 @@ const classes = StyleSheet.create({
   },
   boldText: {
     fontSize: 12,
-    fontFamily: 'Manrope-SemiBold'
+    fontFamily: 'Manrope-SemiBold',
   },
   spacing: {
     flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 30
   },
-  textContainer: {paddingVertical: 10, justifyContent: 'space-between'}
+  textContainer: {paddingVertical: 10, justifyContent: 'space-between'},
 });

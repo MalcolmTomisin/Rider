@@ -56,23 +56,7 @@ const Dashboard = () => {
               />
             </View>
           ),
-          headerTitle: () => (
-            <TouchableOpacity
-              style={{ justifyContent: 'center', alignItems: 'center' }}
-              onPress={() => navigate('OrderPool')}>
-              {isOnline &&
-                acceptedOrders?.filter((v) => v.status !== 'cancelled').length >
-                0 ? (
-                  <Badge style={classes.badge}>{`${acceptedOrders.filter((v) => v.status !== 'cancelled').length
-                    }`}</Badge>
-                ) : null}
-              <Icon
-                size={35}
-                name="basket"
-                color={dark ? colors.grey.light : colors.black}
-              />
-            </TouchableOpacity>
-          ),
+          headerTitle: null,
           headerRight: () => (
             <View style={classes.right}>
               <Switch />

@@ -45,11 +45,22 @@ const ConfirmPickupCode = ({navigation: {goBack, navigate, push, pop}}) => {
         push('OrderPool');
       })
       .catch((err) => {
-        console.error(err);
+        //console.error(err);
+        if(err.response){
+          const {msg} = err.response.data;
+          dispatch(
+            feedbackAction.launch({
+              open: true,
+              severity: 'w',
+              msg,
+            }),
+          );
+          return;
+        }
         dispatch(
           feedbackAction.launch({
             open: true,
-            severity: 's',
+            severity: 'w',
             msg: `${err}`,
           }),
         );

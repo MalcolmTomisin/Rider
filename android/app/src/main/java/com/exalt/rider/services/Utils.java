@@ -46,4 +46,7 @@ public class Utils {
 //        return context.getString(R.string.app_name,
 //                DateFormat.getDateTimeInstance().format(new Date()));
 //    }
+
+    public static final String ACTION_STOP_SERVICE = "stop service";
+    public static final String ACTION_START_SERVICE = "start service";
 }

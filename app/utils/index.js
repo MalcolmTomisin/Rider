@@ -64,15 +64,6 @@ export const callBasket = async (url, token, dispatch, currentIndex) => {
             currentEntry: data[currentIndex],
           }),
         );
-      } else {
-        currentIndex = await AsyncStorage.getItem('currentEntry');
-        if (currentIndex) {
-          dispatch(
-            deliveryAction.setCurrentPickupInfo({
-              currentEntry: data[parseInt(currentIndex)],
-            }),
-          );
-        }
       }
     })
     .catch((err) => console.log(err))
@@ -90,6 +81,20 @@ export const getMapOfWeeks = () => {
   daysOfWeek.set('7', 'Sat');
 
   return daysOfWeek;
+};
+
+export const getStatusOfOrder = () => {
+  let orderStatus = new Map();
+  orderStatus.set('pending', 'Proceed to Pickup');
+  orderStatus.set('enrouteToPickup', 'Confirm arrival');
+  orderStatus.set('arrivedAtPickup', 'Confirm pickup');
+  orderStatus.set('pickedup', 'Start delivery');
+  orderStatus.set('enrouteToDelivery', 'Confirm arrival');
+  orderStatus.set('arrivedAtDelivery', 'Confirm order delivered');
+  orderStatus.set('delivered', 'Completed');
+  orderStatus.set('cancelled', 'Cancelled');
+
+  return orderStatus;
 };
 
 //wrapper for axios

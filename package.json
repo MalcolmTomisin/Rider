@@ -9,7 +9,12 @@
     "test": "jest",
     "lint": "eslint .",
     "push": "appcenter codepush release-react -a Exalt-Application-Limited/Exalt-Rider -m -d Staging",
-    "push-ios": "appcenter codepush release-react -a Exalt-Application-Limited/Exalt-Rider-ios -m -d Staging"
+    "push-ios": "appcenter codepush release-react -a Exalt-Application-Limited/Exalt-Rider-ios -m -d Staging",
+    "bundle": "npx react-native bundle --platform android --dev false --entry-file index.js --bundle-output android/app/src/main/assets/index.android.bundle --assets-dest android/app/src/main/res",
+    "build-apk": "cd android && ./gradlew assembleDebug",
+    "build-bundle": "cd android $$ ./gradlew bundleRelease",
+    "build-apk-release": "cd android && ./gradlew assembleRelease"
+
   },
   "dependencies": {
     "@react-native-async-storage/async-storage": "^1.13.2",
@@ -18,7 +23,6 @@
     "@react-native-community/netinfo": "^5.9.10",
     "@react-native-firebase/app": "^10.0.0",
     "@react-native-firebase/messaging": "^10.0.0",
-    "@react-native-firebase/remote-config": "^10.5.1",
     "@react-native-picker/picker": "^1.9.8",
     "@react-navigation/bottom-tabs": "^5.9.1",
     "@react-navigation/material-top-tabs": "^5.2.19",
@@ -42,6 +46,7 @@
     "react-native-navigation-directions": "^1.0.4",
     "react-native-notification-sounds": "^0.5.2",
     "react-native-otp-textinput": "^0.0.7",
+    "react-native-pager-view": "^5.1.2",
     "react-native-paper": "^4.2.0",
     "react-native-rating-element": "^5.3.4",
     "react-native-reanimated": "^1.13.1",

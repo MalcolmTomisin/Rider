@@ -15,6 +15,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import {api, baseURL} from '../../../api';
 import WSContext from '../../Socket/context';
 import {makeNetworkCalls} from '../../../utils';
+import ReactNativeCallBack from '../../../utils/nativeModule';
 
 const Switch = () => {
   const {
@@ -72,8 +73,10 @@ const Switch = () => {
           socket.on('disconnect', () => {
             //console.log("disconnected");
           });
+          ReactNativeCallBack.stopService();
         } else {
           socket.connect();
+          ReactNativeCallBack.startService(token);
         }
         dispatch(accountAction.setOnline({isOnline: !isOnline}));
       })

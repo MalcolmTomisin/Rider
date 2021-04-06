@@ -76,6 +76,7 @@ const CompletedOrder = ({navigation: {isFocused}}) => {
   return (
     <View style={classes.root}>
       <ScrollView
+      contentContainerStyle={{backgroundColor: '#E5E5E5',  flexGrow: 1}}
         refreshControl={
           <RefreshControl refreshing={refresh} onRefresh={refreshBasket} />
         }>
@@ -90,8 +91,6 @@ export default CompletedOrder;
 const classes = StyleSheet.create({
   root: {
     flex: 1,
-    marginHorizontal: 20,
-    paddingVertical: 15,
     justifyContent: 'space-evenly',
   },
 });

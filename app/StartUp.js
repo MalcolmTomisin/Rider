@@ -23,7 +23,7 @@ import messaging from '@react-native-firebase/messaging';
 import {useFetch} from './utils/fetchHook';
 //import {Order, Offline} from './components/Card';
 import Order from './components/Card/newComponents/Order';
-import {makeNetworkCalls, callBasket} from './utils';
+import {makeNetworkCalls } from './utils';
 import {rejectOrder} from './components/Modal/components/CancelOrder';
 import {navigationRef} from './RootNavigation';
 import * as RootNavigation from './RootNavigation';
@@ -31,6 +31,16 @@ import {useNetInfo} from '@react-native-community/netinfo';
 import axios from 'axios';
 import {setSignInToken} from './store/actions/signUp';
 import SplashScreen from 'react-native-splash-screen';
+import {ConfirmModal} from './components/Modal';
+import PickUp from './components/Card/newComponents/PickUp';
+import {
+  Note,
+  ArrivalDialog,
+  PaymentDialog,
+  PickupOrder,
+} from './components/Card/newComponents/Modals';
+import CashConfirm from './components/Card/newComponents/CashConfirm';
+import Pickup from './components/Card/newComponents/ConfirmPickUp';
 
 async function requestUserPermission() {
   const authStatus = await messaging().requestPermission();
@@ -46,6 +56,8 @@ async function requestUserPermission() {
 const StartUp = () => {
   const [socket, setSocket] = React.useState(null);
   const [running, setTimerIsRunning] = useState(true);
+  const [orderPrompt, setOrderPrompt] = useState(false);
+  const [stopSound, setStopSound] = useState(false); 
   const dispatch = useDispatch();
   const theme = useSelector(({theme}) => theme);
   const netInfo = useNetInfo();
@@ -289,9 +301,33 @@ const StartUp = () => {
       border: theme.dark ? colors.hr.dark : colors.hr.light,
     },
   };
+  const callBasket = (url) => {
+    dispatch(accountAction.setLoadingStatus({loading: true}));
+    makeNetworkCalls({
+      url,
+      method: 'get',
+      headers: {
+        'x-auth-token': token,
+      },
+    })
+      .then((res) => {
+        const {data, msg} = res.data;
+        dispatch(accountAction.setAcceptedOrders({acceptedOrders: data}));
+        if (typeof currentIndex !== 'undefined') {
+          dispatch(
+            deliveryAction.setCurrentPickupInfo({
+              currentEntry: data[currentIndex],
+            }),
+          );
+        }
+      })
+      .catch((err) => console.log(err))
+      .finally(() => dispatch(accountAction.setLoadingStatus({loading: false})));
+  };
 
   //function handling rider accepting an order
   const accept = () => {
+    setOrderPrompt(false);
     const {data} = message;
     dispatch(accountAction.setLoadingStatus({loading: true}));
     setTimerIsRunning(false);
@@ -307,12 +343,13 @@ const StartUp = () => {
       .then(async (res) => {
         message.accept = true;
         //fetch basket for updated info about current entry
-        await callBasket(api.riderBasket, token, dispatch, currentIndex);
-        dispatch(
-          feedbackAction.launch({open: true, severity: 's', msg: res.data.msg}),
-        );
+        callBasket(api.riderBasket);
+        // dispatch(
+        //   feedbackAction.launch({open: true, severity: 's', msg: res.data.msg}),
+        // );
         dispatch(accountAction.setOrder({message}));
-        RootNavigation.navigate('OrderPool');
+        setOrderPrompt(true);
+        setStopSound(true);
       })
       .catch((err) => {
         if (err.response) {
@@ -332,6 +369,7 @@ const StartUp = () => {
       })
       .finally(() => {
         dispatch(accountAction.setLoadingStatus({loading: false}));
+        setStopSound(false);
       });
   };
 
@@ -340,18 +378,37 @@ const StartUp = () => {
       <PaperProvider theme={RNPTheme}>
         <NavigationContainer theme={RNTheme} ref={navigationRef}>
           <Navigation />
-          {/* {!isOnline ? null : !message?.data ? null : message?.accept ? null : (
+          {!isOnline ? null : !message?.data ? null : message?.accept ? null : (
             <Order
               onAccept={accept}
               onCountDownFinish={onCountDownFinish}
               timerIsRunning={running}
               reset={resetTimer.toString()}
+              message={message}
+              stopSound={stopSound}
             />
-          )} */}
+          )}
 
           {/* internet listener, use different listener on android */}
           {/* {!netInfo.isConnected && <Offline isNetworkOff={true} />} */}
-          <Order />
+          {/* <Order /> */}
+          {/* <ConfirmModal /> */}
+          {/* <PickUp /> */}
+          {/* <Note /> */}
+          {/* <ArrivalDialog /> */}
+          {/* <PaymentDialog /> */}
+          {/* <CashConfirm /> */}
+          <PickupOrder
+            showpickup={orderPrompt}
+            pickup={() => {
+              setOrderPrompt(false);
+              RootNavigation.navigate('OrderPool');
+            }}
+            addToBasket={() => {
+              setOrderPrompt(false);
+            }}
+          />
+          {/* <Pickup /> */}
         </NavigationContainer>
         <FeedBack />
         <CancelOrder />

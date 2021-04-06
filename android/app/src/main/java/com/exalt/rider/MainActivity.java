@@ -7,6 +7,7 @@ import android.os.Bundle;
 
 import com.exalt.rider.data.AsyncStorage;
 import com.exalt.rider.services.LocationUpdateService;
+import com.exalt.rider.services.Utils;
 import com.facebook.react.HeadlessJsTaskService;
 import com.facebook.react.ReactActivity;
 import com.facebook.react.ReactInstanceManager;
@@ -37,13 +38,16 @@ public class MainActivity extends ReactActivity {
 //
 //      });
       SharedPreferences preferences = getSharedPreferences("rider", Context.MODE_PRIVATE);
-      if (preferences != null){
-          token = preferences.getString("x-auth-token", "");
-          if (!token.equals("")){
-              Intent serviceIntent = new Intent(this, LocationUpdateService.class);
-              serviceIntent.putExtra(TOKEN, token);
-              startService(serviceIntent);
-              HeadlessJsTaskService.acquireWakeLockNow(this);
+      if (!LocationUpdateService.IS_RUNNING){
+          if (preferences != null){
+              token = preferences.getString("x-auth-token", "");
+              if (!token.equals("")){
+                  Intent serviceIntent = new Intent(this, LocationUpdateService.class);
+                  serviceIntent.putExtra(TOKEN, token);
+                  serviceIntent.setAction(Utils.ACTION_START_SERVICE);
+                  startService(serviceIntent);
+                  HeadlessJsTaskService.acquireWakeLockNow(this);
+              }
           }
       }
     }

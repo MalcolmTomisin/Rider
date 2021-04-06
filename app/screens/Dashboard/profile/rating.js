@@ -95,7 +95,7 @@ const RatingScreen = () => {
               <Caption>{userRatings.length} users</Caption>
             </View>
           </View>
-          <View style={{justifyContent: 'center', alignItems: 'center', marginLeft: -20}}>
+          <View style={{justifyContent: 'center', alignItems: 'center', marginLeft: -40}}>
             <Pie
               count={userRatings.length}
             />
@@ -156,7 +156,7 @@ const classes = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingHorizontal: 20,
+    paddingHorizontal: 10,
     margin: 20,
     height: 200,
   },
