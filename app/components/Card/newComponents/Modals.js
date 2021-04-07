@@ -134,7 +134,9 @@ export function PaymentDialog({showPayment, paid, notPaid, price, name}) {
 
 export function PickupOrder({pickup, addToBasket, showpickup}) {
   return (
-    <Modal visible={showpickup} contentContainerStyle={{
+    <Modal
+      visible={showpickup}
+      contentContainerStyle={{
         backgroundColor: colors.white,
         borderRadius: 20,
         marginHorizontal: 20,
@@ -158,20 +160,27 @@ export function PickupOrder({pickup, addToBasket, showpickup}) {
         Choose your next action
       </Text>
       <View style={{alignItems: 'center', paddingHorizontal: 25}}>
-      <Button
-        label="Start delivery now"
-        labelStyle={{fontFamily: 'Manrope-Bold', fontSize: 12}}
-        rootStyle={{borderRadius: 6, backgroundColor: colors.green.main, marginBottom: 15}}
-        onPress={pickup}
-      />
-      <Button
-        label="Add to your pending orders"
-        labelStyle={{fontFamily: 'Manrope-Bold', fontSize: 12}}
-        rootStyle={{borderRadius: 6, backgroundColor: colors.red.main, marginBottom: 25}}
-        onPress={addToBasket}
-      />
+        <Button
+          label="Start delivery now"
+          labelStyle={{fontFamily: 'Manrope-Bold', fontSize: 12}}
+          rootStyle={{
+            borderRadius: 6,
+            backgroundColor: colors.green.main,
+            marginBottom: 15,
+          }}
+          onPress={pickup}
+        />
+        <Button
+          label="Add to your pending orders"
+          labelStyle={{fontFamily: 'Manrope-Bold', fontSize: 12}}
+          rootStyle={{
+            borderRadius: 6,
+            backgroundColor: colors.red.main,
+            marginBottom: 25,
+          }}
+          onPress={addToBasket}
+        />
       </View>
-      
     </Modal>
   );
 }
