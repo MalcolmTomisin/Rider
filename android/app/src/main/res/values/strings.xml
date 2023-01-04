@@ -1,4 +1,4 @@
 <resources>
     <string name="app_name">Exalt Rider</string>
-    <string moduleConfig="true" name="CodePushDeploymentKey">3jogq91FERUxiYUIvkfm2_UX9InVjY7TfP0Wz</string>
+    <string moduleConfig="true" name="CodePushDeploymentKey"></string>
 </resources>
